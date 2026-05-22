@@ -568,7 +568,7 @@
 // ══════════════════════════════════════════════
 // CONFIG — hardcoded, không cần user nhập
 // ══════════════════════════════════════════════
-const SHEETS_URL = 'https://script.google.com/a/macros/pmax.com.vn/s/AKfycbzINwc8D0CLAed4zmDYis2wspVOFAnsbdzqlHlc4WreHjJZx-B-L9ozEVZTnYfjx6Oycw/exec'; // ← Thay bằng Web App URL sau khi deploy
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbyRe6m-YZW6WVBZeG75J_bPdJKnzow1e2gMpjKL5fj8DmOQus55o6DkeQECvZ7gt9DX/exec'; // ← Thay bằng Web App URL sau khi deploy
 let selectedMember = null;
 let lastReport = null;
 let currentStep = 0;
@@ -792,15 +792,39 @@ async function generateAIAnalysis(d) {
       `Phân tích Vertical: ${d.verticalData.map(v=>`${v.vertical}: ${v.companies} khách, ${v.activities} activities, CR QL ${v.cr}, freq ${v.freq}, ${v.stages}`).join('; ')}.`
   };
 
-  document.getElementById('ai-gen-status').textContent = 'Gemini đang phân tích tất cả sections...';
+  document.getElementById('ai-gen-status').textContent = 'Gemini đang phân tích số liệu...';
   try {
-    const res = await fetch(SHEETS_URL, {
+    // Gọi thẳng Gemini từ browser
+    const GEMINI_KEY = 'AIzaSyBFTqbqRGmpWIXclQHJa4YwM3SvhhCSrTM';
+    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`;
+    const systemCtx = `Bạn là AI phân tích performance cho BD team của PMAX Agency (marketing agency tại TP.HCM). Viết nhận xét ngắn gọn, thực tế, bằng tiếng Việt. Tối đa 2 câu mỗi phần. Dùng **text** để bold điểm quan trọng nhất. Không dùng bullet points. Không mở đầu bằng "Dựa trên" hay "Theo số liệu".`;
+
+    // Gộp tất cả prompts thành 1 request duy nhất để nhanh hơn
+    const combinedPrompt = Object.entries(prompts).map(([k,v]) => `[${k.toUpperCase()}]\n${v}`).join('\n\n');
+    const fullPrompt = `${systemCtx}\n\nPhân tích từng phần sau, trả về JSON object với keys: kpi, activities, funnel, meeting, aov, vertical. Mỗi value là 1-2 câu nhận xét. Chỉ trả về JSON thuần, không markdown:\n\n${combinedPrompt}`;
+
+    const res = await fetch(endpoint, {
       method: 'POST',
-      body: JSON.stringify({ action: 'geminiAnalyze', prompts })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: fullPrompt }] }],
+        generationConfig: { maxOutputTokens: 1000, temperature: 0.7 }
+      })
     });
     const data = await res.json();
-    return data.success ? data.results : {};
-  } catch { return {}; }
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
+    // Parse JSON response
+    const clean = text.replace(/```json\n?|\n?```/g, '').trim();
+    try {
+      return JSON.parse(clean);
+    } catch {
+      // Fallback: nếu không parse được thì trả về text cho kpi
+      return { kpi: clean, activities: '', funnel: '', meeting: '', aov: '', vertical: '' };
+    }
+  } catch(e) {
+    console.error('Gemini error:', e);
+    return {};
+  }
 }
 
 // ══════════════════════════════════════════════
