@@ -244,10 +244,7 @@
       <div class="nav-dot"></div> Highlight & Review
     </div>
 
-    <div class="nav-section" style="margin-top:1.5rem;">Cài đặt</div>
-    <div class="nav-item" onclick="showConfig()">
-      <div class="nav-dot"></div> API Keys
-    </div>
+
   </aside>
 
   <!-- Main -->
@@ -262,10 +259,6 @@
         <div class="step-badge">Bước 1 / 6</div>
         <div class="step-title">Chọn thành viên</div>
         <div class="step-desc">Report sẽ tự load dữ liệu tuần trước để so sánh WoW</div>
-      </div>
-
-      <div class="config-banner" id="config-warn">
-        ⚙️ <span>Chưa cấu hình API. Vào <b>Cài đặt → API Keys</b> để nhập Gemini API key và Google Sheets URL trước khi dùng.</span>
       </div>
 
       <div class="form-card">
@@ -567,59 +560,19 @@
   </main>
 </div>
 
-<!-- Config modal -->
-<div id="config-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:100; display:none; align-items:center; justify-content:center;">
-  <div style="background:white; border-radius:12px; padding:1.5rem; width:480px; max-width:90vw;">
-    <h3 style="margin-bottom:1rem; font-size:15px;">⚙️ Cấu hình API</h3>
-    <div class="field" style="margin-bottom:12px;">
-      <label>Gemini API Key</label>
-      <input type="password" id="cfg-gemini" placeholder="AIzaSy...">
-    </div>
-    <div class="field" style="margin-bottom:12px;">
-      <label>Google Apps Script URL (Web App URL)</label>
-      <input type="text" id="cfg-sheets" placeholder="https://script.google.com/macros/s/...">
-    </div>
-    <div style="display:flex; gap:8px; margin-top:1rem;">
-      <button class="btn-primary" onclick="saveConfig()">Lưu</button>
-      <button class="btn-secondary" onclick="closeConfig()">Hủy</button>
-    </div>
-  </div>
-</div>
+
 
 <div class="toast" id="toast"></div>
 
 <script>
 // ══════════════════════════════════════════════
-// CONFIG
+// CONFIG — hardcoded, không cần user nhập
 // ══════════════════════════════════════════════
-let GEMINI_KEY = localStorage.getItem('gemini_key') || '';
-let SHEETS_URL = localStorage.getItem('sheets_url') || '';
+const SHEETS_URL = 'https://script.google.com/a/macros/pmax.com.vn/s/AKfycbzINwc8D0CLAed4zmDYis2wspVOFAnsbdzqlHlc4WreHjJZx-B-L9ozEVZTnYfjx6Oycw/exec'; // ← Thay bằng Web App URL sau khi deploy
 let selectedMember = null;
 let lastReport = null;
 let currentStep = 0;
 let aiAnalysis = {};
-
-function showConfig() {
-  document.getElementById('cfg-gemini').value = GEMINI_KEY;
-  document.getElementById('cfg-sheets').value = SHEETS_URL;
-  document.getElementById('config-modal').style.display = 'flex';
-}
-function closeConfig() { document.getElementById('config-modal').style.display = 'none'; }
-function saveConfig() {
-  GEMINI_KEY = document.getElementById('cfg-gemini').value.trim();
-  SHEETS_URL = document.getElementById('cfg-sheets').value.trim();
-  localStorage.setItem('gemini_key', GEMINI_KEY);
-  localStorage.setItem('sheets_url', SHEETS_URL);
-  closeConfig();
-  updateConfigWarn();
-  showToast('✓ Đã lưu cấu hình');
-  loadMembers();
-}
-function updateConfigWarn() {
-  const warn = document.getElementById('config-warn');
-  if (GEMINI_KEY && SHEETS_URL) warn.style.display = 'none';
-  else warn.style.display = 'flex';
-}
 
 // ══════════════════════════════════════════════
 // STEP NAVIGATION
@@ -642,10 +595,6 @@ function goStep(n) {
 // LOAD MEMBERS from Sheets
 // ══════════════════════════════════════════════
 async function loadMembers() {
-  if (!SHEETS_URL) {
-    renderStaticMembers();
-    return;
-  }
   try {
     const res = await fetch(`${SHEETS_URL}?action=getMembers`);
     const data = await res.json();
@@ -679,15 +628,12 @@ async function selectMember(member, el) {
   selectedMember = member;
   document.querySelectorAll('.member-card').forEach(c => c.classList.remove('selected'));
   el.classList.add('selected');
-
-  if (SHEETS_URL) {
-    try {
-      const res = await fetch(`${SHEETS_URL}?action=getLastReport&memberId=${member.id}`);
-      const data = await res.json();
-      lastReport = data.report;
-      if (lastReport) showToast(`✓ Đã load dữ liệu tuần ${lastReport.week} để so sánh WoW`);
-    } catch { lastReport = null; }
-  }
+  try {
+    const res = await fetch(`${SHEETS_URL}?action=getLastReport&memberId=${member.id}`);
+    const data = await res.json();
+    lastReport = data.report;
+    if (lastReport) showToast(`✓ Đã load dữ liệu tuần ${lastReport.week} để so sánh WoW`);
+  } catch { lastReport = null; }
 }
 
 // ══════════════════════════════════════════════
@@ -820,69 +766,41 @@ function collectData() {
 // ══════════════════════════════════════════════
 // GEMINI AI ANALYSIS
 // ══════════════════════════════════════════════
-async function callGemini(prompt) {
-  if (!GEMINI_KEY) return 'Chưa cấu hình Gemini API key.';
-  try {
-    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-    });
-    const data = await res.json();
-    return data.candidates?.[0]?.content?.parts?.[0]?.text || 'Không thể phân tích.';
-  } catch { return 'Lỗi kết nối Gemini.'; }
-}
-
+// ══════════════════════════════════════════════
+// GEMINI via Apps Script PROXY — key ẩn hoàn toàn
+// ══════════════════════════════════════════════
 async function generateAIAnalysis(d) {
-  const wow = (cur, prev, key) => prev && prev[key] ? cur - prev[key] : null;
-  const wowAct = {
-    call: wow(d.actCall, lastReport, 'actCall'),
-    sms: wow(d.actSMS, lastReport, 'actSMS'),
-    email: wow(d.actEmail, lastReport, 'actEmail'),
-    meeting: wow(d.actMeeting, lastReport, 'actMeeting'),
+  const crQL    = d.fLead  > 0 ? Math.round(d.fQL/d.fLead*100)     : 0;
+  const crBrief = d.fQL    > 0 ? Math.round(d.fBrief/d.fQL*100)    : 0;
+  const crBriefPlan = d.fQLPlan > 0 ? Math.round(d.fBriefPlan/d.fQLPlan*100) : 0;
+  const crQB    = d.fBrief > 0 ? Math.round(d.fQB/d.fBrief*100)    : 0;
+  const crQS    = d.fQB    > 0 ? Math.round(d.fQS/d.fQB*100)       : 0;
+  const wowLabel = (cur, prev, key) => prev?.[key] !== undefined ? ` (WoW: ${cur - parseFloat(prev[key]) >= 0 ? '+' : ''}${cur - parseFloat(prev[key])})` : '';
+
+  const prompts = {
+    kpi:
+      `Phân tích KPI Q2 QTD: QB ${d.kpiQBActual}/${d.kpiQBPlan} (${Math.round(d.kpiQBActual/d.kpiQBPlan*100)||0}%), GP2 ${d.kpiGP2Actual}M/${d.kpiGP2Plan}M (${Math.round(d.kpiGP2Actual/d.kpiGP2Plan*100)||0}%), Meeting ${d.kpiMeetingActual}/${d.kpiMeetingPlan}, Activities ${d.kpiActActual}/${d.kpiActPlan}. Quarter còn 5 tuần.`,
+    activities:
+      `Phân tích Activities tuần này: Call ${d.actCall}${wowLabel(d.actCall,lastReport,'actCall')}; SMS ${d.actSMS}${wowLabel(d.actSMS,lastReport,'actSMS')}; Email ${d.actEmail}${wowLabel(d.actEmail,lastReport,'actEmail')}; Meeting ${d.actMeeting}${wowLabel(d.actMeeting,lastReport,'actMeeting')}.`,
+    funnel:
+      `Phân tích Funnel Q2 QTD: Lead ${d.fLead}(plan ${d.fLeadPlan}), QL ${d.fQL} CR=${crQL}%, Brief ${d.fBrief} CR=${crBrief}%(plan ${crBriefPlan}%), QB ${d.fQB} CR=${crQB}%, QS ${d.fQS} CR=${crQS}%, Verbal ${d.fVerbal}, Contract ${d.fContract}.`,
+    meeting:
+      `Phân tích Meeting: ${d.meetingDetails.map(m=>`${m.client}(${m.vertical},${m.stage},${m.count} lần,outcome:${m.outcome})`).join('; ')}. Tổng ${d.actMeeting} meetings.`,
+    aov:
+      `Phân tích AOV pipeline: ${d.aovDeals.map(a=>`${a.deal}-${a.stage}-${a.value}`).join('; ')}. Nhận xét concentration risk và pipeline health.`,
+    vertical:
+      `Phân tích Vertical: ${d.verticalData.map(v=>`${v.vertical}: ${v.companies} khách, ${v.activities} activities, CR QL ${v.cr}, freq ${v.freq}, ${v.stages}`).join('; ')}.`
   };
 
-  const crQL = d.fLead > 0 ? Math.round(d.fQL/d.fLead*100) : 0;
-  const crBrief = d.fQL > 0 ? Math.round(d.fBrief/d.fQL*100) : 0;
-  const crQB = d.fBrief > 0 ? Math.round(d.fQB/d.fBrief*100) : 0;
-  const crQS = d.fQB > 0 ? Math.round(d.fQS/d.fQB*100) : 0;
-
-  const systemPrompt = `Bạn là AI phân tích performance cho BD team của PMAX Agency (marketing agency). 
-Viết nhận xét ngắn gọn, thực tế, bằng tiếng Việt. Tối đa 2 câu mỗi phần. Dùng bold (**text**) cho điểm quan trọng nhất. Không dùng bullet points.`;
-
-  const sections = [
-    {
-      key: 'kpi',
-      prompt: `${systemPrompt}\n\nPhân tích KPI: QB ${d.kpiQBActual}/${d.kpiQBPlan} (${Math.round(d.kpiQBActual/d.kpiQBPlan*100)}%), GP2 ${d.kpiGP2Actual}M/${d.kpiGP2Plan}M (${Math.round(d.kpiGP2Actual/d.kpiGP2Plan*100)}%), Meeting ${d.kpiMeetingActual}/${d.kpiMeetingPlan}, Activities ${d.kpiActActual}/${d.kpiActPlan}. Quarter còn 5 tuần.`
-    },
-    {
-      key: 'activities',
-      prompt: `${systemPrompt}\n\nPhân tích Activities tuần này: Call ${d.actCall}${wowAct.call!==null?` (WoW: ${wowAct.call>0?'+':''}${wowAct.call})`:''}; SMS ${d.actSMS}${wowAct.sms!==null?` (WoW: ${wowAct.sms>0?'+':''}${wowAct.sms})`:''}; Email ${d.actEmail}${wowAct.email!==null?` (WoW: ${wowAct.email>0?'+':''}${wowAct.email})`:''}; Meeting ${d.actMeeting}${wowAct.meeting!==null?` (WoW: ${wowAct.meeting>0?'+':''}${wowAct.meeting})`:''}.`
-    },
-    {
-      key: 'funnel',
-      prompt: `${systemPrompt}\n\nPhân tích Funnel Q2 QTD: Lead ${d.fLead} (plan ${d.fLeadPlan}), QL ${d.fQL} CR=${crQL}%, Brief ${d.fBrief} CR=${crBrief}% (plan CR ${d.fBriefPlan>0?Math.round(d.fBriefPlan/d.fQLPlan*100):0}%), QB ${d.fQB} CR=${crQB}%, QS ${d.fQS} CR=${crQS}%, Verbal ${d.fVerbal}, Contract ${d.fContract}.`
-    },
-    {
-      key: 'meeting',
-      prompt: `${systemPrompt}\n\nPhân tích Meeting: ${d.meetingDetails.map(m=>`${m.client} (${m.vertical}, ${m.stage}, ${m.count} lần, outcome: ${m.outcome})`).join('; ')}. Tổng ${d.actMeeting} meetings.`
-    },
-    {
-      key: 'aov',
-      prompt: `${systemPrompt}\n\nPhân tích AOV pipeline: ${d.aovDeals.map(a=>`${a.deal} - ${a.stage} - ${a.value}`).join('; ')}. Nhận xét về rủi ro concentration và pipeline health.`
-    },
-    {
-      key: 'vertical',
-      prompt: `${systemPrompt}\n\nPhân tích Vertical: ${d.verticalData.map(v=>`${v.vertical}: ${v.companies} khách, ${v.activities} activities, CR QL ${v.cr}, freq ${v.freq}, ${v.stages}`).join('; ')}.`
-    }
-  ];
-
-  const results = {};
-  for (const s of sections) {
-    document.getElementById('ai-gen-status').textContent = `Đang phân tích ${s.key}...`;
-    results[s.key] = await callGemini(s.prompt);
-  }
-  return results;
+  document.getElementById('ai-gen-status').textContent = 'Gemini đang phân tích tất cả sections...';
+  try {
+    const res = await fetch(SHEETS_URL, {
+      method: 'POST',
+      body: JSON.stringify({ action: 'geminiAnalyze', prompts })
+    });
+    const data = await res.json();
+    return data.success ? data.results : {};
+  } catch { return {}; }
 }
 
 // ══════════════════════════════════════════════
@@ -1119,15 +1037,7 @@ async function generateReport() {
 
   // Generate AI analysis
   let ai = {};
-  if (GEMINI_KEY) {
-    ai = await generateAIAnalysis(data);
-    data.aiAnalysisKPI = ai.kpi || '';
-    data.aiAnalysisActivities = ai.activities || '';
-    data.aiAnalysisFunnel = ai.funnel || '';
-    data.aiAnalysisMeeting = ai.meeting || '';
-    data.aiAnalysisAOV = ai.aov || '';
-    data.aiAnalysisVertical = ai.vertical || '';
-  }
+  ai = await generateAIAnalysis(data);
 
   aiDiv.style.display = 'none';
   output.innerHTML = renderReport(data, ai);
@@ -1164,7 +1074,6 @@ function toggleEdit() {
 }
 
 async function saveToSheets() {
-  if (!SHEETS_URL) { showToast('⚠ Chưa cấu hình Sheets URL'); return; }
   if (!window._reportData) return;
   try {
     const res = await fetch(SHEETS_URL, {
@@ -1191,7 +1100,6 @@ function showToast(msg) {
 // INIT
 // ══════════════════════════════════════════════
 window.onload = () => {
-  updateConfigWarn();
   loadMembers();
   addMeetingRow();
   addAOVRow();
