@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PMAX BD Weekly Report</title>
+<style>
+  :root {
+    --green: #1D9E75; --green-light: #E1F5EE; --green-mid: #5DCAA5;
+    --blue: #378ADD; --blue-light: #E6F1FB;
+    --amber: #EF9F27; --amber-light: #FAEEDA;
+    --red: #E24B4A; --red-light: #FCEBEB;
+    --purple: #7F77DD; --purple-light: #EEEDFE;
+    --gray: #888780; --gray-light: #F1EFE8;
+    --text: #1a1a1a; --text-2: #555; --text-3: #999;
+    --border: #e5e5e5; --bg: #fafafa; --white: #fff;
+    --radius: 10px; --radius-sm: 6px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); font-size: 14px; }
+  .app { display: flex; min-height: 100vh; }
+  .sidebar { width: 240px; background: var(--white); border-right: 1px solid var(--border); padding: 1.5rem 1rem; flex-shrink: 0; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+  .main { flex: 1; padding: 2rem; max-width: 820px; }
+  .logo { display: flex; align-items: center; gap: 8px; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
+  .logo-mark { width: 28px; height: 28px; background: var(--green); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 13px; }
+  .logo-text { font-weight: 600; font-size: 13px; }
+  .logo-sub { font-size: 11px; color: var(--text-3); }
+  .nav-section { font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-3); margin: 1rem 0 0.4rem; }
+  .nav-item { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: var(--radius-sm); font-size: 12px; color: var(--text-2); cursor: pointer; transition: all 0.15s; margin-bottom: 2px; }
+  .nav-item:hover { background: var(--bg); color: var(--text); }
+  .nav-item.active { background: var(--green-light); color: var(--green); font-weight: 500; }
+  .nav-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); flex-shrink: 0; }
+  .nav-item.active .nav-dot, .nav-item.done .nav-dot { background: var(--green); }
+  .step-header { margin-bottom: 1.5rem; }
+  .step-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; color: var(--green); background: var(--green-light); padding: 4px 10px; border-radius: 99px; margin-bottom: 0.5rem; font-weight: 500; }
+  .step-title { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+  .step-desc { font-size: 13px; color: var(--text-3); }
+  .form-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin-bottom: 1rem; }
+  .form-card-title { font-size: 12px; font-weight: 600; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 1rem; display: flex; align-items: center; gap: 6px; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .form-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .field { display: flex; flex-direction: column; gap: 4px; }
+  .field.full { grid-column: 1 / -1; }
+  label { font-size: 11px; font-weight: 500; color: var(--text-2); }
+  input, select, textarea { border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 7px 10px; font-size: 13px; color: var(--text); background: var(--white); transition: border 0.15s; font-family: inherit; width: 100%; }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: var(--green); }
+  textarea { resize: vertical; min-height: 72px; line-height: 1.5; }
+  input[type="number"] { -moz-appearance: textfield; }
+  input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+  .dynamic-row { display: grid; gap: 8px; align-items: start; margin-bottom: 8px; }
+  .dynamic-row.meeting-row { grid-template-columns: 2fr 1fr 1fr 60px 2fr 28px; }
+  .dynamic-row.aov-row { grid-template-columns: 2fr 1fr 1fr 1.5fr 1.5fr 28px; }
+  .dynamic-row.vertical-row { grid-template-columns: 1.2fr 60px 80px 80px 80px 2fr 28px; }
+  .dynamic-row input, .dynamic-row select { font-size: 12px; padding: 6px 8px; }
+  .btn-remove { width: 28px; height: 32px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--white); color: var(--text-3); cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; transition: all 0.15s; flex-shrink: 0; }
+  .btn-remove:hover { background: var(--red-light); border-color: var(--red); color: var(--red); }
+  .btn-add { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border: 1px dashed var(--border); border-radius: var(--radius-sm); font-size: 12px; color: var(--text-3); cursor: pointer; background: transparent; transition: all 0.15s; margin-top: 4px; }
+  .btn-add:hover { border-color: var(--green); color: var(--green); background: var(--green-light); }
+  .btn-primary { background: var(--green); color: white; border: none; border-radius: var(--radius-sm); padding: 10px 20px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.15s; display: inline-flex; align-items: center; gap: 7px; }
+  .btn-primary:hover { background: #189063; }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn-secondary { background: var(--white); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 9px 16px; font-size: 13px; cursor: pointer; transition: all 0.15s; display: inline-flex; align-items: center; gap: 7px; }
+  .btn-secondary:hover { background: var(--bg); }
+  .btn-actions { display: flex; gap: 8px; margin-top: 1.5rem; flex-wrap: wrap; }
+  .progress-bar { height: 3px; background: var(--border); border-radius: 99px; margin-bottom: 1.5rem; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--green); border-radius: 99px; transition: width 0.3s; }
+  .ai-generating { background: var(--purple-light); border: 1px solid #AFA9EC; border-radius: var(--radius); padding: 1.25rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 12px; }
+  .ai-spinner { width: 20px; height: 20px; border: 2px solid #AFA9EC; border-top-color: var(--purple); border-radius: 50%; animation: spin 0.8s linear infinite; flex-shrink: 0; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .ai-gen-text { font-size: 13px; color: var(--purple); font-weight: 500; }
+  .ai-gen-sub { font-size: 12px; color: #7F77DD; margin-top: 2px; }
+  #report-preview { display: none; }
+  .report-actions { display: flex; gap: 8px; margin-bottom: 1.5rem; flex-wrap: wrap; }
+  .btn-copy { background: var(--blue); color: white; border: none; border-radius: var(--radius-sm); padding: 10px 20px; font-size: 13px; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; transition: all 0.15s; }
+  .btn-copy:hover { background: #2a6bb5; }
+  .btn-edit { background: var(--white); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 9px 16px; font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; transition: all 0.15s; }
+  .btn-save { background: var(--green); color: white; border: none; border-radius: var(--radius-sm); padding: 9px 16px; font-size: 13px; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; }
+  #report-output { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem; line-height: 1.7; font-size: 13px; }
+  #report-output[contenteditable="true"] { outline: 2px solid var(--blue); }
+  .step-page { display: none; }
+  .step-page.active { display: block; }
+  .member-select-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .member-card { border: 2px solid var(--border); border-radius: var(--radius); padding: 14px; cursor: pointer; transition: all 0.15s; background: var(--white); }
+  .member-card:hover { border-color: var(--green-mid); }
+  .member-card.selected { border-color: var(--green); background: var(--green-light); }
+  .member-card .m-name { font-weight: 600; font-size: 13px; }
+  .member-card .m-meta { font-size: 11px; color: var(--text-3); margin-top: 3px; }
+  .member-card .m-role { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 99px; margin-top: 6px; }
+  .role-exec { background: var(--blue-light); color: #185FA5; }
+  .role-leader { background: var(--amber-light); color: #854F0B; }
+  .toast { position: fixed; bottom: 24px; right: 24px; background: var(--text); color: white; padding: 10px 18px; border-radius: 8px; font-size: 13px; opacity: 0; transform: translateY(8px); transition: all 0.25s; pointer-events: none; z-index: 999; }
+  .toast.show { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="logo-mark">P</div>
+      <div><div class="logo-text">PMAX BD Report</div><div class="logo-sub">Weekly Generator</div></div>
+    </div>
+    <div class="nav-section">Các bước</div>
+    <div class="nav-item active" id="nav-0" onclick="goStep(0)"><div class="nav-dot"></div> Chọn thành viên</div>
+    <div class="nav-item" id="nav-1" onclick="goStep(1)"><div class="nav-dot"></div> Kế hoạch & KPI</div>
+    <div class="nav-item" id="nav-2" onclick="goStep(2)"><div class="nav-dot"></div> Activities & Funnel</div>
+    <div class="nav-item" id="nav-3" onclick="goStep(3)"><div class="nav-dot"></div> Meeting & AOV</div>
+    <div class="nav-item" id="nav-4" onclick="goStep(4)"><div class="nav-dot"></div> Vertical & Vấn đề</div>
+    <div class="nav-item" id="nav-5" onclick="goStep(5)"><div class="nav-dot"></div> Highlight & Review</div>
+  </aside>
+  <main class="main">
+    <div class="progress-bar"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+
+    <!-- Step 0 -->
+    <div class="step-page active" id="step-0">
+      <div class="step-header">
+        <div class="step-badge">Bước 1 / 6</div>
+        <div class="step-title">Chọn thành viên</div>
+        <div class="step-desc">Report sẽ tự load dữ liệu tuần trước để so sánh WoW</div>
+      </div>
+      <div class="form-card">
+        <div class="form-card-title">Thông tin tuần báo cáo</div>
+        <div class="form-grid">
+          <div class="field"><label>Quý</label><select id="quarter"><option value="Q2">Q2/2026</option><option value="Q3">Q3/2026</option><option value="Q1">Q1/2026</option></select></div>
+          <div class="field"><label>Tuần số</label><input type="number" id="week" min="1" max="13" value="8"></div>
+          <div class="field"><label>Từ ngày</label><input type="date" id="period-from"></div>
+          <div class="field"><label>Đến ngày</label><input type="date" id="period-to"></div>
+        </div>
+      </div>
+      <div class="form-card">
+        <div class="form-card-title">Chọn thành viên</div>
+        <div class="member-select-wrap" id="member-list"><div style="color:var(--text-3);font-size:13px;">Đang tải...</div></div>
+      </div>
+      <div class="btn-actions"><button class="btn-primary" onclick="goStep(1)">Tiếp theo →</button></div>
+    </div>
+
+    <!-- Step 1 -->
+    <div class="step-page" id="step-1">
+      <div class="step-header"><div class="step-badge">Bước 2 / 6</div><div class="step-title">Kế hoạch & KPI</div></div>
+      <div class="form-card">
+        <div class="form-card-title">📋 Kế hoạch tuần này</div>
+        <div class="form-grid">
+          <div class="field"><label>Số khách dự kiến tiếp cận</label><input type="number" id="plan-clients" placeholder="12"></div>
+          <div class="field"><label>Focus vertical tuần này</label><input type="text" id="plan-focus-vertical" placeholder="Healthcare (IVF/Sản nhi)"></div>
+          <div class="field full"><label>Mục tiêu stage move</label><input type="text" id="plan-stage-move" placeholder="Phương Châu: Brief → QB"></div>
+          <div class="field full"><label>Deal ưu tiên BOF</label><input type="text" id="plan-priority-deals" placeholder="Biocodex top-up"></div>
+        </div>
+      </div>
+      <div class="form-card">
+        <div class="form-card-title">🎯 KPI — Actual vs Plan (Q2 QTD)</div>
+        <div class="form-grid-4">
+          <div class="field"><label>QB Actual</label><input type="number" id="kpi-qb-actual" placeholder="3"></div>
+          <div class="field"><label>QB Plan Q2</label><input type="number" id="kpi-qb-plan" placeholder="5"></div>
+          <div class="field"><label>GP2 Actual (M)</label><input type="number" id="kpi-gp2-actual" placeholder="125"></div>
+          <div class="field"><label>GP2 Plan Q2 (M)</label><input type="number" id="kpi-gp2-plan" placeholder="675"></div>
+          <div class="field"><label>Meeting 1st Actual</label><input type="number" id="kpi-meeting-actual" placeholder="17"></div>
+          <div class="field"><label>Meeting 1st Plan Q2</label><input type="number" id="kpi-meeting-plan" placeholder="25"></div>
+          <div class="field"><label>Activities Actual</label><input type="number" id="kpi-act-actual" placeholder="251"></div>
+          <div class="field"><label>Activities Plan Q2</label><input type="number" id="kpi-act-plan" placeholder="280"></div>
+        </div>
+      </div>
+      <div class="btn-actions"><button class="btn-secondary" onclick="goStep(0)">← Quay lại</button><button class="btn-primary" onclick="goStep(2)">Tiếp theo →</button></div>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="step-page" id="step-2">
+      <div class="step-header"><div class="step-badge">Bước 3 / 6</div><div class="step-title">Activities & Funnel</div></div>
+      <div class="form-card">
+        <div class="form-card-title">📊 Activities tuần này</div>
+        <div class="form-grid-4">
+          <div class="field"><label>Call</label><input type="number" id="act-call" placeholder="23"></div>
+          <div class="field"><label>SMS</label><input type="number" id="act-sms" placeholder="87"></div>
+          <div class="field"><label>Email & other</label><input type="number" id="act-email" placeholder="41"></div>
+          <div class="field"><label>Meeting</label><input type="number" id="act-meeting" placeholder="6"></div>
+        </div>
+      </div>
+      <div class="form-card">
+        <div class="form-card-title">🔽 Funnel — Actual (Q2 QTD)</div>
+        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-bottom:6px;">
+          <span style="font-size:10px;color:var(--text-3);font-weight:600;text-transform:uppercase;">Lead</span><span style="font-size:10px;color:var(--text-3);font-weight:600;text-transform:uppercase;">QL</span><span style="font-size:10px;color:var(--text-3);font-weight:600;text-transform:uppercase;">Brief</span><span style="font-size:10px;color:var(--text-3);font-weight:600;text-transform:uppercase;">QB</span><span style="font-size:10px;color:var(--text-3);font-weight:600;text-transform:uppercase;">QS</span><span style="font-size:10px;color:var(--text-3);font-weight:600;text-transform:uppercase;">Verbal</span><span style="font-size:10px;color:var(--text-3);font-weight:600;text-transform:uppercase;">Contract</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-bottom:14px;">
+          <input type="number" id="f-lead" placeholder="19"><input type="number" id="f-ql" placeholder="15"><input type="number" id="f-brief" placeholder="4"><input type="number" id="f-qb" placeholder="3"><input type="number" id="f-qs" placeholder="1"><input type="number" id="f-verbal" placeholder="0"><input type="number" id="f-contract" placeholder="0">
+        </div>
+        <div class="form-card-title" style="margin-top:4px;">Plan Q2</div>
+        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:8px;">
+          <input type="number" id="fp-lead" placeholder="25"><input type="number" id="fp-ql" placeholder="18"><input type="number" id="fp-brief" placeholder="6"><input type="number" id="fp-qb" placeholder="5"><input type="number" id="fp-qs" placeholder="3"><input type="number" id="fp-verbal" placeholder="1"><input type="number" id="fp-contract" placeholder="1">
+        </div>
+      </div>
+      <div class="btn-actions"><button class="btn-secondary" onclick="goStep(1)">← Quay lại</button><button class="btn-primary" onclick="goStep(3)">Tiếp theo →</button></div>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="step-page" id="step-3">
+      <div class="step-header"><div class="step-badge">Bước 4 / 6</div><div class="step-title">Meeting & AOV Control</div></div>
+      <div class="form-card">
+        <div class="form-card-title">🤝 Meeting</div>
+        <div style="display:grid;grid-template-columns:2fr 1fr 1fr 60px 2fr 28px;gap:8px;margin-bottom:4px;">
+          <span style="font-size:10px;color:var(--text-3);font-weight:600;text-transform:uppercase;">Khách hàng</span><span style="font-size:10px;color:var(--text-3);font-weight:600;text-transform:uppercase;">Vertical</span><span style="font-size:10px;color:var(--text-3);font-weight:600;text-transform:uppercase;">Stage</span><span style="font-size:10px;color:var(--text-3);font-weight:600;text-transform:uppercase;">Số lần</span><span style="font-size:10px;color:var(--text-3);font-weight:600;text-transform:uppercase;">Outcome</span><span></span>
+        </div>
+        <div id="meeting-rows"></div>
+        <button class="btn-add" onclick="addMeetingRow()">+ Thêm khách</button>
+      </div>
+      <div class="form-card">
+        <div class="form-card-title">💰 AOV Control</div>
+        <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1.5fr 1.5fr 28px;gap:8px;margin-bottom:4px;">
+          <span style="font-size:10px;color:var(--text-3);font-weight:600;text-transform:uppercase;">Deal</span><span style="font-size:10px;color:var(--text-3);font-weight:600;text-transform:uppercase;">Vertical</span><span style="font-size:10px;color:var(--text-3);font-weight:600;text-transform:uppercase;">Stage</span><span style="font-size:10px;color:var(--text-3);font-weight:600;text-transform:uppercase;">Value</span><span style="font-size:10px;color:var(--text-3);font-weight:600;text-transform:uppercase;">Next step</span><span></span>
+        </div>
+        <div id="aov-rows"></div>
+        <button class="btn-add" onclick="addAOVRow()">+ Thêm deal</button>
+      </div>
+      <div class="btn-actions"><button class="btn-secondary" onclick="goStep(2)">← Quay lại</button><button class="btn-primary" onclick="goStep(4)">Tiếp theo →</button></div>
+    </div>
+
+    <!-- Step 4 -->
+    <div class="step-page" id="step-4">
+      <div class="step-header"><div class="step-badge">Bước 5 / 6</div><div class="step-title">Vertical & Vấn đề</div></div>
+      <div class="form-card">
+        <div class="form-card-title">📊 Vertical Analysis</div>
+        <div style="display:grid;grid-template-columns:1.2fr 60px 80px 80px 80px 2fr 28px;gap:8px;margin-bottom:4px;">
+          <span style="font-size:10px;color:var(--text-3);font-weight:600;text-transform:uppercase;">Vertical</span><span style="font-size:10px;color:var(--text-3);font-weight:600;text-transform:uppercase;">Khách</span><span style="font-size:10px;color:var(--text-3);font-weight:600;text-transform:uppercase;">Activities</span><span style="font-size:10px;color:var(--text-3);font-weight:600;text-transform:uppercase;">Lead→QL</span><span style="font-size:10px;color:var(--text-3);font-weight:600;text-transform:uppercase;">Freq</span><span style="font-size:10px;color:var(--text-3);font-weight:600;text-transform:uppercase;">Stage nổi bật</span><span></span>
+        </div>
+        <div id="vertical-rows"></div>
+        <button class="btn-add" onclick="addVerticalRow()">+ Thêm vertical</button>
+      </div>
+      <div class="form-card">
+        <div class="form-card-title">⚠️ Vấn đề & Điều chỉnh</div>
+        <div class="field" style="margin-bottom:12px;"><label>Bottleneck tuần này?</label><textarea id="issue-bottleneck" placeholder="CR Brief→QB thấp..."></textarea></div>
+        <div class="field" style="margin-bottom:12px;"><label>Deal nào đang risk?</label><textarea id="issue-risk" placeholder="Chiro dời lịch 2 lần..."></textarea></div>
+        <div class="field"><label>Điều chỉnh tuần tới?</label><textarea id="issue-adjust" placeholder="Tăng Relationship Direct..."></textarea></div>
+      </div>
+      <div class="btn-actions"><button class="btn-secondary" onclick="goStep(3)">← Quay lại</button><button class="btn-primary" onclick="goStep(5)">Tiếp theo →</button></div>
+    </div>
+
+    <!-- Step 5 -->
+    <div class="step-page" id="step-5">
+      <div class="step-header"><div class="step-badge">Bước 6 / 6</div><div class="step-title">Highlight & Tạo Report</div></div>
+      <div class="form-card"><div class="form-card-title">⭐ Highlight</div><div id="hl-rows"></div><button class="btn-add" onclick="addHLRow('hl')">+ Thêm điểm sáng</button></div>
+      <div class="form-card"><div class="form-card-title" style="color:var(--red);">🚩 Red flags</div><div id="rf-rows"></div><button class="btn-add" onclick="addHLRow('rf')">+ Thêm red flag</button></div>
+      <div class="form-card"><div class="form-card-title" style="color:var(--blue);">→ Next step</div><div id="ns-rows"></div><button class="btn-add" onclick="addHLRow('ns')">+ Thêm next step</button></div>
+      <div class="btn-actions"><button class="btn-secondary" onclick="goStep(4)">← Quay lại</button><button class="btn-primary" id="btn-generate" onclick="generateReport()">✦ Tạo Report với AI</button></div>
+    </div>
+
+    <!-- Report Preview -->
+    <div id="report-preview">
+      <div id="ai-generating" class="ai-generating" style="display:none;">
+        <div class="ai-spinner"></div>
+        <div><div class="ai-gen-text">Gemini đang phân tích...</div><div class="ai-gen-sub" id="ai-gen-status">Đang xử lý</div></div>
+      </div>
+      <div class="report-actions">
+        <button class="btn-copy" onclick="copyReport()">📋 Copy để paste vào Gmail</button>
+        <button class="btn-edit" onclick="toggleEdit()">✏️ Chỉnh sửa</button>
+        <button class="btn-save" onclick="saveToSheets()">💾 Lưu vào Sheets</button>
+        <button class="btn-secondary" onclick="goStep(0)">← Làm report mới</button>
+      </div>
+      <div id="report-output"></div>
+    </div>
+  </main>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// VERSION: 2.0 - Fixed AI proxy parsing
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbyRe6m-YZW6WVBZeG75J_bPdJKnzow1e2gMpjKL5fj8DmOQus55o6DkeQECvZ7gt9DX/exec';
+let selectedMember = null, lastReport = null, currentStep = 0;
+
+function goStep(n) {
+  document.querySelectorAll('.step-page').forEach(p => p.classList.remove('active'));
+  document.getElementById('step-'+n).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach((el,i) => {
+    el.classList.remove('active','done');
+    if(i===n) el.classList.add('active');
+    else if(i<n) el.classList.add('done');
+  });
+  document.getElementById('progress').style.width = (n/5*100)+'%';
+  document.getElementById('report-preview').style.display = 'none';
+  currentStep = n; window.scrollTo(0,0);
+}
+
+async function loadMembers() {
+  try {
+    const res = await fetch(SHEETS_URL+'?action=getMembers');
+    const data = await res.json();
+    if(data.success) renderMembers(data.members); else renderStaticMembers();
+  } catch { renderStaticMembers(); }
+}
+
+function renderStaticMembers() {
+  renderMembers([
+    {id:'bd_thao',name:'Thảo Hồ Lê Thanh',team:'NUP',role:'executive',vertical:'Healthcare, Real Estate'},
+    {id:'bd_phuong',name:'Huỳnh Phương',team:'BD',role:'executive',vertical:'Real Estate, Auto, Finance'},
+    {id:'bd_my',name:'Hoài My',team:'BD',role:'executive',vertical:'FMCG, Beauty, Hospitality'},
+    {id:'bd_ngoc',name:'Ngọc Nguyễn (Jolie)',team:'NUP',role:'leader',vertical:'All verticals'},
+    {id:'bd_dai',name:'Nguyễn Trọng Đại',team:'BD',role:'leader',vertical:'All verticals'},
+  ]);
+}
+
+function renderMembers(members) {
+  document.getElementById('member-list').innerHTML = members.map(m=>`
+    <div class="member-card" onclick="selectMember(${JSON.stringify(m).replace(/"/g,'&quot;')},this)">
+      <div class="m-name">${m.name}</div>
+      <div class="m-meta">${m.team} · ${m.vertical}</div>
+      <span class="m-role ${m.role==='leader'?'role-leader':'role-exec'}">${m.role==='leader'?'Leader':'Executive'}</span>
+    </div>`).join('');
+}
+
+async function selectMember(member, el) {
+  selectedMember = member;
+  document.querySelectorAll('.member-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  try {
+    const res = await fetch(SHEETS_URL+'?action=getLastReport&memberId='+member.id);
+    const data = await res.json();
+    lastReport = data.report;
+    if(lastReport) showToast('✓ Đã load dữ liệu tuần '+lastReport.week+' để so sánh WoW');
+  } catch { lastReport = null; }
+}
+
+const VERTICALS = ['Healthcare','Real Estate','FMCG','Beauty','Auto','Finance','Education','Home & Electronics','Hospitality','Others'];
+const STAGES = ['Lead','QL','Brief','QB','QS','Verbal','Contract','Execution','Not Verbal'];
+const vOpts = (s='') => VERTICALS.map(v=>`<option${v===s?' selected':''}>${v}</option>`).join('');
+const sOpts = (s='') => STAGES.map(v=>`<option${v===s?' selected':''}>${v}</option>`).join('');
+
+function addMeetingRow(d={}) {
+  const div = document.createElement('div');
+  div.className = 'dynamic-row meeting-row';
+  div.innerHTML = `<input type="text" placeholder="Tên khách hàng" value="${d.client||''}"><select>${vOpts(d.vertical)}</select><select>${sOpts(d.stage)}</select><input type="number" placeholder="1" value="${d.count||''}"><input type="text" placeholder="Outcome" value="${d.outcome||''}"><button class="btn-remove" onclick="this.parentElement.remove()">×</button>`;
+  document.getElementById('meeting-rows').appendChild(div);
+}
+
+function addAOVRow(d={}) {
+  const div = document.createElement('div');
+  div.className = 'dynamic-row aov-row';
+  div.innerHTML = `<input type="text" placeholder="Tên deal" value="${d.deal||''}"><select>${vOpts(d.vertical)}</select><select>${sOpts(d.stage)}</select><input type="text" placeholder="~1.2B" value="${d.value||''}"><input type="text" placeholder="Next step" value="${d.next||''}"><button class="btn-remove" onclick="this.parentElement.remove()">×</button>`;
+  document.getElementById('aov-rows').appendChild(div);
+}
+
+function addVerticalRow(d={}) {
+  const div = document.createElement('div');
+  div.className = 'dynamic-row vertical-row';
+  div.innerHTML = `<select>${vOpts(d.vertical)}</select><input type="number" placeholder="29" value="${d.companies||''}"><input type="number" placeholder="845" value="${d.activities||''}"><input type="text" placeholder="83%" value="${d.cr||''}"><input type="text" placeholder="16.9" value="${d.freq||''}"><input type="text" placeholder="2 Brief..." value="${d.stages||''}"><button class="btn-remove" onclick="this.parentElement.remove()">×</button>`;
+  document.getElementById('vertical-rows').appendChild(div);
+}
+
+function addHLRow(type) {
+  const p = {hl:'Điểm sáng...',rf:'Red flag...',ns:'Next step...'};
+  const div = document.createElement('div');
+  div.style.cssText = 'display:flex;gap:8px;margin-bottom:6px;';
+  div.innerHTML = `<input type="text" placeholder="${p[type]}" style="flex:1;"><button class="btn-remove" onclick="this.parentElement.remove()">×</button>`;
+  document.getElementById(type+'-rows').appendChild(div);
+}
+
+function g(id) { return document.getElementById(id)?.value||''; }
+function gn(id) { return parseFloat(g(id))||0; }
+
+function collectData() {
+  const meetings = [...document.querySelectorAll('#meeting-rows .dynamic-row')].map(row => {
+    const inp = row.querySelectorAll('input'), sel = row.querySelectorAll('select');
+    return {client:inp[0].value,vertical:sel[0].value,stage:sel[1].value,count:inp[1].value,outcome:inp[2].value};
+  });
+  const aovDeals = [...document.querySelectorAll('#aov-rows .dynamic-row')].map(row => {
+    const inp = row.querySelectorAll('input'), sel = row.querySelectorAll('select');
+    return {deal:inp[0].value,vertical:sel[0].value,stage:sel[1].value,value:inp[1].value,next:inp[2].value};
+  });
+  const verticalData = [...document.querySelectorAll('#vertical-rows .dynamic-row')].map(row => {
+    const inp = row.querySelectorAll('input');
+    return {vertical:row.querySelector('select').value,companies:inp[0].value,activities:inp[1].value,cr:inp[2].value,freq:inp[3].value,stages:inp[4].value};
+  });
+  return {
+    memberId:selectedMember?.id||'', memberName:selectedMember?.name||'',
+    team:selectedMember?.team||'', role:selectedMember?.role||'',
+    quarter:g('quarter'), week:g('week'), period:g('period-from')+' – '+g('period-to'),
+    verticals:selectedMember?.vertical||'',
+    planClients:g('plan-clients'), planStageMove:g('plan-stage-move'),
+    planFocusVertical:g('plan-focus-vertical'), planPriorityDeals:g('plan-priority-deals'),
+    actCall:gn('act-call'), actSMS:gn('act-sms'), actEmail:gn('act-email'), actMeeting:gn('act-meeting'),
+    fLead:gn('f-lead'), fQL:gn('f-ql'), fBrief:gn('f-brief'), fQB:gn('f-qb'),
+    fQS:gn('f-qs'), fVerbal:gn('f-verbal'), fContract:gn('f-contract'),
+    fLeadPlan:gn('fp-lead'), fQLPlan:gn('fp-ql'), fBriefPlan:gn('fp-brief'), fQBPlan:gn('fp-qb'),
+    fQSPlan:gn('fp-qs'), fVerbalPlan:gn('fp-verbal'), fContractPlan:gn('fp-contract'),
+    kpiQBActual:gn('kpi-qb-actual'), kpiQBPlan:gn('kpi-qb-plan'),
+    kpiGP2Actual:gn('kpi-gp2-actual'), kpiGP2Plan:gn('kpi-gp2-plan'),
+    kpiMeetingActual:gn('kpi-meeting-actual'), kpiMeetingPlan:gn('kpi-meeting-plan'),
+    kpiActActual:gn('kpi-act-actual'), kpiActPlan:gn('kpi-act-plan'),
+    meetingDetails:meetings, aovDeals, verticalData,
+    highlight:[...document.querySelectorAll('#hl-rows input')].map(i=>i.value).filter(Boolean),
+    redflag:[...document.querySelectorAll('#rf-rows input')].map(i=>i.value).filter(Boolean),
+    nextstep:[...document.querySelectorAll('#ns-rows input')].map(i=>i.value).filter(Boolean),
+    issueBottleneck:g('issue-bottleneck'), issueRisk:g('issue-risk'), issueAdjust:g('issue-adjust'),
+    timestamp:new Date().toISOString()
+  };
+}
+
+// ══════ AI ANALYSIS — qua Apps Script proxy ══════
+async function generateAIAnalysis(d) {
+  const cr = (a,b) => b>0 ? Math.round(a/b*100) : 0;
+  const wow = (cur,key) => {
+    if(!lastReport||lastReport[key]===undefined) return '';
+    const diff = cur - parseFloat(lastReport[key]);
+    return ` (WoW:${diff>=0?'+':''}${diff})`;
+  };
+
+  const prompt = `Phân tích BD Weekly Report của ${d.memberName} — ${d.quarter} Tuần ${d.week}.
+Trả về JSON object với đúng 6 keys: kpi, activities, funnel, meeting, aov, vertical.
+Mỗi value là string 1-2 câu nhận xét tiếng Việt, dùng **text** để bold điểm quan trọng.
+QUAN TRỌNG: Chỉ trả về JSON thuần. Không markdown. Không backtick. Không giải thích thêm.
+
+KPI: QB ${d.kpiQBActual}/${d.kpiQBPlan} (${cr(d.kpiQBActual,d.kpiQBPlan)}%), GP2 ${d.kpiGP2Actual}M/${d.kpiGP2Plan}M (${cr(d.kpiGP2Actual,d.kpiGP2Plan)}%), Meeting ${d.kpiMeetingActual}/${d.kpiMeetingPlan}, Act ${d.kpiActActual}/${d.kpiActPlan}. Còn ~5 tuần.
+ACTIVITIES: Call ${d.actCall}${wow(d.actCall,'actCall')}, SMS ${d.actSMS}${wow(d.actSMS,'actSMS')}, Email ${d.actEmail}${wow(d.actEmail,'actEmail')}, Meeting ${d.actMeeting}${wow(d.actMeeting,'actMeeting')}.
+FUNNEL: Lead ${d.fLead}→QL ${d.fQL}(${cr(d.fQL,d.fLead)}%)→Brief ${d.fBrief}(${cr(d.fBrief,d.fQL)}%)→QB ${d.fQB}(${cr(d.fQB,d.fBrief)}%)→QS ${d.fQS}→Verbal ${d.fVerbal}→Contract ${d.fContract}.
+MEETING: ${d.meetingDetails.map(m=>m.client+'('+m.stage+','+m.count+'lần,'+m.outcome+')').join('; ')}.
+AOV: ${d.aovDeals.map(a=>a.deal+' '+a.stage+' '+a.value).join('; ')}.
+VERTICAL: ${d.verticalData.map(v=>v.vertical+': '+v.companies+' khách, '+v.activities+' act, CR '+v.cr).join('; ')}.`;
+
+  document.getElementById('ai-gen-status').textContent = 'Đang gửi qua proxy...';
+
+  try {
+    const res = await fetch(SHEETS_URL, {
+      method: 'POST',
+      body: JSON.stringify({ action: 'geminiAnalyze', prompts: { combined: prompt } })
+    });
+    const data = await res.json();
+    console.log('PROXY RESPONSE:', JSON.stringify(data)); // debug log
+
+    if (!data.success) throw new Error(data.error || 'Proxy error');
+
+    let raw = data.results?.combined || '';
+    console.log('RAW GEMINI TEXT:', raw.substring(0, 300));
+
+    // Strip backticks nếu có
+    raw = raw.replace(/```json\s*/gi,'').replace(/```\s*/g,'').trim();
+
+    // Thử parse JSON trực tiếp
+    try {
+      const direct = JSON.parse(raw);
+      if (direct.kpi !== undefined) return direct;
+    } catch(e) {}
+
+    // Tìm JSON object trong text
+    const match = raw.match(/\{[\s\S]*\}/);
+    if (match) {
+      try {
+        const parsed = JSON.parse(match[0]);
+        if (parsed.kpi !== undefined) return parsed;
+      } catch(e) {}
+    }
+
+    // Gemini trả về text thường — tách theo key pattern
+    const extract = (key) => {
+      const patterns = [
+        new RegExp(`"${key}"\\s*:\\s*"((?:[^"\\\\]|\\\\.)*)"`, 'i'),
+        new RegExp(`\\.?${key}["\\.:]+(.*?)(?=\\n\\s*[a-z_"]+[":.]|$)`, 'i'),
+      ];
+      for (const p of patterns) {
+        const m = raw.match(p);
+        if (m) return m[1].trim().replace(/\\n/g,' ').replace(/\\"/g,'"');
+      }
+      return '';
+    };
+
+    // Nếu raw là text dài → dùng toàn bộ làm kpi
+    if (raw.length > 50 && !raw.includes('"kpi"')) {
+      return { kpi: raw.substring(0, 300), activities:'', funnel:'', meeting:'', aov:'', vertical:'' };
+    }
+
+    return {
+      kpi: extract('kpi'),
+      activities: extract('activities'),
+      funnel: extract('funnel'),
+      meeting: extract('meeting'),
+      aov: extract('aov'),
+      vertical: extract('vertical'),
+    };
+
+  } catch(err) {
+    console.error('AI failed:', err.message);
+    showToast('⚠ AI lỗi — report vẫn tạo được, không có nhận xét AI');
+    return {kpi:'',activities:'',funnel:'',meeting:'',aov:'',vertical:''};
+  }
+}
+
+// ══════ RENDER REPORT ══════
+function renderReport(d, ai) {
+  const pct = (a,b) => b>0 ? Math.min(Math.round(a/b*100),100) : 0;
+  const cr = (a,b) => b>0 ? Math.round(a/b*100) : 0;
+  const md = t => (t||'').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
+
+  const wowStr = (cur,key) => {
+    if(!lastReport||lastReport[key]===undefined) return '<span style="color:#999">—</span>';
+    const diff = cur - parseFloat(lastReport[key]);
+    if(diff>0) return `<span style="color:#1D9E75;font-weight:600">▲ +${diff}</span>`;
+    if(diff<0) return `<span style="color:#E24B4A;font-weight:600">▼ ${diff}</span>`;
+    return '<span style="color:#999">= 0</span>';
+  };
+
+  const crQL=cr(d.fQL,d.fLead), crBrief=cr(d.fBrief,d.fQL), crBriefPlan=cr(d.fBriefPlan,d.fQLPlan);
+  const crQB=cr(d.fQB,d.fBrief), crQS=cr(d.fQS,d.fQB);
+
+  const aiBlock = text => !text ? '' : `<tr><td style="padding:0 0 4px;"><table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin-top:8px;"><tr><td style="background:#f4f3fe;border:1px solid #d0cdf5;border-radius:6px;padding:10px 14px;font-size:12px;color:#444;line-height:1.7;"><span style="color:#7F77DD;font-weight:700;font-size:11px;margin-right:8px;">✦ AI</span>${md(text)}</td></tr></table></td></tr>`;
+
+  const kpiBar = (label,actual,plan,color) => {
+    const p=pct(actual,plan);
+    return `<table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin-bottom:10px;"><tr><td style="font-size:11px;color:#777;padding-bottom:4px;">${label}</td><td style="font-size:12px;font-weight:600;text-align:right;padding-bottom:4px;">${actual} / ${plan} &nbsp;·&nbsp; <span style="color:${p>=100?'#1D9E75':p>=70?'#EF9F27':'#E24B4A'}">${p}%</span></td></tr><tr><td colspan="2"><table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;background:#eee;border-radius:3px;"><tr><td width="${p}%" style="background:${color};height:6px;border-radius:3px;font-size:0;">&nbsp;</td><td style="height:6px;font-size:0;">&nbsp;</td></tr></table></td></tr></table>`;
+  };
+
+  const sec = label => `<tr><td style="padding:16px 0 0;"><table width="100%" cellpadding="0" cellspacing="0"><tr><td style="font-size:10px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:#aaa;border-bottom:1px solid #eee;padding-bottom:6px;">${label}</td></tr></table></td></tr>`;
+
+  const hlRows = (items,bc,bg,icon) => items.filter(Boolean).map(t=>`<div style="border-left:3px solid ${bc};background:${bg};padding:8px 12px;margin-bottom:5px;border-radius:0 6px 6px 0;font-size:13px;color:#222;">${icon} ${t}</div>`).join('');
+
+  const vStyle = v => {
+    const m={'Healthcare':'background:#E6F1FB;color:#185FA5','Real Estate':'background:#FAEEDA;color:#854F0B','FMCG':'background:#E1F5EE;color:#0F6E56','Beauty':'background:#FBEAF0;color:#993556','Auto':'background:#F1EFE8;color:#5F5E5A','Finance':'background:#EAF3DE;color:#3B6D11'};
+    return (m[v]||'background:#f0f0f0;color:#666')+';font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;display:inline-block;';
+  };
+  const sStyle = s => {
+    const m={'QS':'background:#FAEEDA;color:#854F0B','QB':'background:#E6F1FB;color:#185FA5','Verbal':'background:#E1F5EE;color:#0F6E56','Brief':'background:#F1EFE8;color:#5F5E5A','Contract':'background:#EAF3DE;color:#3B6D11'};
+    return (m[s]||'background:#FCEBEB;color:#A32D2D')+';font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;display:inline-block;';
+  };
+
+  const funnelStages = [
+    {name:'Lead',val:d.fLead,plan:d.fLeadPlan,cr:'',key:'fLead'},
+    {name:'QL',val:d.fQL,plan:d.fQLPlan,cr:`CR ${crQL}%`,key:'fQL'},
+    {name:'Brief',val:d.fBrief,plan:d.fBriefPlan,cr:`CR ${crBrief}% ${crBrief>=crBriefPlan?'↑':'↓'}`,key:'fBrief'},
+    {name:'QB',val:d.fQB,plan:d.fQBPlan,cr:`CR ${crQB}%`,key:'fQB'},
+    {name:'QS',val:d.fQS,plan:d.fQSPlan,cr:`CR ${crQS}%`,key:'fQS'},
+    {name:'Verbal',val:d.fVerbal,plan:d.fVerbalPlan,cr:'',key:'fVerbal'},
+    {name:'Contract',val:d.fContract,plan:d.fContractPlan,cr:'',key:'fContract'},
+  ];
+
+  const funnelCells = funnelStages.map(s => {
+    const bg=(s.name==='Contract'&&s.val===0)?'#FCEBEB':s.val>=s.plan?'#E8F9F4':s.val>=s.plan*0.7?'#FAEEDA':'#f9f9f9';
+    return `<td width="14%" style="padding:2px;"><table width="100%" cellpadding="6" cellspacing="0" style="border-collapse:collapse;background:${bg};border-radius:8px;text-align:center;"><tr><td style="font-size:9px;color:#888;text-align:center;">${s.name}</td></tr><tr><td style="font-size:18px;font-weight:700;text-align:center;padding:2px 0;color:#111;">${s.val}</td></tr><tr><td style="font-size:9px;color:#777;text-align:center;">${s.cr||'plan '+s.plan}</td></tr><tr><td style="font-size:9px;text-align:center;">${wowStr(s.val,s.key)}</td></tr></table></td>`;
+  }).join('');
+
+  const actCells = [
+    {label:'Call',val:d.actCall,key:'actCall'},{label:'SMS',val:d.actSMS,key:'actSMS'},
+    {label:'Email & other',val:d.actEmail,key:'actEmail'},{label:'Meeting',val:d.actMeeting,key:'actMeeting'},
+  ].map(a=>`<td width="25%" style="padding:3px;"><table width="100%" cellpadding="8" cellspacing="0" style="border-collapse:collapse;background:#f8f8f8;border-radius:8px;text-align:center;"><tr><td style="font-size:10px;color:#999;padding-bottom:2px;">${a.label}</td></tr><tr><td style="font-size:22px;font-weight:700;color:#111;padding:2px 0;">${a.val}</td></tr><tr><td style="font-size:11px;padding-top:2px;">${wowStr(a.val,a.key)}</td></tr></table></td>`).join('');
+
+  const thStyle = 'text-align:left;font-size:10px;color:#999;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:8px;';
+
+  return `<table width="100%" cellpadding="0" cellspacing="0" style="font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#1a1a1a;border-collapse:collapse;max-width:680px;margin:0 auto;">
+<tr><td style="padding-bottom:16px;"><table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;border-left:4px solid #1D9E75;background:#f7fffe;"><tr><td style="padding:12px 16px;"><div style="font-size:16px;font-weight:700;color:#111;">${d.quarter}/2026 Tuần ${d.week} — BD Weekly Report</div><div style="font-size:12px;color:#888;margin-top:4px;">${d.memberName} &nbsp;·&nbsp; ${d.period} &nbsp;·&nbsp; ${d.verticals}</div></td></tr></table></td></tr>
+${sec('Highlight & Key takeaway')}
+<tr><td style="padding:10px 0 0;">${hlRows(d.highlight,'#1D9E75','#E8F9F4','✦')}${hlRows(d.redflag,'#E24B4A','#FCEBEB','⚠')}${hlRows(d.nextstep,'#378ADD','#E6F1FB','→')}</td></tr>
+${sec('Kế hoạch tuần này')}
+<tr><td style="padding:10px 0 0;"><table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;border:1px solid #eee;border-radius:8px;"><tr><td width="50%" style="padding:10px 14px;border-bottom:1px solid #f5f5f5;border-right:1px solid #f5f5f5;vertical-align:top;"><div style="font-size:10px;color:#999;text-transform:uppercase;margin-bottom:4px;">Số khách dự kiến</div><div style="font-weight:600;">${d.planClients} khách</div></td><td width="50%" style="padding:10px 14px;border-bottom:1px solid #f5f5f5;vertical-align:top;"><div style="font-size:10px;color:#999;text-transform:uppercase;margin-bottom:4px;">Mục tiêu stage move</div><div style="font-weight:600;">${d.planStageMove}</div></td></tr><tr><td style="padding:10px 14px;border-right:1px solid #f5f5f5;vertical-align:top;"><div style="font-size:10px;color:#999;text-transform:uppercase;margin-bottom:4px;">Focus vertical</div><div style="font-weight:600;">${d.planFocusVertical}</div></td><td style="padding:10px 14px;vertical-align:top;"><div style="font-size:10px;color:#999;text-transform:uppercase;margin-bottom:4px;">Deal ưu tiên BOF</div><div style="font-weight:600;">${d.planPriorityDeals}</div></td></tr></table></td></tr>
+${sec('KPI — '+d.quarter+' QTD')}
+<tr><td style="padding:10px 0 0;"><table width="100%" cellpadding="14" cellspacing="0" style="border-collapse:collapse;border:1px solid #eee;border-radius:8px;"><tr><td>${kpiBar('QB Active — cá nhân',d.kpiQBActual,d.kpiQBPlan,'#1D9E75')}${kpiBar('GP2 Active (M)',d.kpiGP2Actual,d.kpiGP2Plan,'#EF9F27')}${kpiBar('Meeting 1st — cá nhân',d.kpiMeetingActual,d.kpiMeetingPlan,'#378ADD')}${kpiBar('Activities tổng',d.kpiActActual,d.kpiActPlan,'#7F77DD')}</td></tr></table>${aiBlock(ai.kpi)}</td></tr>
+${sec('Activities — WoW')}
+<tr><td style="padding:10px 0 0;"><table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;"><tr>${actCells}</tr></table>${aiBlock(ai.activities)}</td></tr>
+${sec('Funnel — Stage · CR% · WoW')}
+<tr><td style="padding:10px 0 0;"><table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;"><tr>${funnelCells}</tr></table>${aiBlock(ai.funnel)}</td></tr>
+${sec('Meeting — Chi tiết theo khách')}
+<tr><td style="padding:10px 0 0;"><table width="100%" cellpadding="8" cellspacing="0" style="border-collapse:collapse;border:1px solid #eee;border-radius:8px;font-size:12px;"><tr style="background:#f8f8f8;"><th style="${thStyle}">Khách hàng</th><th style="${thStyle}">Vertical</th><th style="${thStyle}">Stage</th><th style="text-align:center;font-size:10px;color:#999;font-weight:700;text-transform:uppercase;padding:8px;">Lần</th><th style="${thStyle}">Outcome</th></tr>${d.meetingDetails.map(m=>`<tr style="border-top:1px solid #f5f5f5;"><td style="padding:7px 8px;font-weight:600;">${m.client}</td><td style="padding:7px 8px;"><span style="${vStyle(m.vertical)}">${m.vertical}</span></td><td style="padding:7px 8px;"><span style="${sStyle(m.stage)}">${m.stage}</span></td><td style="padding:7px 8px;text-align:center;">${m.count}</td><td style="padding:7px 8px;color:#777;font-size:11px;">${m.outcome}</td></tr>`).join('')}</table>${aiBlock(ai.meeting)}</td></tr>
+${sec('AOV Control — Pipeline cá nhân')}
+<tr><td style="padding:10px 0 0;"><table width="100%" cellpadding="8" cellspacing="0" style="border-collapse:collapse;border:1px solid #eee;border-radius:8px;font-size:12px;"><tr style="background:#f8f8f8;"><th style="${thStyle}">Deal</th><th style="${thStyle}">Vertical</th><th style="${thStyle}">Stage</th><th style="text-align:right;font-size:10px;color:#999;font-weight:700;text-transform:uppercase;padding:8px;">Value</th><th style="${thStyle}">Next step</th></tr>${d.aovDeals.map(a=>`<tr style="border-top:1px solid #f5f5f5;"><td style="padding:7px 8px;font-weight:600;">${a.deal}</td><td style="padding:7px 8px;"><span style="${vStyle(a.vertical)}">${a.vertical}</span></td><td style="padding:7px 8px;"><span style="${sStyle(a.stage)}">${a.stage}</span></td><td style="padding:7px 8px;text-align:right;">${a.value}</td><td style="padding:7px 8px;color:#777;font-size:11px;">${a.next}</td></tr>`).join('')}</table>${aiBlock(ai.aov)}</td></tr>
+${sec('Vertical Analysis — '+d.quarter+' QTD')}
+<tr><td style="padding:10px 0 0;"><table width="100%" cellpadding="8" cellspacing="0" style="border-collapse:collapse;border:1px solid #eee;border-radius:8px;font-size:12px;"><tr style="background:#f8f8f8;"><th style="${thStyle}">Vertical</th><th style="text-align:center;font-size:10px;color:#999;font-weight:700;text-transform:uppercase;padding:8px;">Khách</th><th style="text-align:center;font-size:10px;color:#999;font-weight:700;text-transform:uppercase;padding:8px;">Activities</th><th style="text-align:center;font-size:10px;color:#999;font-weight:700;text-transform:uppercase;padding:8px;">Freq</th><th style="text-align:center;font-size:10px;color:#999;font-weight:700;text-transform:uppercase;padding:8px;">Lead→QL</th><th style="${thStyle}">Stage nổi bật</th></tr>${d.verticalData.map(v=>`<tr style="border-top:1px solid #f5f5f5;"><td style="padding:7px 8px;"><span style="${vStyle(v.vertical)}">${v.vertical}</span></td><td style="padding:7px 8px;text-align:center;">${v.companies}</td><td style="padding:7px 8px;text-align:center;">${v.activities}</td><td style="padding:7px 8px;text-align:center;">${v.freq}</td><td style="padding:7px 8px;text-align:center;color:#1D9E75;font-weight:700;">${v.cr}</td><td style="padding:7px 8px;font-size:11px;color:#555;">${v.stages}</td></tr>`).join('')}</table>${aiBlock(ai.vertical)}</td></tr>
+${sec('Vấn đề & Điều chỉnh')}
+<tr><td style="padding:10px 0 0;"><table width="100%" cellpadding="12" cellspacing="0" style="border-collapse:collapse;border:1px solid #eee;border-radius:8px;"><tr><td style="border-bottom:1px solid #f5f5f5;"><div style="font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;margin-bottom:5px;">Bottleneck tuần này</div><div style="font-size:13px;line-height:1.6;">${d.issueBottleneck||'—'}</div></td></tr><tr><td style="border-bottom:1px solid #f5f5f5;"><div style="font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;margin-bottom:5px;">Deal đang risk</div><div style="font-size:13px;line-height:1.6;">${d.issueRisk||'—'}</div></td></tr><tr><td><div style="font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;margin-bottom:5px;">Điều chỉnh tuần tới</div><div style="font-size:13px;line-height:1.6;">${d.issueAdjust||'—'}</div></td></tr></table></td></tr>
+</table>`;
+}
+
+async function generateReport() {
+  const btn = document.getElementById('btn-generate');
+  btn.disabled = true; btn.textContent = '⏳ Đang tạo...';
+  const data = collectData();
+  const preview = document.getElementById('report-preview');
+  const aiDiv = document.getElementById('ai-generating');
+  const output = document.getElementById('report-output');
+  document.querySelectorAll('.step-page').forEach(p=>p.classList.remove('active'));
+  preview.style.display = 'block'; aiDiv.style.display = 'flex'; output.innerHTML = '';
+  window.scrollTo(0,0);
+  let ai = {};
+  try { ai = await generateAIAnalysis(data); } catch(e) { console.error(e); }
+  aiDiv.style.display = 'none';
+  output.innerHTML = renderReport(data, ai||{});
+  window._reportData = data;
+  btn.disabled = false; btn.textContent = '✦ Tạo Report với AI';
+}
+
+function copyReport() {
+  const el = document.getElementById('report-output');
+  const range = document.createRange();
+  range.selectNode(el);
+  window.getSelection().removeAllRanges();
+  window.getSelection().addRange(range);
+  document.execCommand('copy');
+  window.getSelection().removeAllRanges();
+  showToast('✓ Đã copy! Paste vào Gmail giữ nguyên format.');
+}
+
+let isEditing = false;
+function toggleEdit() {
+  const el = document.getElementById('report-output');
+  const btn = document.querySelector('.btn-edit');
+  isEditing = !isEditing;
+  el.contentEditable = isEditing ? 'true' : 'false';
+  btn.textContent = isEditing ? '✓ Xong' : '✏️ Chỉnh sửa';
+  if(isEditing) el.focus();
+}
+
+async function saveToSheets() {
+  if(!window._reportData) return;
+  try {
+    const res = await fetch(SHEETS_URL, {method:'POST', body:JSON.stringify({action:'saveReport',payload:window._reportData})});
+    const data = await res.json();
+    if(data.success) showToast('✓ Đã lưu vào Sheets!');
+    else showToast('⚠ Lỗi: '+data.error);
+  } catch { showToast('⚠ Không kết nối được Sheets'); }
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+window.onload = () => {
+  loadMembers();
+  addMeetingRow(); addAOVRow(); addVerticalRow();
+  addHLRow('hl'); addHLRow('hl');
+  addHLRow('rf');
+  addHLRow('ns');
+};
+</script>
+</body>
+</html>
