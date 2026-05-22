@@ -19,18 +19,13 @@
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); font-size: 14px; }
-
-  /* ── Layout ── */
   .app { display: flex; min-height: 100vh; }
-  .sidebar { width: 260px; background: var(--white); border-right: 1px solid var(--border); padding: 1.5rem 1rem; flex-shrink: 0; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
-  .main { flex: 1; padding: 2rem; max-width: 800px; }
-
-  /* ── Sidebar nav ── */
+  .sidebar { width: 240px; background: var(--white); border-right: 1px solid var(--border); padding: 1.5rem 1rem; flex-shrink: 0; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+  .main { flex: 1; padding: 2rem; max-width: 820px; }
   .logo { display: flex; align-items: center; gap: 8px; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
   .logo-mark { width: 28px; height: 28px; background: var(--green); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 13px; }
   .logo-text { font-weight: 600; font-size: 13px; }
   .logo-sub { font-size: 11px; color: var(--text-3); }
-
   .nav-section { font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-3); margin: 1rem 0 0.4rem; }
   .nav-item { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: var(--radius-sm); font-size: 12px; color: var(--text-2); cursor: pointer; transition: all 0.15s; margin-bottom: 2px; }
   .nav-item:hover { background: var(--bg); color: var(--text); }
@@ -38,35 +33,23 @@
   .nav-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); flex-shrink: 0; }
   .nav-item.active .nav-dot { background: var(--green); }
   .nav-item.done .nav-dot { background: var(--green); }
-  .nav-item.done { color: var(--text-2); }
-
-  /* ── Step header ── */
   .step-header { margin-bottom: 1.5rem; }
   .step-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; color: var(--green); background: var(--green-light); padding: 4px 10px; border-radius: 99px; margin-bottom: 0.5rem; font-weight: 500; }
   .step-title { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
   .step-desc { font-size: 13px; color: var(--text-3); }
-
-  /* ── Form ── */
   .form-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin-bottom: 1rem; }
   .form-card-title { font-size: 12px; font-weight: 600; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 1rem; display: flex; align-items: center; gap: 6px; }
   .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
   .form-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
   .field { display: flex; flex-direction: column; gap: 4px; }
   .field.full { grid-column: 1 / -1; }
   label { font-size: 11px; font-weight: 500; color: var(--text-2); }
-  input, select, textarea {
-    border: 1px solid var(--border); border-radius: var(--radius-sm);
-    padding: 7px 10px; font-size: 13px; color: var(--text);
-    background: var(--white); transition: border 0.15s; font-family: inherit;
-  }
+  input, select, textarea { border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 7px 10px; font-size: 13px; color: var(--text); background: var(--white); transition: border 0.15s; font-family: inherit; width: 100%; }
   input:focus, select:focus, textarea:focus { outline: none; border-color: var(--green); }
   textarea { resize: vertical; min-height: 72px; line-height: 1.5; }
   input[type="number"] { -moz-appearance: textfield; }
   input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
-
-  /* ── Dynamic rows (meetings, AOV, verticals) ── */
-  .dynamic-row { display: grid; gap: 8px; align-items: start; margin-bottom: 8px; position: relative; }
+  .dynamic-row { display: grid; gap: 8px; align-items: start; margin-bottom: 8px; }
   .dynamic-row.meeting-row { grid-template-columns: 2fr 1fr 1fr 60px 2fr 28px; }
   .dynamic-row.aov-row { grid-template-columns: 2fr 1fr 1fr 1.5fr 1.5fr 28px; }
   .dynamic-row.vertical-row { grid-template-columns: 1.2fr 60px 80px 80px 80px 2fr 28px; }
@@ -75,124 +58,31 @@
   .btn-remove:hover { background: var(--red-light); border-color: var(--red); color: var(--red); }
   .btn-add { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border: 1px dashed var(--border); border-radius: var(--radius-sm); font-size: 12px; color: var(--text-3); cursor: pointer; background: transparent; transition: all 0.15s; margin-top: 4px; }
   .btn-add:hover { border-color: var(--green); color: var(--green); background: var(--green-light); }
-
   .row-labels { display: grid; gap: 8px; margin-bottom: 4px; }
-  .row-labels.meeting-labels { grid-template-columns: 2fr 1fr 1fr 60px 2fr 28px; }
-  .row-labels.aov-labels { grid-template-columns: 2fr 1fr 1fr 1.5fr 1.5fr 28px; }
-  .row-labels.vertical-labels { grid-template-columns: 1.2fr 60px 80px 80px 80px 2fr 28px; }
   .row-labels span { font-size: 10px; color: var(--text-3); font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; }
-
-  /* ── Buttons ── */
   .btn-primary { background: var(--green); color: white; border: none; border-radius: var(--radius-sm); padding: 10px 20px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.15s; display: inline-flex; align-items: center; gap: 7px; }
   .btn-primary:hover { background: #189063; }
   .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
   .btn-secondary { background: var(--white); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 9px 16px; font-size: 13px; cursor: pointer; transition: all 0.15s; display: inline-flex; align-items: center; gap: 7px; }
   .btn-secondary:hover { background: var(--bg); }
   .btn-actions { display: flex; gap: 8px; margin-top: 1.5rem; flex-wrap: wrap; }
-
-  /* ── Progress ── */
   .progress-bar { height: 3px; background: var(--border); border-radius: 99px; margin-bottom: 1.5rem; overflow: hidden; }
   .progress-fill { height: 100%; background: var(--green); border-radius: 99px; transition: width 0.3s; }
-
-  /* ── AI generating state ── */
   .ai-generating { background: var(--purple-light); border: 1px solid #AFA9EC; border-radius: var(--radius); padding: 1.25rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 12px; }
   .ai-spinner { width: 20px; height: 20px; border: 2px solid #AFA9EC; border-top-color: var(--purple); border-radius: 50%; animation: spin 0.8s linear infinite; flex-shrink: 0; }
   @keyframes spin { to { transform: rotate(360deg); } }
   .ai-gen-text { font-size: 13px; color: var(--purple); font-weight: 500; }
   .ai-gen-sub { font-size: 12px; color: #7F77DD; margin-top: 2px; }
-
-  /* ── Report preview ── */
   #report-preview { display: none; }
   .report-actions { display: flex; gap: 8px; margin-bottom: 1.5rem; flex-wrap: wrap; }
   .btn-copy { background: var(--blue); color: white; border: none; border-radius: var(--radius-sm); padding: 10px 20px; font-size: 13px; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; transition: all 0.15s; }
   .btn-copy:hover { background: #2a6bb5; }
   .btn-edit { background: var(--white); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 9px 16px; font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; transition: all 0.15s; }
-  .btn-edit:hover { background: var(--bg); }
   .btn-save { background: var(--green); color: white; border: none; border-radius: var(--radius-sm); padding: 9px 16px; font-size: 13px; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; }
-
-  /* ── Editable report ── */
-  #report-output {
-    background: var(--white); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 2rem;
-    line-height: 1.7; font-size: 13px;
-  }
+  #report-output { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem; line-height: 1.7; font-size: 13px; }
   #report-output[contenteditable="true"] { outline: 2px solid var(--blue); }
-
-  /* ── Report styles (inside output) ── */
-  .r-header { border-left: 3px solid var(--green); padding: 10px 14px; margin-bottom: 1.5rem; background: #f8fffe; border-radius: 0 8px 8px 0; }
-  .r-header .r-title { font-size: 15px; font-weight: 600; color: var(--text); }
-  .r-header .r-meta { font-size: 12px; color: var(--text-3); margin-top: 3px; }
-  .r-sec { margin-bottom: 1.25rem; }
-  .r-sec-label { font-size: 10px; font-weight: 600; letter-spacing: 0.09em; text-transform: uppercase; color: var(--text-3); margin-bottom: 8px; padding-bottom: 5px; border-bottom: 1px solid var(--border); }
-  .r-card { background: var(--white); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; margin-bottom: 6px; }
-  .r-hl { border-left: 2px solid var(--green); padding: 6px 10px; margin-bottom: 5px; background: var(--green-light); border-radius: 0 6px 6px 0; font-size: 12px; color: var(--text); }
-  .r-rf { border-left: 2px solid var(--red); padding: 6px 10px; margin-bottom: 5px; background: var(--red-light); border-radius: 0 6px 6px 0; font-size: 12px; color: var(--text); }
-  .r-ns { border-left: 2px solid var(--blue); padding: 6px 10px; margin-bottom: 5px; background: var(--blue-light); border-radius: 0 6px 6px 0; font-size: 12px; color: var(--text); }
-  .r-ai { background: #f8f7ff; border: 1px solid #d4d1f7; border-radius: 6px; padding: 8px 12px; margin-top: 6px; font-size: 12px; color: var(--text-2); line-height: 1.6; display: flex; gap: 8px; }
-  .r-ai-icon { color: var(--purple); font-weight: 600; font-size: 11px; white-space: nowrap; flex-shrink: 0; padding-top: 1px; }
-
-  .r-kpi-row { margin-bottom: 8px; }
-  .r-kpi-top { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-3); margin-bottom: 4px; }
-  .r-kpi-top b { color: var(--text); }
-  .r-kpi-track { height: 5px; background: #eee; border-radius: 99px; overflow: hidden; }
-  .r-kpi-fill { height: 100%; border-radius: 99px; }
-
-  .r-act-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-  .r-act-card { background: #f8f8f8; border-radius: 6px; padding: 10px; text-align: center; }
-  .r-act-label { font-size: 10px; color: var(--text-3); margin-bottom: 3px; }
-  .r-act-val { font-size: 18px; font-weight: 600; color: var(--text); }
-  .r-act-wow { font-size: 10px; margin-top: 2px; }
-  .c-up { color: var(--green); } .c-dn { color: var(--red); } .c-fl { color: var(--text-3); }
-
-  .r-funnel { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 6px; }
-  .r-fs { background: #f8f8f8; border-radius: 6px; padding: 8px 4px; text-align: center; }
-  .r-fs.ok { background: var(--green-light); }
-  .r-fs.warn { background: var(--amber-light); }
-  .r-fs.bad { background: var(--red-light); }
-  .r-fs-name { font-size: 9px; color: var(--text-3); margin-bottom: 2px; }
-  .r-fs-val { font-size: 15px; font-weight: 600; color: var(--text); }
-  .r-fs-cr { font-size: 9px; color: var(--text-3); }
-  .r-fs-wow { font-size: 9px; margin-top: 1px; }
-
-  .r-tbl { width: 100%; border-collapse: collapse; font-size: 12px; }
-  .r-tbl th { text-align: left; font-size: 10px; font-weight: 600; color: var(--text-3); padding: 5px 8px; border-bottom: 1px solid var(--border); text-transform: uppercase; letter-spacing: 0.04em; }
-  .r-tbl td { padding: 6px 8px; border-bottom: 1px solid #f5f5f5; color: var(--text); vertical-align: middle; }
-  .r-tbl tr:last-child td { border-bottom: none; }
-  .r-tbl th.r, .r-tbl td.r { text-align: right; }
-  .r-tbl th.c, .r-tbl td.c { text-align: center; }
-
-  .badge { display: inline-block; font-size: 9px; font-weight: 600; padding: 2px 7px; border-radius: 99px; }
-  .b-hc { background: var(--blue-light); color: #185FA5; }
-  .b-re { background: var(--amber-light); color: #854F0B; }
-  .b-fm { background: var(--green-light); color: #0F6E56; }
-  .b-bt { background: #FBEAF0; color: #993556; }
-  .b-au { background: var(--gray-light); color: #5F5E5A; }
-  .b-fi { background: #EAF3DE; color: #3B6D11; }
-  .b-other { background: #f0f0f0; color: #666; }
-
-  .pill { display: inline-block; font-size: 9px; font-weight: 600; padding: 2px 7px; border-radius: 4px; }
-  .p-qs { background: var(--amber-light); color: #854F0B; }
-  .p-qb { background: var(--blue-light); color: #185FA5; }
-  .p-verbal { background: var(--green-light); color: #0F6E56; }
-  .p-brief { background: var(--gray-light); color: #5F5E5A; }
-  .p-contract { background: #EAF3DE; color: #3B6D11; }
-  .p-risk { background: var(--red-light); color: #A32D2D; }
-
-  .plan-g { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .plan-lbl { font-size: 11px; color: var(--text-3); margin-bottom: 2px; }
-  .plan-val { font-size: 13px; font-weight: 500; }
-
-  .issue-q { font-size: 11px; font-weight: 600; color: var(--text-3); margin-bottom: 4px; }
-  .issue-a { font-size: 12px; color: var(--text); line-height: 1.6; }
-  .issue-block { padding-bottom: 10px; margin-bottom: 10px; border-bottom: 1px solid #f0f0f0; }
-  .issue-block:last-child { padding-bottom: 0; margin-bottom: 0; border-bottom: none; }
-  .r-divider { height: 1px; background: var(--border); margin: 1.25rem 0; }
-
-  /* ── Toast ── */
-  .toast { position: fixed; bottom: 24px; right: 24px; background: var(--text); color: white; padding: 10px 18px; border-radius: 8px; font-size: 13px; opacity: 0; transform: translateY(8px); transition: all 0.25s; pointer-events: none; z-index: 999; }
-  .toast.show { opacity: 1; transform: translateY(0); }
-
-  /* ── Member selector ── */
+  .step-page { display: none; }
+  .step-page.active { display: block; }
   .member-select-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .member-card { border: 2px solid var(--border); border-radius: var(--radius); padding: 14px; cursor: pointer; transition: all 0.15s; background: var(--white); }
   .member-card:hover { border-color: var(--green-mid); }
@@ -202,19 +92,15 @@
   .member-card .m-role { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 99px; margin-top: 6px; }
   .role-exec { background: var(--blue-light); color: #185FA5; }
   .role-leader { background: var(--amber-light); color: #854F0B; }
-
-  /* ── Steps ── */
-  .step-page { display: none; }
-  .step-page.active { display: block; }
-
-  /* ── API config ── */
-  .config-banner { background: var(--amber-light); border: 1px solid #FAC775; border-radius: var(--radius-sm); padding: 10px 14px; font-size: 12px; color: #633806; margin-bottom: 1rem; display: flex; gap: 8px; align-items: flex-start; }
+  .toast { position: fixed; bottom: 24px; right: 24px; background: var(--text); color: white; padding: 10px 18px; border-radius: 8px; font-size: 13px; opacity: 0; transform: translateY(8px); transition: all 0.25s; pointer-events: none; z-index: 999; }
+  .toast.show { opacity: 1; transform: translateY(0); }
+  .ai-status-bar { background: linear-gradient(135deg, #f0effe, #e8e6fc); border: 1px solid #c5c1f0; border-radius: 8px; padding: 12px 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+  .ai-status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--purple); animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.85)} }
 </style>
 </head>
 <body>
-
 <div class="app">
-  <!-- Sidebar -->
   <aside class="sidebar">
     <div class="logo">
       <div class="logo-mark">P</div>
@@ -223,192 +109,106 @@
         <div class="logo-sub">Weekly Generator</div>
       </div>
     </div>
-
     <div class="nav-section">Các bước</div>
-    <div class="nav-item active" id="nav-0" onclick="goStep(0)">
-      <div class="nav-dot"></div> Chọn thành viên
-    </div>
-    <div class="nav-item" id="nav-1" onclick="goStep(1)">
-      <div class="nav-dot"></div> Kế hoạch & KPI
-    </div>
-    <div class="nav-item" id="nav-2" onclick="goStep(2)">
-      <div class="nav-dot"></div> Activities & Funnel
-    </div>
-    <div class="nav-item" id="nav-3" onclick="goStep(3)">
-      <div class="nav-dot"></div> Meeting & AOV
-    </div>
-    <div class="nav-item" id="nav-4" onclick="goStep(4)">
-      <div class="nav-dot"></div> Vertical & Vấn đề
-    </div>
-    <div class="nav-item" id="nav-5" onclick="goStep(5)">
-      <div class="nav-dot"></div> Highlight & Review
-    </div>
-
-
+    <div class="nav-item active" id="nav-0" onclick="goStep(0)"><div class="nav-dot"></div> Chọn thành viên</div>
+    <div class="nav-item" id="nav-1" onclick="goStep(1)"><div class="nav-dot"></div> Kế hoạch & KPI</div>
+    <div class="nav-item" id="nav-2" onclick="goStep(2)"><div class="nav-dot"></div> Activities & Funnel</div>
+    <div class="nav-item" id="nav-3" onclick="goStep(3)"><div class="nav-dot"></div> Meeting & AOV</div>
+    <div class="nav-item" id="nav-4" onclick="goStep(4)"><div class="nav-dot"></div> Vertical & Vấn đề</div>
+    <div class="nav-item" id="nav-5" onclick="goStep(5)"><div class="nav-dot"></div> Highlight & Review</div>
   </aside>
 
-  <!-- Main -->
   <main class="main">
-    <div class="progress-bar">
-      <div class="progress-fill" id="progress" style="width:0%"></div>
-    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress" style="width:0%"></div></div>
 
-    <!-- Step 0: Chọn member -->
+    <!-- Step 0 -->
     <div class="step-page active" id="step-0">
       <div class="step-header">
         <div class="step-badge">Bước 1 / 6</div>
         <div class="step-title">Chọn thành viên</div>
         <div class="step-desc">Report sẽ tự load dữ liệu tuần trước để so sánh WoW</div>
       </div>
-
       <div class="form-card">
         <div class="form-card-title">Thông tin tuần báo cáo</div>
         <div class="form-grid">
-          <div class="field">
-            <label>Quý</label>
-            <select id="quarter">
-              <option value="Q2">Q2/2026</option>
-              <option value="Q3">Q3/2026</option>
-              <option value="Q1">Q1/2026</option>
-            </select>
+          <div class="field"><label>Quý</label>
+            <select id="quarter"><option value="Q2">Q2/2026</option><option value="Q3">Q3/2026</option><option value="Q1">Q1/2026</option></select>
           </div>
-          <div class="field">
-            <label>Tuần số</label>
-            <input type="number" id="week" min="1" max="13" placeholder="8" value="8">
-          </div>
-          <div class="field">
-            <label>Từ ngày</label>
-            <input type="date" id="period-from">
-          </div>
-          <div class="field">
-            <label>Đến ngày</label>
-            <input type="date" id="period-to">
-          </div>
+          <div class="field"><label>Tuần số</label><input type="number" id="week" min="1" max="13" value="8"></div>
+          <div class="field"><label>Từ ngày</label><input type="date" id="period-from"></div>
+          <div class="field"><label>Đến ngày</label><input type="date" id="period-to"></div>
         </div>
       </div>
-
       <div class="form-card">
         <div class="form-card-title">Chọn thành viên</div>
-        <div class="member-select-wrap" id="member-list">
-          <div style="color:var(--text-3); font-size:13px;">Đang tải danh sách...</div>
-        </div>
+        <div class="member-select-wrap" id="member-list"><div style="color:var(--text-3);font-size:13px;">Đang tải danh sách...</div></div>
       </div>
-
-      <div class="btn-actions">
-        <button class="btn-primary" onclick="goStep(1)">Tiếp theo →</button>
-      </div>
+      <div class="btn-actions"><button class="btn-primary" onclick="goStep(1)">Tiếp theo →</button></div>
     </div>
 
-    <!-- Step 1: Kế hoạch & KPI -->
+    <!-- Step 1 -->
     <div class="step-page" id="step-1">
       <div class="step-header">
         <div class="step-badge">Bước 2 / 6</div>
         <div class="step-title">Kế hoạch & KPI</div>
         <div class="step-desc">Điền số liệu KPI tuần và Q2 QTD</div>
       </div>
-
       <div class="form-card">
         <div class="form-card-title">📋 Kế hoạch tuần này</div>
         <div class="form-grid">
-          <div class="field">
-            <label>Số khách dự kiến tiếp cận</label>
-            <input type="number" id="plan-clients" placeholder="12">
-          </div>
-          <div class="field">
-            <label>Focus vertical tuần này</label>
-            <input type="text" id="plan-focus-vertical" placeholder="Healthcare (IVF/Sản nhi)">
-          </div>
-          <div class="field full">
-            <label>Mục tiêu stage move</label>
-            <input type="text" id="plan-stage-move" placeholder="Phương Châu: Brief → QB, Chiro: QB → QS">
-          </div>
-          <div class="field full">
-            <label>Deal ưu tiên BOF</label>
-            <input type="text" id="plan-priority-deals" placeholder="Biocodex top-up, Chiro Lifestyle">
-          </div>
+          <div class="field"><label>Số khách dự kiến tiếp cận</label><input type="number" id="plan-clients" placeholder="12"></div>
+          <div class="field"><label>Focus vertical tuần này</label><input type="text" id="plan-focus-vertical" placeholder="Healthcare (IVF/Sản nhi)"></div>
+          <div class="field full"><label>Mục tiêu stage move</label><input type="text" id="plan-stage-move" placeholder="Phương Châu: Brief → QB, Chiro: QB → QS"></div>
+          <div class="field full"><label>Deal ưu tiên BOF</label><input type="text" id="plan-priority-deals" placeholder="Biocodex top-up, Chiro Lifestyle"></div>
         </div>
       </div>
-
       <div class="form-card">
         <div class="form-card-title">🎯 KPI — Actual vs Plan (Q2 QTD)</div>
         <div class="form-grid-4">
-          <div class="field">
-            <label>QB Actual</label>
-            <input type="number" id="kpi-qb-actual" placeholder="3">
-          </div>
-          <div class="field">
-            <label>QB Plan Q2</label>
-            <input type="number" id="kpi-qb-plan" placeholder="5">
-          </div>
-          <div class="field">
-            <label>GP2 Actual (M)</label>
-            <input type="number" id="kpi-gp2-actual" placeholder="125">
-          </div>
-          <div class="field">
-            <label>GP2 Plan Q2 (M)</label>
-            <input type="number" id="kpi-gp2-plan" placeholder="675">
-          </div>
-          <div class="field">
-            <label>Meeting 1st Actual</label>
-            <input type="number" id="kpi-meeting-actual" placeholder="17">
-          </div>
-          <div class="field">
-            <label>Meeting 1st Plan Q2</label>
-            <input type="number" id="kpi-meeting-plan" placeholder="25">
-          </div>
-          <div class="field">
-            <label>Activities Actual</label>
-            <input type="number" id="kpi-act-actual" placeholder="251">
-          </div>
-          <div class="field">
-            <label>Activities Plan Q2</label>
-            <input type="number" id="kpi-act-plan" placeholder="280">
-          </div>
+          <div class="field"><label>QB Actual</label><input type="number" id="kpi-qb-actual" placeholder="3"></div>
+          <div class="field"><label>QB Plan Q2</label><input type="number" id="kpi-qb-plan" placeholder="5"></div>
+          <div class="field"><label>GP2 Actual (M)</label><input type="number" id="kpi-gp2-actual" placeholder="125"></div>
+          <div class="field"><label>GP2 Plan Q2 (M)</label><input type="number" id="kpi-gp2-plan" placeholder="675"></div>
+          <div class="field"><label>Meeting 1st Actual</label><input type="number" id="kpi-meeting-actual" placeholder="17"></div>
+          <div class="field"><label>Meeting 1st Plan Q2</label><input type="number" id="kpi-meeting-plan" placeholder="25"></div>
+          <div class="field"><label>Activities Actual</label><input type="number" id="kpi-act-actual" placeholder="251"></div>
+          <div class="field"><label>Activities Plan Q2</label><input type="number" id="kpi-act-plan" placeholder="280"></div>
         </div>
       </div>
-
       <div class="btn-actions">
         <button class="btn-secondary" onclick="goStep(0)">← Quay lại</button>
         <button class="btn-primary" onclick="goStep(2)">Tiếp theo →</button>
       </div>
     </div>
 
-    <!-- Step 2: Activities & Funnel -->
+    <!-- Step 2 -->
     <div class="step-page" id="step-2">
       <div class="step-header">
         <div class="step-badge">Bước 3 / 6</div>
         <div class="step-title">Activities & Funnel</div>
         <div class="step-desc">Điền số liệu tuần này — WoW sẽ tự tính từ dữ liệu tuần trước</div>
       </div>
-
       <div class="form-card">
         <div class="form-card-title">📊 Activities tuần này</div>
         <div class="form-grid-4">
-          <div class="field">
-            <label>Call</label>
-            <input type="number" id="act-call" placeholder="23">
-          </div>
-          <div class="field">
-            <label>SMS</label>
-            <input type="number" id="act-sms" placeholder="87">
-          </div>
-          <div class="field">
-            <label>Email & other</label>
-            <input type="number" id="act-email" placeholder="41">
-          </div>
-          <div class="field">
-            <label>Meeting</label>
-            <input type="number" id="act-meeting" placeholder="6">
-          </div>
+          <div class="field"><label>Call</label><input type="number" id="act-call" placeholder="23"></div>
+          <div class="field"><label>SMS</label><input type="number" id="act-sms" placeholder="87"></div>
+          <div class="field"><label>Email & other</label><input type="number" id="act-email" placeholder="41"></div>
+          <div class="field"><label>Meeting</label><input type="number" id="act-meeting" placeholder="6"></div>
         </div>
       </div>
-
       <div class="form-card">
         <div class="form-card-title">🔽 Funnel — Actual (Q2 QTD)</div>
-        <div class="row-labels vertical-labels" style="grid-template-columns: repeat(7,1fr); gap:8px; margin-bottom:6px;">
-          <span>Lead</span><span>QL</span><span>Brief</span><span>QB</span><span>QS</span><span>Verbal</span><span>Contract</span>
+        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-bottom:6px;">
+          <span style="font-size:10px;color:var(--text-3);font-weight:600;text-transform:uppercase;">Lead</span>
+          <span style="font-size:10px;color:var(--text-3);font-weight:600;text-transform:uppercase;">QL</span>
+          <span style="font-size:10px;color:var(--text-3);font-weight:600;text-transform:uppercase;">Brief</span>
+          <span style="font-size:10px;color:var(--text-3);font-weight:600;text-transform:uppercase;">QB</span>
+          <span style="font-size:10px;color:var(--text-3);font-weight:600;text-transform:uppercase;">QS</span>
+          <span style="font-size:10px;color:var(--text-3);font-weight:600;text-transform:uppercase;">Verbal</span>
+          <span style="font-size:10px;color:var(--text-3);font-weight:600;text-transform:uppercase;">Contract</span>
         </div>
-        <div style="display:grid; grid-template-columns:repeat(7,1fr); gap:8px; margin-bottom:12px;">
+        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-bottom:14px;">
           <input type="number" id="f-lead" placeholder="19">
           <input type="number" id="f-ql" placeholder="15">
           <input type="number" id="f-brief" placeholder="4">
@@ -417,8 +217,8 @@
           <input type="number" id="f-verbal" placeholder="0">
           <input type="number" id="f-contract" placeholder="0">
         </div>
-        <div class="form-card-title" style="margin-top:4px;">Plan Q2 (để tính CR vs plan)</div>
-        <div style="display:grid; grid-template-columns:repeat(7,1fr); gap:8px;">
+        <div class="form-card-title" style="margin-top:4px;">Plan Q2</div>
+        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:8px;">
           <input type="number" id="fp-lead" placeholder="25">
           <input type="number" id="fp-ql" placeholder="18">
           <input type="number" id="fp-brief" placeholder="6">
@@ -428,112 +228,90 @@
           <input type="number" id="fp-contract" placeholder="1">
         </div>
       </div>
-
       <div class="btn-actions">
         <button class="btn-secondary" onclick="goStep(1)">← Quay lại</button>
         <button class="btn-primary" onclick="goStep(3)">Tiếp theo →</button>
       </div>
     </div>
 
-    <!-- Step 3: Meeting & AOV -->
+    <!-- Step 3 -->
     <div class="step-page" id="step-3">
       <div class="step-header">
         <div class="step-badge">Bước 4 / 6</div>
         <div class="step-title">Meeting & AOV Control</div>
       </div>
-
       <div class="form-card">
         <div class="form-card-title">🤝 Meeting — Chi tiết theo khách</div>
-        <div class="row-labels meeting-labels">
+        <div class="row-labels" style="display:grid;grid-template-columns:2fr 1fr 1fr 60px 2fr 28px;gap:8px;margin-bottom:4px;">
           <span>Khách hàng</span><span>Vertical</span><span>Stage</span><span>Số lần</span><span>Outcome</span><span></span>
         </div>
         <div id="meeting-rows"></div>
         <button class="btn-add" onclick="addMeetingRow()">+ Thêm khách</button>
       </div>
-
       <div class="form-card">
         <div class="form-card-title">💰 AOV Control — Pipeline cá nhân</div>
-        <div class="row-labels aov-labels">
+        <div class="row-labels" style="display:grid;grid-template-columns:2fr 1fr 1fr 1.5fr 1.5fr 28px;gap:8px;margin-bottom:4px;">
           <span>Deal / Khách hàng</span><span>Vertical</span><span>Stage</span><span>Deal value</span><span>Next step</span><span></span>
         </div>
         <div id="aov-rows"></div>
         <button class="btn-add" onclick="addAOVRow()">+ Thêm deal</button>
       </div>
-
       <div class="btn-actions">
         <button class="btn-secondary" onclick="goStep(2)">← Quay lại</button>
         <button class="btn-primary" onclick="goStep(4)">Tiếp theo →</button>
       </div>
     </div>
 
-    <!-- Step 4: Vertical & Vấn đề -->
+    <!-- Step 4 -->
     <div class="step-page" id="step-4">
       <div class="step-header">
         <div class="step-badge">Bước 5 / 6</div>
         <div class="step-title">Vertical & Vấn đề</div>
       </div>
-
       <div class="form-card">
         <div class="form-card-title">📊 Vertical Analysis</div>
-        <div class="row-labels vertical-labels">
+        <div class="row-labels" style="display:grid;grid-template-columns:1.2fr 60px 80px 80px 80px 2fr 28px;gap:8px;margin-bottom:4px;">
           <span>Vertical</span><span>Khách</span><span>Activities</span><span>Lead→QL</span><span>Freq/client</span><span>Stage nổi bật</span><span></span>
         </div>
         <div id="vertical-rows"></div>
         <button class="btn-add" onclick="addVerticalRow()">+ Thêm vertical</button>
       </div>
-
       <div class="form-card">
         <div class="form-card-title">⚠️ Vấn đề & Điều chỉnh</div>
-        <div class="field" style="margin-bottom:12px;">
-          <label>Bottleneck tuần này là gì?</label>
-          <textarea id="issue-bottleneck" placeholder="CR Brief→QB thấp, meeting có agenda chưa rõ..."></textarea>
-        </div>
-        <div class="field" style="margin-bottom:12px;">
-          <label>Deal nào đang risk?</label>
-          <textarea id="issue-risk" placeholder="Chiro dời lịch 2 lần, Re Green pending..."></textarea>
-        </div>
-        <div class="field">
-          <label>Điều chỉnh tuần tới?</label>
-          <textarea id="issue-adjust" placeholder="Tăng Relationship Direct, soạn email campaign IVF..."></textarea>
-        </div>
+        <div class="field" style="margin-bottom:12px;"><label>Bottleneck tuần này là gì?</label><textarea id="issue-bottleneck" placeholder="CR Brief→QB thấp, meeting có agenda chưa rõ..."></textarea></div>
+        <div class="field" style="margin-bottom:12px;"><label>Deal nào đang risk?</label><textarea id="issue-risk" placeholder="Chiro dời lịch 2 lần, Re Green pending..."></textarea></div>
+        <div class="field"><label>Điều chỉnh tuần tới?</label><textarea id="issue-adjust" placeholder="Tăng Relationship Direct, soạn email campaign IVF..."></textarea></div>
       </div>
-
       <div class="btn-actions">
         <button class="btn-secondary" onclick="goStep(3)">← Quay lại</button>
         <button class="btn-primary" onclick="goStep(5)">Tiếp theo →</button>
       </div>
     </div>
 
-    <!-- Step 5: Highlight & Generate -->
+    <!-- Step 5 -->
     <div class="step-page" id="step-5">
       <div class="step-header">
         <div class="step-badge">Bước 6 / 6</div>
         <div class="step-title">Highlight & Tạo Report</div>
       </div>
-
       <div class="form-card">
         <div class="form-card-title">⭐ Highlight & Key takeaway</div>
         <div id="hl-rows"></div>
         <button class="btn-add" onclick="addHLRow('hl')">+ Thêm điểm sáng</button>
       </div>
-
       <div class="form-card">
         <div class="form-card-title" style="color:var(--red);">🚩 Red flags</div>
         <div id="rf-rows"></div>
         <button class="btn-add" onclick="addHLRow('rf')">+ Thêm red flag</button>
       </div>
-
       <div class="form-card">
         <div class="form-card-title" style="color:var(--blue);">→ Next step tuần tới</div>
         <div id="ns-rows"></div>
         <button class="btn-add" onclick="addHLRow('ns')">+ Thêm next step</button>
       </div>
-
       <div class="btn-actions">
         <button class="btn-secondary" onclick="goStep(4)">← Quay lại</button>
-        <button class="btn-primary" id="btn-generate" onclick="generateReport()">
-          ✦ Tạo Report với AI
-        </button>
+        <button class="btn-primary" id="btn-generate" onclick="generateReport()">✦ Tạo Report với AI</button>
       </div>
     </div>
 
@@ -546,36 +324,31 @@
           <div class="ai-gen-sub" id="ai-gen-status">Đang xử lý dữ liệu</div>
         </div>
       </div>
-
       <div class="report-actions">
         <button class="btn-copy" onclick="copyReport()">📋 Copy để paste vào Gmail</button>
         <button class="btn-edit" onclick="toggleEdit()">✏️ Chỉnh sửa</button>
         <button class="btn-save" onclick="saveToSheets()">💾 Lưu vào Sheets</button>
         <button class="btn-secondary" onclick="goStep(0)">← Làm report mới</button>
       </div>
-
       <div id="report-output"></div>
     </div>
-
   </main>
 </div>
-
-
 
 <div class="toast" id="toast"></div>
 
 <script>
 // ══════════════════════════════════════════════
-// CONFIG — hardcoded, không cần user nhập
+// CONFIG
 // ══════════════════════════════════════════════
-const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbyRe6m-YZW6WVBZeG75J_bPdJKnzow1e2gMpjKL5fj8DmOQus55o6DkeQECvZ7gt9DX/exec'; // ← Thay bằng Web App URL sau khi deploy
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbyRe6m-YZW6WVBZeG75J_bPdJKnzow1e2gMpjKL5fj8DmOQus55o6DkeQECvZ7gt9DX/exec';
+
 let selectedMember = null;
 let lastReport = null;
 let currentStep = 0;
-let aiAnalysis = {};
 
 // ══════════════════════════════════════════════
-// STEP NAVIGATION
+// NAV
 // ══════════════════════════════════════════════
 function goStep(n) {
   document.querySelectorAll('.step-page').forEach(p => p.classList.remove('active'));
@@ -592,7 +365,7 @@ function goStep(n) {
 }
 
 // ══════════════════════════════════════════════
-// LOAD MEMBERS from Sheets
+// MEMBERS
 // ══════════════════════════════════════════════
 async function loadMembers() {
   try {
@@ -620,8 +393,7 @@ function renderMembers(members) {
       <div class="m-name">${m.name}</div>
       <div class="m-meta">${m.team} · ${m.vertical}</div>
       <span class="m-role ${m.role==='leader'?'role-leader':'role-exec'}">${m.role==='leader'?'Leader':'Executive'}</span>
-    </div>
-  `).join('');
+    </div>`).join('');
 }
 
 async function selectMember(member, el) {
@@ -642,22 +414,19 @@ async function selectMember(member, el) {
 const VERTICALS = ['Healthcare','Real Estate','FMCG','Beauty','Auto','Finance','Education','Home & Electronics','Hospitality','Others'];
 const STAGES = ['Lead','QL','Brief','QB','QS','Verbal','Contract','Execution','Not Verbal'];
 
-function verticalOpts() { return VERTICALS.map(v=>`<option>${v}</option>`).join(''); }
-function stageOpts() { return STAGES.map(s=>`<option>${s}</option>`).join(''); }
+function verticalOpts(sel='') { return VERTICALS.map(v=>`<option${v===sel?' selected':''}>${v}</option>`).join(''); }
+function stageOpts(sel='') { return STAGES.map(s=>`<option${s===sel?' selected':''}>${s}</option>`).join(''); }
 
 function addMeetingRow(data={}) {
   const div = document.createElement('div');
   div.className = 'dynamic-row meeting-row';
   div.innerHTML = `
     <input type="text" placeholder="Tên khách hàng" value="${data.client||''}">
-    <select>${verticalOpts()}</select>
-    <select>${stageOpts()}</select>
+    <select>${verticalOpts(data.vertical||'')}</select>
+    <select>${stageOpts(data.stage||'')}</select>
     <input type="number" placeholder="1" value="${data.count||''}" min="1">
     <input type="text" placeholder="Outcome / ghi chú" value="${data.outcome||''}">
-    <button class="btn-remove" onclick="this.parentElement.remove()">×</button>
-  `;
-  if (data.vertical) div.querySelector('select').value = data.vertical;
-  if (data.stage) div.querySelectorAll('select')[1].value = data.stage;
+    <button class="btn-remove" onclick="this.parentElement.remove()">×</button>`;
   document.getElementById('meeting-rows').appendChild(div);
 }
 
@@ -666,14 +435,11 @@ function addAOVRow(data={}) {
   div.className = 'dynamic-row aov-row';
   div.innerHTML = `
     <input type="text" placeholder="Tên deal / khách hàng" value="${data.deal||''}">
-    <select>${verticalOpts()}</select>
-    <select>${stageOpts()}</select>
+    <select>${verticalOpts(data.vertical||'')}</select>
+    <select>${stageOpts(data.stage||'')}</select>
     <input type="text" placeholder="~1.2B / TBD" value="${data.value||''}">
     <input type="text" placeholder="Next step cụ thể" value="${data.next||''}">
-    <button class="btn-remove" onclick="this.parentElement.remove()">×</button>
-  `;
-  if (data.vertical) div.querySelector('select').value = data.vertical;
-  if (data.stage) div.querySelectorAll('select')[1].value = data.stage;
+    <button class="btn-remove" onclick="this.parentElement.remove()">×</button>`;
   document.getElementById('aov-rows').appendChild(div);
 }
 
@@ -681,36 +447,26 @@ function addVerticalRow(data={}) {
   const div = document.createElement('div');
   div.className = 'dynamic-row vertical-row';
   div.innerHTML = `
-    <select>${verticalOpts()}</select>
+    <select>${verticalOpts(data.vertical||'')}</select>
     <input type="number" placeholder="29" value="${data.companies||''}">
     <input type="number" placeholder="845" value="${data.activities||''}">
     <input type="text" placeholder="83%" value="${data.cr||''}">
     <input type="text" placeholder="16.9" value="${data.freq||''}">
     <input type="text" placeholder="2 Brief, 1 Contract..." value="${data.stages||''}">
-    <button class="btn-remove" onclick="this.parentElement.remove()">×</button>
-  `;
-  if (data.vertical) div.querySelector('select').value = data.vertical;
+    <button class="btn-remove" onclick="this.parentElement.remove()">×</button>`;
   document.getElementById('vertical-rows').appendChild(div);
 }
 
 function addHLRow(type) {
-  const containerId = `${type}-rows`;
-  const placeholders = {
-    hl: 'Điểm sáng tuần này...',
-    rf: 'Red flag / vấn đề cần chú ý...',
-    ns: 'Next step tuần tới...'
-  };
+  const placeholders = { hl:'Điểm sáng tuần này...', rf:'Red flag / vấn đề cần chú ý...', ns:'Next step tuần tới...' };
   const div = document.createElement('div');
-  div.style.cssText = 'display:flex; gap:8px; margin-bottom:6px;';
-  div.innerHTML = `
-    <input type="text" placeholder="${placeholders[type]}" style="flex:1;">
-    <button class="btn-remove" onclick="this.parentElement.remove()">×</button>
-  `;
-  document.getElementById(containerId).appendChild(div);
+  div.style.cssText = 'display:flex;gap:8px;margin-bottom:6px;';
+  div.innerHTML = `<input type="text" placeholder="${placeholders[type]}" style="flex:1;"><button class="btn-remove" onclick="this.parentElement.remove()">×</button>`;
+  document.getElementById(`${type}-rows`).appendChild(div);
 }
 
 // ══════════════════════════════════════════════
-// COLLECT FORM DATA
+// COLLECT DATA
 // ══════════════════════════════════════════════
 function g(id) { return document.getElementById(id)?.value || ''; }
 function gn(id) { return parseFloat(g(id)) || 0; }
@@ -719,55 +475,44 @@ function collectData() {
   const meetings = [...document.querySelectorAll('#meeting-rows .dynamic-row')].map(row => {
     const inputs = row.querySelectorAll('input');
     const selects = row.querySelectorAll('select');
-    return { client: inputs[0].value, vertical: selects[0].value, stage: selects[1].value, count: inputs[1].value, outcome: inputs[2].value };
+    return { client:inputs[0].value, vertical:selects[0].value, stage:selects[1].value, count:inputs[1].value, outcome:inputs[2].value };
   });
-
   const aovDeals = [...document.querySelectorAll('#aov-rows .dynamic-row')].map(row => {
     const inputs = row.querySelectorAll('input');
     const selects = row.querySelectorAll('select');
-    return { deal: inputs[0].value, vertical: selects[0].value, stage: selects[1].value, value: inputs[1].value, next: inputs[2].value };
+    return { deal:inputs[0].value, vertical:selects[0].value, stage:selects[1].value, value:inputs[1].value, next:inputs[2].value };
   });
-
   const verticalData = [...document.querySelectorAll('#vertical-rows .dynamic-row')].map(row => {
     const inputs = row.querySelectorAll('input');
-    return { vertical: row.querySelector('select').value, companies: inputs[0].value, activities: inputs[1].value, cr: inputs[2].value, freq: inputs[3].value, stages: inputs[4].value };
+    return { vertical:row.querySelector('select').value, companies:inputs[0].value, activities:inputs[1].value, cr:inputs[2].value, freq:inputs[3].value, stages:inputs[4].value };
   });
-
-  const highlights = [...document.querySelectorAll('#hl-rows input')].map(i=>i.value).filter(Boolean);
-  const redflags = [...document.querySelectorAll('#rf-rows input')].map(i=>i.value).filter(Boolean);
-  const nextsteps = [...document.querySelectorAll('#ns-rows input')].map(i=>i.value).filter(Boolean);
-
   return {
-    memberId: selectedMember?.id || '',
-    memberName: selectedMember?.name || '',
-    team: selectedMember?.team || '',
-    role: selectedMember?.role || '',
-    quarter: g('quarter'), week: g('week'),
-    period: `${g('period-from')} – ${g('period-to')}`,
-    verticals: selectedMember?.vertical || '',
-    planClients: g('plan-clients'), planStageMove: g('plan-stage-move'),
-    planFocusVertical: g('plan-focus-vertical'), planPriorityDeals: g('plan-priority-deals'),
-    actCall: gn('act-call'), actSMS: gn('act-sms'), actEmail: gn('act-email'), actMeeting: gn('act-meeting'),
-    fLead: gn('f-lead'), fQL: gn('f-ql'), fBrief: gn('f-brief'), fQB: gn('f-qb'),
-    fQS: gn('f-qs'), fVerbal: gn('f-verbal'), fContract: gn('f-contract'),
-    fLeadPlan: gn('fp-lead'), fQLPlan: gn('fp-ql'), fBriefPlan: gn('fp-brief'), fQBPlan: gn('fp-qb'),
-    fQSPlan: gn('fp-qs'), fVerbalPlan: gn('fp-verbal'), fContractPlan: gn('fp-contract'),
-    kpiQBActual: gn('kpi-qb-actual'), kpiQBPlan: gn('kpi-qb-plan'),
-    kpiGP2Actual: gn('kpi-gp2-actual'), kpiGP2Plan: gn('kpi-gp2-plan'),
-    kpiMeetingActual: gn('kpi-meeting-actual'), kpiMeetingPlan: gn('kpi-meeting-plan'),
-    kpiActActual: gn('kpi-act-actual'), kpiActPlan: gn('kpi-act-plan'),
-    meetingDetails: meetings, aovDeals, verticalData,
-    highlight: highlights, redflag: redflags, nextstep: nextsteps,
-    issueBottleneck: g('issue-bottleneck'), issueRisk: g('issue-risk'), issueAdjust: g('issue-adjust'),
+    memberId: selectedMember?.id||'', memberName: selectedMember?.name||'',
+    team: selectedMember?.team||'', role: selectedMember?.role||'',
+    quarter:g('quarter'), week:g('week'), period:`${g('period-from')} – ${g('period-to')}`,
+    verticals: selectedMember?.vertical||'',
+    planClients:g('plan-clients'), planStageMove:g('plan-stage-move'),
+    planFocusVertical:g('plan-focus-vertical'), planPriorityDeals:g('plan-priority-deals'),
+    actCall:gn('act-call'), actSMS:gn('act-sms'), actEmail:gn('act-email'), actMeeting:gn('act-meeting'),
+    fLead:gn('f-lead'), fQL:gn('f-ql'), fBrief:gn('f-brief'), fQB:gn('f-qb'),
+    fQS:gn('f-qs'), fVerbal:gn('f-verbal'), fContract:gn('f-contract'),
+    fLeadPlan:gn('fp-lead'), fQLPlan:gn('fp-ql'), fBriefPlan:gn('fp-brief'), fQBPlan:gn('fp-qb'),
+    fQSPlan:gn('fp-qs'), fVerbalPlan:gn('fp-verbal'), fContractPlan:gn('fp-contract'),
+    kpiQBActual:gn('kpi-qb-actual'), kpiQBPlan:gn('kpi-qb-plan'),
+    kpiGP2Actual:gn('kpi-gp2-actual'), kpiGP2Plan:gn('kpi-gp2-plan'),
+    kpiMeetingActual:gn('kpi-meeting-actual'), kpiMeetingPlan:gn('kpi-meeting-plan'),
+    kpiActActual:gn('kpi-act-actual'), kpiActPlan:gn('kpi-act-plan'),
+    meetingDetails:meetings, aovDeals, verticalData,
+    highlight:[...document.querySelectorAll('#hl-rows input')].map(i=>i.value).filter(Boolean),
+    redflag:[...document.querySelectorAll('#rf-rows input')].map(i=>i.value).filter(Boolean),
+    nextstep:[...document.querySelectorAll('#ns-rows input')].map(i=>i.value).filter(Boolean),
+    issueBottleneck:g('issue-bottleneck'), issueRisk:g('issue-risk'), issueAdjust:g('issue-adjust'),
     timestamp: new Date().toISOString()
   };
 }
 
 // ══════════════════════════════════════════════
-// GEMINI AI ANALYSIS
-// ══════════════════════════════════════════════
-// ══════════════════════════════════════════════
-// GEMINI via Apps Script PROXY — key ẩn hoàn toàn
+// AI ANALYSIS — qua Apps Script proxy (fix CORS)
 // ══════════════════════════════════════════════
 async function generateAIAnalysis(d) {
   const crQL    = d.fLead  > 0 ? Math.round(d.fQL/d.fLead*100)     : 0;
@@ -775,70 +520,73 @@ async function generateAIAnalysis(d) {
   const crBriefPlan = d.fQLPlan > 0 ? Math.round(d.fBriefPlan/d.fQLPlan*100) : 0;
   const crQB    = d.fBrief > 0 ? Math.round(d.fQB/d.fBrief*100)    : 0;
   const crQS    = d.fQB    > 0 ? Math.round(d.fQS/d.fQB*100)       : 0;
-  const wowLabel = (cur, prev, key) => prev?.[key] !== undefined ? ` (WoW: ${cur - parseFloat(prev[key]) >= 0 ? '+' : ''}${cur - parseFloat(prev[key])})` : '';
 
-  const prompts = {
-    kpi:
-      `Phân tích KPI Q2 QTD: QB ${d.kpiQBActual}/${d.kpiQBPlan} (${Math.round(d.kpiQBActual/d.kpiQBPlan*100)||0}%), GP2 ${d.kpiGP2Actual}M/${d.kpiGP2Plan}M (${Math.round(d.kpiGP2Actual/d.kpiGP2Plan*100)||0}%), Meeting ${d.kpiMeetingActual}/${d.kpiMeetingPlan}, Activities ${d.kpiActActual}/${d.kpiActPlan}. Quarter còn 5 tuần.`,
-    activities:
-      `Phân tích Activities tuần này: Call ${d.actCall}${wowLabel(d.actCall,lastReport,'actCall')}; SMS ${d.actSMS}${wowLabel(d.actSMS,lastReport,'actSMS')}; Email ${d.actEmail}${wowLabel(d.actEmail,lastReport,'actEmail')}; Meeting ${d.actMeeting}${wowLabel(d.actMeeting,lastReport,'actMeeting')}.`,
-    funnel:
-      `Phân tích Funnel Q2 QTD: Lead ${d.fLead}(plan ${d.fLeadPlan}), QL ${d.fQL} CR=${crQL}%, Brief ${d.fBrief} CR=${crBrief}%(plan ${crBriefPlan}%), QB ${d.fQB} CR=${crQB}%, QS ${d.fQS} CR=${crQS}%, Verbal ${d.fVerbal}, Contract ${d.fContract}.`,
-    meeting:
-      `Phân tích Meeting: ${d.meetingDetails.map(m=>`${m.client}(${m.vertical},${m.stage},${m.count} lần,outcome:${m.outcome})`).join('; ')}. Tổng ${d.actMeeting} meetings.`,
-    aov:
-      `Phân tích AOV pipeline: ${d.aovDeals.map(a=>`${a.deal}-${a.stage}-${a.value}`).join('; ')}. Nhận xét concentration risk và pipeline health.`,
-    vertical:
-      `Phân tích Vertical: ${d.verticalData.map(v=>`${v.vertical}: ${v.companies} khách, ${v.activities} activities, CR QL ${v.cr}, freq ${v.freq}, ${v.stages}`).join('; ')}.`
+  const wowNote = (cur, key) => {
+    if (!lastReport || lastReport[key] === undefined) return '';
+    const diff = cur - parseFloat(lastReport[key]);
+    return ` (WoW: ${diff >= 0 ? '+' : ''}${diff})`;
   };
 
-  document.getElementById('ai-gen-status').textContent = 'Gemini đang phân tích số liệu...';
+  // Prompt gộp — 1 call duy nhất để nhanh hơn
+  const combinedPrompt = `Phân tích BD Weekly Report của ${d.memberName} — ${d.quarter} Tuần ${d.week}. Trả về JSON object với 6 keys: kpi, activities, funnel, meeting, aov, vertical. Mỗi value là 1-2 câu nhận xét ngắn gọn bằng tiếng Việt, dùng **bold** cho điểm quan trọng nhất. Không bullet. Không mở đầu bằng "Dựa trên" hay "Theo số liệu". Chỉ trả về JSON thuần, không markdown, không backtick.
+
+[KPI] QB ${d.kpiQBActual}/${d.kpiQBPlan} (${Math.round(d.kpiQBActual/(d.kpiQBPlan||1)*100)}%), GP2 ${d.kpiGP2Actual}M/${d.kpiGP2Plan}M, Meeting ${d.kpiMeetingActual}/${d.kpiMeetingPlan}, Activities ${d.kpiActActual}/${d.kpiActPlan}. Quarter còn ~5 tuần.
+
+[ACTIVITIES] Call ${d.actCall}${wowNote(d.actCall,'actCall')}, SMS ${d.actSMS}${wowNote(d.actSMS,'actSMS')}, Email ${d.actEmail}${wowNote(d.actEmail,'actEmail')}, Meeting ${d.actMeeting}${wowNote(d.actMeeting,'actMeeting')}.
+
+[FUNNEL] Lead ${d.fLead}→QL ${d.fQL}(CR ${crQL}%)→Brief ${d.fBrief}(CR ${crBrief}%, plan ${crBriefPlan}%)→QB ${d.fQB}(CR ${crQB}%)→QS ${d.fQS}(CR ${crQS}%)→Verbal ${d.fVerbal}→Contract ${d.fContract}.
+
+[MEETING] ${d.meetingDetails.map(m=>`${m.client}(${m.vertical},${m.stage},${m.count} lần,outcome:${m.outcome})`).join('; ')}.
+
+[AOV] ${d.aovDeals.map(a=>`${a.deal} ${a.stage} ${a.value}`).join('; ')}.
+
+[VERTICAL] ${d.verticalData.map(v=>`${v.vertical}: ${v.companies} khách, ${v.activities} act, CR ${v.cr}, freq ${v.freq}`).join('; ')}.`;
+
+  document.getElementById('ai-gen-status').textContent = 'Đang gửi qua Apps Script proxy...';
+
   try {
-    // Gọi thẳng Gemini từ browser
-    const GEMINI_KEY = 'AIzaSyBFTqbqRGmpWIXclQHJa4YwM3SvhhCSrTM';
-    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`;
-    const systemCtx = `Bạn là AI phân tích performance cho BD team của PMAX Agency (marketing agency tại TP.HCM). Viết nhận xét ngắn gọn, thực tế, bằng tiếng Việt. Tối đa 2 câu mỗi phần. Dùng **text** để bold điểm quan trọng nhất. Không dùng bullet points. Không mở đầu bằng "Dựa trên" hay "Theo số liệu".`;
-
-    // Gộp tất cả prompts thành 1 request duy nhất để nhanh hơn
-    const combinedPrompt = Object.entries(prompts).map(([k,v]) => `[${k.toUpperCase()}]\n${v}`).join('\n\n');
-    const fullPrompt = `${systemCtx}\n\nPhân tích từng phần sau, trả về JSON object với keys: kpi, activities, funnel, meeting, aov, vertical. Mỗi value là 1-2 câu nhận xét. Chỉ trả về JSON thuần, không markdown:\n\n${combinedPrompt}`;
-
-    const res = await fetch(endpoint, {
+    const res = await fetch(SHEETS_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        contents: [{ parts: [{ text: fullPrompt }] }],
-        generationConfig: { maxOutputTokens: 1000, temperature: 0.7 }
+        action: 'geminiAnalyze',
+        prompts: { combined: combinedPrompt }
       })
     });
     const data = await res.json();
-    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
-    // Parse JSON response
-    const clean = text.replace(/```json\n?|\n?```/g, '').trim();
-    try {
-      return JSON.parse(clean);
-    } catch {
-      // Fallback: nếu không parse được thì trả về text cho kpi
-      return { kpi: clean, activities: '', funnel: '', meeting: '', aov: '', vertical: '' };
-    }
-  } catch(e) {
-    console.error('Gemini error:', e);
-    return {};
+
+    if (!data.success) throw new Error(data.error || 'Proxy error');
+
+    const rawText = data.results?.combined || '';
+    // Clean và parse JSON
+    const clean = rawText.replace(/```json\s*/gi,'').replace(/```\s*/g,'').trim();
+
+    // Tìm JSON object trong response
+    const jsonMatch = clean.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) throw new Error('No JSON in response');
+
+    const parsed = JSON.parse(jsonMatch[0]);
+    return parsed;
+
+  } catch(err) {
+    console.warn('AI analysis failed:', err.message);
+    showToast('⚠ AI analysis lỗi — report vẫn được tạo không có nhận xét AI');
+    return { kpi:'', activities:'', funnel:'', meeting:'', aov:'', vertical:'' };
   }
 }
 
 // ══════════════════════════════════════════════
-// RENDER REPORT HTML
+// RENDER REPORT (Gmail-safe table HTML)
 // ══════════════════════════════════════════════
 function renderReport(d, ai) {
-  const pct = (a,b) => b > 0 ? Math.round(a/b*100) : 0;
+  const pct = (a,b) => b > 0 ? Math.min(Math.round(a/b*100), 100) : 0;
   const cr = (a,b) => b > 0 ? Math.round(a/b*100) : 0;
-  const wowStr = (cur, prev, key) => {
-    if (!prev || prev[key] === undefined) return '';
-    const diff = cur - parseFloat(prev[key]);
-    if (diff > 0) return `<span class="c-up">▲ +${diff} WoW</span>`;
-    if (diff < 0) return `<span class="c-dn">▼ ${diff} WoW</span>`;
-    return `<span class="c-fl">— 0 WoW</span>`;
+
+  const wowStr = (cur, key) => {
+    if (!lastReport || lastReport[key] === undefined) return '<span style="color:#999">—</span>';
+    const diff = cur - parseFloat(lastReport[key]);
+    if (diff > 0) return `<span style="color:#1D9E75;font-weight:600">▲ +${diff}</span>`;
+    if (diff < 0) return `<span style="color:#E24B4A;font-weight:600">▼ ${diff}</span>`;
+    return '<span style="color:#999">= 0</span>';
   };
 
   const crQL = cr(d.fQL, d.fLead);
@@ -847,166 +595,153 @@ function renderReport(d, ai) {
   const crQB = cr(d.fQB, d.fBrief);
   const crQS = cr(d.fQS, d.fQB);
 
-  const funnelStages = [
-    { name:'Lead', val:d.fLead, plan:d.fLeadPlan, cr:'', wow:wowStr(d.fLead,lastReport,'fLead') },
-    { name:'QL', val:d.fQL, plan:d.fQLPlan, cr:`CR ${crQL}%`, wow:wowStr(d.fQL,lastReport,'fQL') },
-    { name:'Brief', val:d.fBrief, plan:d.fBriefPlan, cr:`CR ${crBrief}% ${crBrief>=crBriefPlan?'↑':'↓'}`, wow:wowStr(d.fBrief,lastReport,'fBrief') },
-    { name:'QB', val:d.fQB, plan:d.fQBPlan, cr:`CR ${crQB}%`, wow:wowStr(d.fQB,lastReport,'fQB') },
-    { name:'QS', val:d.fQS, plan:d.fQSPlan, cr:`CR ${crQS}%`, wow:wowStr(d.fQS,lastReport,'fQS') },
-    { name:'Verbal', val:d.fVerbal, plan:d.fVerbalPlan, cr:'', wow:wowStr(d.fVerbal,lastReport,'fVerbal') },
-    { name:'Contract', val:d.fContract, plan:d.fContractPlan, cr:'', wow:wowStr(d.fContract,lastReport,'fContract') },
-  ];
-
-  const fsClass = (s) => {
-    if (s.name==='Contract' && s.val===0) return 'bad';
-    if (s.val >= s.plan) return 'ok';
-    if (s.val >= s.plan*0.7) return 'warn';
-    return '';
-  };
-
-  const vertBadgeClass = v => {
-    const m = {'Healthcare':'b-hc','Real Estate':'b-re','FMCG':'b-fm','Beauty':'b-bt','Auto':'b-au','Finance':'b-fi'};
-    return m[v] || 'b-other';
-  };
-
-  const stagePillClass = s => {
-    const m = {'QS':'p-qs','QB':'p-qb','Verbal':'p-verbal','Brief':'p-brief','Contract':'p-contract'};
-    return m[s] || 'p-risk';
-  };
-
-  // Gmail-safe: bold text từ **markdown**
+  // Markdown bold
   const md = t => (t||'').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
 
-  // AI block — table-based cho Gmail
+  // AI block
   const aiBlock = text => !text ? '' : `
-    <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:6px;border-collapse:collapse;">
-      <tr>
-        <td style="background:#f8f7ff;border:1px solid #d4d1f7;border-radius:6px;padding:10px 12px;font-size:12px;color:#444;line-height:1.6;">
-          <span style="color:#7F77DD;font-weight:600;font-size:11px;margin-right:8px;">✦ AI</span>${md(text)}
-        </td>
-      </tr>
-    </table>`;
+    <tr><td style="padding:0 0 4px;">
+      <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin-top:8px;">
+        <tr><td style="background:#f4f3fe;border:1px solid #d0cdf5;border-radius:6px;padding:10px 14px;font-size:12px;color:#444;line-height:1.7;">
+          <span style="color:#7F77DD;font-weight:700;font-size:11px;margin-right:8px;">✦ AI</span>${md(text)}
+        </td></tr>
+      </table>
+    </td></tr>`;
 
-  // KPI bar — table-based
+  // KPI progress bar
   const kpiBar = (label, actual, plan, color) => {
-    const p = Math.min(pct(actual,plan),100);
-    const filledCells = Math.round(p/5); // 20 cells = 100%
+    const p = pct(actual, plan);
     return `
-    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:10px;border-collapse:collapse;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin-bottom:10px;">
       <tr>
-        <td style="font-size:11px;color:#777;padding-bottom:3px;">${label}</td>
-        <td style="font-size:11px;text-align:right;font-weight:600;padding-bottom:3px;">${actual} / ${plan} &nbsp;·&nbsp; ${p}%</td>
+        <td style="font-size:11px;color:#777;padding-bottom:4px;">${label}</td>
+        <td style="font-size:12px;font-weight:600;text-align:right;padding-bottom:4px;">${actual} / ${plan} &nbsp;·&nbsp; <span style="color:${p>=100?'#1D9E75':p>=70?'#EF9F27':'#E24B4A'}">${p}%</span></td>
       </tr>
-      <tr>
-        <td colspan="2" style="padding:0;">
-          <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;background:#eee;border-radius:4px;overflow:hidden;">
-            <tr>
-              <td width="${p}%" style="background:${color};height:5px;font-size:0;">&nbsp;</td>
-              <td style="height:5px;font-size:0;">&nbsp;</td>
-            </tr>
-          </table>
-        </td>
-      </tr>
+      <tr><td colspan="2" style="padding:0;">
+        <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;background:#eee;border-radius:3px;">
+          <tr>
+            <td width="${p}%" style="background:${color};height:6px;border-radius:3px;font-size:0;">&nbsp;</td>
+            <td style="height:6px;font-size:0;">&nbsp;</td>
+          </tr>
+        </table>
+      </td></tr>
     </table>`;
   };
 
-  // Section label
-  const secLabel = txt => `<div style="font-size:10px;font-weight:600;letter-spacing:0.09em;text-transform:uppercase;color:#999;padding:8px 0 6px;border-bottom:1px solid #eee;margin-bottom:10px;">${txt}</div>`;
+  // Section divider
+  const sec = label => `
+    <tr><td style="padding:16px 0 0;">
+      <table width="100%" cellpadding="0" cellspacing="0"><tr>
+        <td style="font-size:10px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:#aaa;border-bottom:1px solid #eee;padding-bottom:6px;">${label}</td>
+      </tr></table>
+    </td></tr>`;
 
-  // Highlight blocks
-  const hlBlock = (items, color, bg, icon) => items.filter(Boolean).map(t=>
-    `<div style="border-left:3px solid ${color};background:${bg};padding:7px 12px;margin-bottom:5px;border-radius:0 6px 6px 0;font-size:12px;color:#333;">${icon} ${t}</div>`
+  // Highlight pills
+  const hlRows = (items, borderColor, bgColor, icon) => items.filter(Boolean).map(t=>
+    `<div style="border-left:3px solid ${borderColor};background:${bgColor};padding:8px 12px;margin-bottom:5px;border-radius:0 6px 6px 0;font-size:13px;color:#222;">${icon} ${t}</div>`
   ).join('');
 
-  // Funnel — table-based, all 7 stages visible
-  const funnelHTML = funnelStages.map(s => {
-    const bg = s.name==='Contract'&&s.val===0 ? '#FCEBEB' : s.val>=s.plan ? '#E1F5EE' : s.val>=s.plan*0.7 ? '#FAEEDA' : '#f8f8f8';
-    return `<td width="14%" style="text-align:center;padding:2px;">
-      <table width="100%" cellpadding="6" cellspacing="0" style="border-collapse:collapse;background:${bg};border-radius:6px;">
-        <tr><td style="font-size:9px;color:#999;text-align:center;padding-bottom:0;">${s.name}</td></tr>
-        <tr><td style="font-size:16px;font-weight:600;text-align:center;padding:2px 0;">${s.val}</td></tr>
+  // Vertical / stage badge styles
+  const vertStyle = v => {
+    const m = {'Healthcare':'background:#E6F1FB;color:#185FA5','Real Estate':'background:#FAEEDA;color:#854F0B','FMCG':'background:#E1F5EE;color:#0F6E56','Beauty':'background:#FBEAF0;color:#993556','Auto':'background:#F1EFE8;color:#5F5E5A','Finance':'background:#EAF3DE;color:#3B6D11','Education':'background:#f0f0fe;color:#4040a0','Hospitality':'background:#fef0f0;color:#a04040'};
+    return (m[v]||'background:#f0f0f0;color:#666')+';font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;display:inline-block;';
+  };
+  const stageStyle = s => {
+    const m = {'QS':'background:#FAEEDA;color:#854F0B','QB':'background:#E6F1FB;color:#185FA5','Verbal':'background:#E1F5EE;color:#0F6E56','Brief':'background:#F1EFE8;color:#5F5E5A','Contract':'background:#EAF3DE;color:#3B6D11','Lead':'background:#f8f8f8;color:#666','QL':'background:#f0f0f0;color:#555'};
+    return (m[s]||'background:#FCEBEB;color:#A32D2D')+';font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;display:inline-block;';
+  };
+
+  // Funnel cells
+  const funnelStages = [
+    {name:'Lead', val:d.fLead, plan:d.fLeadPlan, cr:'', key:'fLead'},
+    {name:'QL', val:d.fQL, plan:d.fQLPlan, cr:`CR ${crQL}%`, key:'fQL'},
+    {name:'Brief', val:d.fBrief, plan:d.fBriefPlan, cr:`CR ${crBrief}% ${crBrief>=crBriefPlan?'↑':'↓'}plan`, key:'fBrief'},
+    {name:'QB', val:d.fQB, plan:d.fQBPlan, cr:`CR ${crQB}%`, key:'fQB'},
+    {name:'QS', val:d.fQS, plan:d.fQSPlan, cr:`CR ${crQS}%`, key:'fQS'},
+    {name:'Verbal', val:d.fVerbal, plan:d.fVerbalPlan, cr:'', key:'fVerbal'},
+    {name:'Contract', val:d.fContract, plan:d.fContractPlan, cr:'', key:'fContract'},
+  ];
+
+  const funnelCells = funnelStages.map(s => {
+    const bg = (s.name==='Contract'&&s.val===0) ? '#FCEBEB' : s.val>=s.plan ? '#E8F9F4' : s.val>=s.plan*0.7 ? '#FAEEDA' : '#f9f9f9';
+    const ww = wowStr(s.val, s.key);
+    return `<td width="14%" style="padding:2px;">
+      <table width="100%" cellpadding="6" cellspacing="0" style="border-collapse:collapse;background:${bg};border-radius:8px;text-align:center;">
+        <tr><td style="font-size:9px;color:#888;text-align:center;padding-bottom:1px;letter-spacing:.03em;">${s.name}</td></tr>
+        <tr><td style="font-size:18px;font-weight:700;text-align:center;padding:2px 0;color:#111;">${s.val}</td></tr>
         <tr><td style="font-size:9px;color:#777;text-align:center;padding-top:0;">${s.cr||'plan '+s.plan}</td></tr>
-        <tr><td style="font-size:9px;text-align:center;padding-top:0;">${s.wow||'&nbsp;'}</td></tr>
-      </table>
-    </td>`;
+        <tr><td style="font-size:9px;text-align:center;padding-top:2px;">${ww}</td></tr>
+      </table></td>`;
   }).join('');
 
-  // Activities — table-based 4 cols
-  const actHTML = [
+  // Activities cells
+  const actCells = [
     {label:'Call', val:d.actCall, key:'actCall'},
     {label:'SMS', val:d.actSMS, key:'actSMS'},
     {label:'Email & other', val:d.actEmail, key:'actEmail'},
     {label:'Meeting', val:d.actMeeting, key:'actMeeting'},
-  ].map(a => {
-    const w = wowStr(a.val, lastReport, a.key);
-    return `<td width="25%" style="padding:3px;">
-      <table width="100%" cellpadding="8" cellspacing="0" style="border-collapse:collapse;background:#f8f8f8;border-radius:6px;text-align:center;">
-        <tr><td style="font-size:10px;color:#999;padding-bottom:2px;">${a.label}</td></tr>
-        <tr><td style="font-size:20px;font-weight:600;padding:2px 0;">${a.val}</td></tr>
-        <tr><td style="font-size:10px;padding-top:2px;">${w||'<span style="color:#999">—</span>'}</td></tr>
-      </table>
-    </td>`;
-  }).join('');
-
-  // Badge & pill inline styles
-  const vertStyle = v => {
-    const m = {'Healthcare':'background:#E6F1FB;color:#185FA5','Real Estate':'background:#FAEEDA;color:#854F0B','FMCG':'background:#E1F5EE;color:#0F6E56','Beauty':'background:#FBEAF0;color:#993556','Auto':'background:#F1EFE8;color:#5F5E5A','Finance':'background:#EAF3DE;color:#3B6D11'};
-    return (m[v]||'background:#f0f0f0;color:#666') + ';font-size:10px;font-weight:600;padding:2px 7px;border-radius:99px;display:inline-block;';
-  };
-  const stageStyle = s => {
-    const m = {'QS':'background:#FAEEDA;color:#854F0B','QB':'background:#E6F1FB;color:#185FA5','Verbal':'background:#E1F5EE;color:#0F6E56','Brief':'background:#F1EFE8;color:#5F5E5A','Contract':'background:#EAF3DE;color:#3B6D11'};
-    return (m[s]||'background:#FCEBEB;color:#A32D2D') + ';font-size:10px;font-weight:600;padding:2px 7px;border-radius:4px;display:inline-block;';
-  };
+  ].map(a => `<td width="25%" style="padding:3px;">
+    <table width="100%" cellpadding="8" cellspacing="0" style="border-collapse:collapse;background:#f8f8f8;border-radius:8px;text-align:center;">
+      <tr><td style="font-size:10px;color:#999;padding-bottom:2px;">${a.label}</td></tr>
+      <tr><td style="font-size:22px;font-weight:700;color:#111;padding:2px 0;">${a.val}</td></tr>
+      <tr><td style="font-size:11px;padding-top:2px;">${wowStr(a.val, a.key)}</td></tr>
+    </table></td>`).join('');
 
   return `
-<table width="100%" cellpadding="0" cellspacing="0" style="font-family:Arial,sans-serif;font-size:13px;color:#1a1a1a;border-collapse:collapse;max-width:680px;">
+<table width="100%" cellpadding="0" cellspacing="0" style="font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#1a1a1a;border-collapse:collapse;max-width:680px;margin:0 auto;">
 
-<tr><td style="border-left:4px solid #1D9E75;background:#f8fffe;padding:10px 14px;border-radius:0 8px 8px 0;margin-bottom:16px;">
-  <div style="font-size:15px;font-weight:700;">${d.quarter}/2026 Tuần ${d.week} — BD Weekly Report</div>
-  <div style="font-size:12px;color:#777;margin-top:3px;">${d.memberName} &nbsp;·&nbsp; ${d.period} &nbsp;·&nbsp; ${d.verticals}</div>
+<!-- HEADER -->
+<tr><td style="padding-bottom:16px;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;border-left:4px solid #1D9E75;background:#f7fffe;border-radius:0 8px 8px 0;padding:12px 16px;">
+    <tr><td style="padding:12px 16px;">
+      <div style="font-size:16px;font-weight:700;color:#111;">${d.quarter}/2026 Tuần ${d.week} — BD Weekly Report</div>
+      <div style="font-size:12px;color:#888;margin-top:4px;">${d.memberName} &nbsp;·&nbsp; ${d.period} &nbsp;·&nbsp; ${d.verticals}</div>
+    </td></tr>
+  </table>
 </td></tr>
 
-<tr><td style="padding:14px 0 0;">
-  ${secLabel('Highlight & Key takeaway')}
-  ${hlBlock(d.highlight,'#1D9E75','#E1F5EE','✦')}
-  ${hlBlock(d.redflag,'#E24B4A','#FCEBEB','⚠')}
-  ${hlBlock(d.nextstep,'#378ADD','#E6F1FB','→')}
+<!-- HIGHLIGHT -->
+${sec('Highlight & Key takeaway')}
+<tr><td style="padding:10px 0 0;">
+  ${hlRows(d.highlight, '#1D9E75', '#E8F9F4', '✦')}
+  ${hlRows(d.redflag,   '#E24B4A', '#FCEBEB', '⚠')}
+  ${hlRows(d.nextstep,  '#378ADD', '#E6F1FB', '→')}
 </td></tr>
 
-<tr><td style="padding:16px 0 0;">
-  <hr style="border:none;border-top:1px solid #eee;margin:0 0 12px;">
-  ${secLabel('Kế hoạch tuần này')}
-  <table width="100%" cellpadding="10" cellspacing="0" style="border-collapse:collapse;border:1px solid #eee;border-radius:8px;">
+<!-- KẾ HOẠCH -->
+${sec('Kế hoạch tuần này')}
+<tr><td style="padding:10px 0 0;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;border:1px solid #eee;border-radius:8px;overflow:hidden;">
     <tr>
-      <td width="50%" style="border-bottom:1px solid #f5f5f5;border-right:1px solid #f5f5f5;">
-        <div style="font-size:11px;color:#999;">Số khách dự kiến tiếp cận</div>
-        <div style="font-weight:600;margin-top:3px;">${d.planClients} khách</div>
+      <td width="50%" style="padding:10px 14px;border-bottom:1px solid #f5f5f5;border-right:1px solid #f5f5f5;vertical-align:top;">
+        <div style="font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;">Số khách dự kiến</div>
+        <div style="font-weight:600;">${d.planClients} khách</div>
       </td>
-      <td width="50%" style="border-bottom:1px solid #f5f5f5;">
-        <div style="font-size:11px;color:#999;">Mục tiêu stage move</div>
-        <div style="font-weight:600;margin-top:3px;">${d.planStageMove}</div>
+      <td width="50%" style="padding:10px 14px;border-bottom:1px solid #f5f5f5;vertical-align:top;">
+        <div style="font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;">Mục tiêu stage move</div>
+        <div style="font-weight:600;">${d.planStageMove}</div>
       </td>
     </tr>
     <tr>
-      <td style="border-right:1px solid #f5f5f5;">
-        <div style="font-size:11px;color:#999;">Focus vertical</div>
-        <div style="font-weight:600;margin-top:3px;">${d.planFocusVertical}</div>
+      <td style="padding:10px 14px;border-right:1px solid #f5f5f5;vertical-align:top;">
+        <div style="font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;">Focus vertical</div>
+        <div style="font-weight:600;">${d.planFocusVertical}</div>
       </td>
-      <td>
-        <div style="font-size:11px;color:#999;">Deal ưu tiên BOF</div>
-        <div style="font-weight:600;margin-top:3px;">${d.planPriorityDeals}</div>
+      <td style="padding:10px 14px;vertical-align:top;">
+        <div style="font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;">Deal ưu tiên BOF</div>
+        <div style="font-weight:600;">${d.planPriorityDeals}</div>
       </td>
     </tr>
   </table>
 </td></tr>
 
-<tr><td style="padding:16px 0 0;">
-  <hr style="border:none;border-top:1px solid #eee;margin:0 0 12px;">
-  ${secLabel('KPI — Tuần ' + d.week + ' & ' + d.quarter + ' QTD')}
-  <table width="100%" cellpadding="12" cellspacing="0" style="border-collapse:collapse;border:1px solid #eee;border-radius:8px;">
+<!-- KPI -->
+${sec('KPI — ' + d.quarter + ' QTD')}
+<tr><td style="padding:10px 0 0;">
+  <table width="100%" cellpadding="14" cellspacing="0" style="border-collapse:collapse;border:1px solid #eee;border-radius:8px;">
     <tr><td>
       ${kpiBar('QB Active — cá nhân', d.kpiQBActual, d.kpiQBPlan, '#1D9E75')}
-      ${kpiBar('GP2 Active — cá nhân (FY)', d.kpiGP2Actual, d.kpiGP2Plan, '#EF9F27')}
+      ${kpiBar('GP2 Active — cá nhân (M)', d.kpiGP2Actual, d.kpiGP2Plan, '#EF9F27')}
       ${kpiBar('Meeting 1st — cá nhân', d.kpiMeetingActual, d.kpiMeetingPlan, '#378ADD')}
       ${kpiBar('Activities tổng', d.kpiActActual, d.kpiActPlan, '#7F77DD')}
     </td></tr>
@@ -1014,31 +749,34 @@ function renderReport(d, ai) {
   ${aiBlock(ai.kpi)}
 </td></tr>
 
-<tr><td style="padding:16px 0 0;">
-  ${secLabel('Activities — WoW')}
+<!-- ACTIVITIES -->
+${sec('Activities — WoW')}
+<tr><td style="padding:10px 0 0;">
   <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
-    <tr>${actHTML}</tr>
+    <tr>${actCells}</tr>
   </table>
   ${aiBlock(ai.activities)}
 </td></tr>
 
-<tr><td style="padding:16px 0 0;">
-  ${secLabel('Funnel — Stage · CR% · WoW')}
+<!-- FUNNEL -->
+${sec('Funnel — Stage · CR% · WoW')}
+<tr><td style="padding:10px 0 0;">
   <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
-    <tr>${funnelHTML}</tr>
+    <tr>${funnelCells}</tr>
   </table>
   ${aiBlock(ai.funnel)}
 </td></tr>
 
-<tr><td style="padding:16px 0 0;">
-  ${secLabel('Meeting — Chi tiết theo khách')}
+<!-- MEETING -->
+${sec('Meeting — Chi tiết theo khách')}
+<tr><td style="padding:10px 0 0;">
   <table width="100%" cellpadding="8" cellspacing="0" style="border-collapse:collapse;border:1px solid #eee;border-radius:8px;font-size:12px;">
     <tr style="background:#f8f8f8;">
-      <th style="text-align:left;font-size:10px;color:#999;font-weight:600;text-transform:uppercase;padding:6px 8px;">Khách hàng</th>
-      <th style="text-align:left;font-size:10px;color:#999;font-weight:600;text-transform:uppercase;padding:6px 8px;">Vertical</th>
-      <th style="text-align:left;font-size:10px;color:#999;font-weight:600;text-transform:uppercase;padding:6px 8px;">Stage</th>
-      <th style="text-align:center;font-size:10px;color:#999;font-weight:600;text-transform:uppercase;padding:6px 8px;">Lần</th>
-      <th style="text-align:left;font-size:10px;color:#999;font-weight:600;text-transform:uppercase;padding:6px 8px;">Outcome</th>
+      <th style="text-align:left;font-size:10px;color:#999;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:8px;">Khách hàng</th>
+      <th style="text-align:left;font-size:10px;color:#999;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:8px;">Vertical</th>
+      <th style="text-align:left;font-size:10px;color:#999;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:8px;">Stage</th>
+      <th style="text-align:center;font-size:10px;color:#999;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:8px;">Lần</th>
+      <th style="text-align:left;font-size:10px;color:#999;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:8px;">Outcome</th>
     </tr>
     ${d.meetingDetails.map(m=>`
     <tr style="border-top:1px solid #f5f5f5;">
@@ -1052,15 +790,16 @@ function renderReport(d, ai) {
   ${aiBlock(ai.meeting)}
 </td></tr>
 
-<tr><td style="padding:16px 0 0;">
-  ${secLabel('AOV Control — Pipeline cá nhân')}
+<!-- AOV -->
+${sec('AOV Control — Pipeline cá nhân')}
+<tr><td style="padding:10px 0 0;">
   <table width="100%" cellpadding="8" cellspacing="0" style="border-collapse:collapse;border:1px solid #eee;border-radius:8px;font-size:12px;">
     <tr style="background:#f8f8f8;">
-      <th style="text-align:left;font-size:10px;color:#999;font-weight:600;text-transform:uppercase;padding:6px 8px;">Deal</th>
-      <th style="text-align:left;font-size:10px;color:#999;font-weight:600;text-transform:uppercase;padding:6px 8px;">Vertical</th>
-      <th style="text-align:left;font-size:10px;color:#999;font-weight:600;text-transform:uppercase;padding:6px 8px;">Stage</th>
-      <th style="text-align:right;font-size:10px;color:#999;font-weight:600;text-transform:uppercase;padding:6px 8px;">Value</th>
-      <th style="text-align:left;font-size:10px;color:#999;font-weight:600;text-transform:uppercase;padding:6px 8px;">Next step</th>
+      <th style="text-align:left;font-size:10px;color:#999;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:8px;">Deal</th>
+      <th style="text-align:left;font-size:10px;color:#999;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:8px;">Vertical</th>
+      <th style="text-align:left;font-size:10px;color:#999;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:8px;">Stage</th>
+      <th style="text-align:right;font-size:10px;color:#999;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:8px;">Value</th>
+      <th style="text-align:left;font-size:10px;color:#999;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:8px;">Next step</th>
     </tr>
     ${d.aovDeals.map(a=>`
     <tr style="border-top:1px solid #f5f5f5;">
@@ -1074,16 +813,17 @@ function renderReport(d, ai) {
   ${aiBlock(ai.aov)}
 </td></tr>
 
-<tr><td style="padding:16px 0 0;">
-  ${secLabel('Vertical Analysis — ' + d.quarter + ' QTD')}
+<!-- VERTICAL -->
+${sec('Vertical Analysis — ' + d.quarter + ' QTD')}
+<tr><td style="padding:10px 0 0;">
   <table width="100%" cellpadding="8" cellspacing="0" style="border-collapse:collapse;border:1px solid #eee;border-radius:8px;font-size:12px;">
     <tr style="background:#f8f8f8;">
-      <th style="text-align:left;font-size:10px;color:#999;font-weight:600;text-transform:uppercase;padding:6px 8px;">Vertical</th>
-      <th style="text-align:center;font-size:10px;color:#999;font-weight:600;text-transform:uppercase;padding:6px 8px;">Khách</th>
-      <th style="text-align:center;font-size:10px;color:#999;font-weight:600;text-transform:uppercase;padding:6px 8px;">Activities</th>
-      <th style="text-align:center;font-size:10px;color:#999;font-weight:600;text-transform:uppercase;padding:6px 8px;">Freq/client</th>
-      <th style="text-align:center;font-size:10px;color:#999;font-weight:600;text-transform:uppercase;padding:6px 8px;">Lead→QL</th>
-      <th style="text-align:left;font-size:10px;color:#999;font-weight:600;text-transform:uppercase;padding:6px 8px;">Stage nổi bật</th>
+      <th style="text-align:left;font-size:10px;color:#999;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:8px;">Vertical</th>
+      <th style="text-align:center;font-size:10px;color:#999;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:8px;">Khách</th>
+      <th style="text-align:center;font-size:10px;color:#999;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:8px;">Activities</th>
+      <th style="text-align:center;font-size:10px;color:#999;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:8px;">Freq/client</th>
+      <th style="text-align:center;font-size:10px;color:#999;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:8px;">Lead→QL</th>
+      <th style="text-align:left;font-size:10px;color:#999;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:8px;">Stage nổi bật</th>
     </tr>
     ${d.verticalData.map(v=>`
     <tr style="border-top:1px solid #f5f5f5;">
@@ -1091,28 +831,28 @@ function renderReport(d, ai) {
       <td style="padding:7px 8px;text-align:center;">${v.companies}</td>
       <td style="padding:7px 8px;text-align:center;">${v.activities}</td>
       <td style="padding:7px 8px;text-align:center;">${v.freq}</td>
-      <td style="padding:7px 8px;text-align:center;color:#1D9E75;font-weight:600;">${v.cr}</td>
-      <td style="padding:7px 8px;font-size:11px;">${v.stages}</td>
+      <td style="padding:7px 8px;text-align:center;color:#1D9E75;font-weight:700;">${v.cr}</td>
+      <td style="padding:7px 8px;font-size:11px;color:#555;">${v.stages}</td>
     </tr>`).join('')}
   </table>
   ${aiBlock(ai.vertical)}
 </td></tr>
 
-<tr><td style="padding:16px 0 0;">
-  <hr style="border:none;border-top:1px solid #eee;margin:0 0 12px;">
-  ${secLabel('Vấn đề & Điều chỉnh')}
+<!-- VẤN ĐỀ -->
+${sec('Vấn đề & Điều chỉnh')}
+<tr><td style="padding:10px 0 0;">
   <table width="100%" cellpadding="12" cellspacing="0" style="border-collapse:collapse;border:1px solid #eee;border-radius:8px;">
     <tr><td style="border-bottom:1px solid #f5f5f5;">
-      <div style="font-size:11px;font-weight:600;color:#999;margin-bottom:4px;">Bottleneck tuần này là gì?</div>
-      <div style="font-size:12px;">${d.issueBottleneck}</div>
+      <div style="font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px;">Bottleneck tuần này</div>
+      <div style="font-size:13px;line-height:1.6;">${d.issueBottleneck||'—'}</div>
     </td></tr>
     <tr><td style="border-bottom:1px solid #f5f5f5;">
-      <div style="font-size:11px;font-weight:600;color:#999;margin-bottom:4px;">Deal nào đang risk?</div>
-      <div style="font-size:12px;">${d.issueRisk}</div>
+      <div style="font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px;">Deal đang risk</div>
+      <div style="font-size:13px;line-height:1.6;">${d.issueRisk||'—'}</div>
     </td></tr>
     <tr><td>
-      <div style="font-size:11px;font-weight:600;color:#999;margin-bottom:4px;">Điều chỉnh tuần tới?</div>
-      <div style="font-size:12px;">${d.issueAdjust}</div>
+      <div style="font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px;">Điều chỉnh tuần tới</div>
+      <div style="font-size:13px;line-height:1.6;">${d.issueAdjust||'—'}</div>
     </td></tr>
   </table>
 </td></tr>
@@ -1121,7 +861,7 @@ function renderReport(d, ai) {
 }
 
 // ══════════════════════════════════════════════
-// GENERATE REPORT
+// GENERATE
 // ══════════════════════════════════════════════
 async function generateReport() {
   const btn = document.getElementById('btn-generate');
@@ -1133,21 +873,21 @@ async function generateReport() {
   const aiDiv = document.getElementById('ai-generating');
   const output = document.getElementById('report-output');
 
-  // Show preview area
   document.querySelectorAll('.step-page').forEach(p => p.classList.remove('active'));
   preview.style.display = 'block';
   aiDiv.style.display = 'flex';
   output.innerHTML = '';
   window.scrollTo(0, 0);
 
-  // Generate AI analysis
   let ai = {};
-  ai = await generateAIAnalysis(data);
+  try {
+    ai = await generateAIAnalysis(data);
+  } catch(e) {
+    console.error(e);
+  }
 
   aiDiv.style.display = 'none';
-  output.innerHTML = renderReport(data, ai);
-
-  // Store data for save
+  output.innerHTML = renderReport(data, ai || {});
   window._reportData = data;
 
   btn.disabled = false;
@@ -1165,7 +905,7 @@ function copyReport() {
   window.getSelection().addRange(range);
   document.execCommand('copy');
   window.getSelection().removeAllRanges();
-  showToast('✓ Đã copy! Paste thẳng vào Gmail giữ nguyên format.');
+  showToast('✓ Đã copy! Paste vào Gmail giữ nguyên format.');
 }
 
 let isEditing = false;
@@ -1192,18 +932,15 @@ async function saveToSheets() {
 }
 
 // ══════════════════════════════════════════════
-// TOAST
+// TOAST & INIT
 // ══════════════════════════════════════════════
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2800);
+  setTimeout(() => t.classList.remove('show'), 3000);
 }
 
-// ══════════════════════════════════════════════
-// INIT
-// ══════════════════════════════════════════════
 window.onload = () => {
   loadMembers();
   addMeetingRow();
