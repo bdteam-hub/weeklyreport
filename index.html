@@ -435,8 +435,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 <div class="toast" id="toast"></div>
 
 <script>
-const SHEETS_URL = 'https://script.google.com/a/macros/pmax.com.vn/s/AKfycbzINwc8D0CLAed4zmDYis2wspVOFAnsbdzqlHlc4WreHjJZx-B-L9ozEVZTnYfjx6Oycw/exec';
-const CLAUDE_API = 'https://api.anthropic.com/v1/messages';
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbyRe6m-YZW6WVBZeG75J_bPdJKnzow1e2gMpjKL5fj8DmOQus55o6DkeQECvZ7gt9DX/exec';
 const OKR_SHEET_ID = '1pU-2pZAOCTcETEH1_JGAQnWmh40BWU4_OE7D9ihdmIQ';
 
 // ── MEMBER CONFIG ──────────────────────────────────────────
@@ -774,89 +773,52 @@ function collectData() {
 // ── AI ANALYSIS ────────────────────────────────────────────
 async function getAIAnalysis(d) {
   const prevAct = lastReport || {};
-  const wow = (cur,key) => {
-    if(!lastReport||lastReport[key]===undefined) return '';
-    const diff = cur - parseFloat(lastReport[key]);
-    return ` (WoW ${diff>=0?'+':''}${diff})`;
-  };
-  const md = d.okrData;
-  const systemPrompt = `Bạn là BD analyst viết weekly report cho PMAX Agency.
-
-PHONG CÁCH — học theo chị Ngọc (BD Lead), đây là cách chị ấy viết:
-- Luôn bắt đầu bằng điểm mạnh / tín hiệu tốt trước, dù số chưa cao
-- Dùng ngôn ngữ động lực: "tín hiệu tốt", "đà tăng", "bứt phá", "chuyển hóa tốt", "nền tảng vững"
-- Khi nói gap: frame như cơ hội hành động, không phải thất bại — "cần push thêm", "còn room để cải thiện", "cửa sổ 5 tuần là đủ nếu..."
-- Kết mỗi đoạn bằng 1 implication hoặc action rõ ràng (→ ...)
-- Viết như người trong cuộc, hiểu context BD agency, không viết như AI
-- Tiếng Việt tự nhiên, không dùng từ sáo rỗng như "tuyệt vời", "xuất sắc"
-- Không dùng bullet, không heading, không label, không markdown
-- Độ dài: 2-3 câu mỗi phần, súc tích`;
-
+  const md = d.okrData || {};
   const weeksLeft = 13 - parseInt(d.week||8);
+
+  const systemTone = `Bạn là BD Lead của PMAX Agency viết nhận xét weekly report cho member của mình.
+Phong cách: positive framing, insight-driven, action-oriented như chị Ngọc (BD Lead).
+Quy tắc bắt buộc:
+- Luôn bắt đầu bằng điểm mạnh / tín hiệu tích cực trước
+- Dùng ngôn ngữ động lực: "tín hiệu tốt", "đà tăng", "chuyển hóa tốt", "nền tảng vững"
+- Gap/thiếu → frame như cơ hội hành động: "cần push thêm", "còn room", "cửa sổ X tuần là đủ nếu..."
+- Kết bằng action/implication cụ thể (→ ...)
+- Viết tiếng Việt tự nhiên, không label, không heading, không bullet
+- Không dùng từ sáo rỗng: "tuyệt vời", "xuất sắc", "rất tốt"
+- Mỗi phần 2-3 câu, súc tích`;
+
   const prompts = {
-    okr: `Viết nhận xét 2-3 câu cho phần OKR & KPI của ${d.memberName}, ${d.quarter} Tuần ${d.week}.
-Số liệu:
-- Brief BE: ${md?.okr_brief_actual||0}/${md?.okr_brief_plan||0} (${pct(md?.okr_brief_actual,md?.okr_brief_plan)}% plan, run-rate ${Math.round(pct(md?.okr_brief_actual,md?.okr_brief_plan)*2)}%)
-- Meeting: ${md?.okr_meet_actual||0}/${md?.okr_meet_plan||0} (${pct(md?.okr_meet_actual,md?.okr_meet_plan)}%)
-- Activities: ${md?.okr_act_actual||0}/${md?.okr_act_plan||0} (${pct(md?.okr_act_actual,md?.okr_act_plan)}%)
-- GP2 from QB: ${md?.okr_gp2_actual||0}M / ${md?.okr_gp2_plan||0}M
-- KPI QB Active: ${md?.kpi_qba_actual||0}/${md?.kpi_qba_plan||0} (${pct(md?.kpi_qba_actual,md?.kpi_qba_plan)}%)
-- KPI Meeting 1st: ${md?.kpi_meet_actual||0}/${md?.kpi_meet_plan||0}
-- Total KPI achievement: ${md?.kpi_total||'?'}
-- Còn ${weeksLeft} tuần trong Q2.
-Bắt đầu bằng điểm mạnh nhất, sau đó chỉ ra 1 KPI cần ưu tiên push nhất, kết bằng action cụ thể.`,
+    okr: systemTone + `\n\nViết nhận xét OKR & KPI của ${d.memberName} Tuần ${d.week}:\nBrief BE ${md.okr_brief_actual||0}/${md.okr_brief_plan||0} (${pct(md.okr_brief_actual,md.okr_brief_plan)}%), Meeting ${md.okr_meet_actual||0}/${md.okr_meet_plan||0} (${pct(md.okr_meet_actual,md.okr_meet_plan)}%), Activities ${md.okr_act_actual||0}/${md.okr_act_plan||0} (${pct(md.okr_act_actual,md.okr_act_plan)}%), GP2 ${md.okr_gp2_actual||0}M/${md.okr_gp2_plan||0}M. KPI QB Active ${md.kpi_qba_actual||0}/${md.kpi_qba_plan||0} (${pct(md.kpi_qba_actual,md.kpi_qba_plan)}%), Meeting 1st ${md.kpi_meet_actual||0}/${md.kpi_meet_plan||0}, Total achievement ${md.kpi_total||'?'}. Còn ${weeksLeft} tuần Q2. Bắt đầu điểm mạnh nhất, chỉ 1 KPI cần push nhất, kết bằng action.`,
 
-    activities: `Viết nhận xét 2-3 câu cho phần Activities tuần này của ${d.memberName}.
-Tuần này: Call ${d.actCall}, SMS/Zalo ${d.actSMS}, Email ${d.actEmail}, Meeting ${d.actMeeting}.
-Tuần trước: Call ${prevAct.actCall||'?'}, SMS ${prevAct.actSMS||'?'}, Email ${prevAct.actEmail||'?'}, Meeting ${prevAct.actMeeting||'?'}.
-WoW delta: Call ${d.actCall-(prevAct.actCall||d.actCall)>=0?'+':''}${d.actCall-(prevAct.actCall||d.actCall)}, SMS ${d.actSMS-(prevAct.actSMS||d.actSMS)>=0?'+':''}${d.actSMS-(prevAct.actSMS||d.actSMS)}, Meeting ${d.actMeeting-(prevAct.actMeeting||d.actMeeting)>=0?'+':''}${d.actMeeting-(prevAct.actMeeting||d.actMeeting)}.
-Highlight kênh tăng tốt nhất, chỉ ra kênh nào đang tạo ra deal thực sự (Meeting > SMS > Call về chất lượng), kết bằng điều chỉnh cụ thể nếu cần.`,
+    activities: systemTone + `\n\nViết nhận xét Activities tuần này của ${d.memberName}:\nTuần này — Call: ${d.actCall}, SMS: ${d.actSMS}, Email: ${d.actEmail}, Meeting: ${d.actMeeting}.\nTuần trước — Call: ${prevAct.actCall||'?'}, SMS: ${prevAct.actSMS||'?'}, Email: ${prevAct.actEmail||'?'}, Meeting: ${prevAct.actMeeting||'?'}.\nWoW delta: Call ${d.actCall-(prevAct.actCall||d.actCall)>=0?'+':''}${d.actCall-(prevAct.actCall||d.actCall)}, SMS ${d.actSMS-(prevAct.actSMS||d.actSMS)>=0?'+':''}${d.actSMS-(prevAct.actSMS||d.actSMS)}, Meeting ${d.actMeeting-(prevAct.actMeeting||d.actMeeting)>=0?'+':''}${d.actMeeting-(prevAct.actMeeting||d.actMeeting)}.\nHighlight kênh tăng tốt, chỉ kênh tạo deal thực sự (Meeting > SMS > Call về chất lượng), action nếu cần.`,
 
-    funnel: `Viết nhận xét 2-3 câu cho phần Funnel của ${d.memberName}, ${d.quarter} Tuần ${d.week}.
-Funnel QTD: Lead ${d.fLead} → QL ${d.fQL} (CR ${cr(d.fQL,d.fLead)}%) → Brief ${d.fBrief} (CR ${cr(d.fBrief,d.fQL)}%) → QB ${d.fQB} (CR ${cr(d.fQB,d.fBrief)}%) → QS ${d.fQS} → Verbal ${d.fVerbal} → Contract ${d.fContract}.
-WoW: QL ${d.fQL-(lastReport?.fQL||d.fQL)>=0?'+':''}${d.fQL-(lastReport?.fQL||d.fQL)}, QB ${d.fQB-(lastReport?.fQB||d.fQB)>=0?'+':''}${d.fQB-(lastReport?.fQB||d.fQB)}, QS ${d.fQS-(lastReport?.fQS||d.fQS)>=0?'+':''}${d.fQS-(lastReport?.fQS||d.fQS)}.
-Bắt đầu bằng stage đang chuyển hóa tốt nhất (CR cao, WoW tăng), sau đó chỉ ra bottleneck rõ nhất (stage nào CR thấp hoặc bị stall), kết bằng action push stage đó.`,
+    funnel: systemTone + `\n\nViết nhận xét Funnel của ${d.memberName} Tuần ${d.week}:\nLead ${d.fLead}→QL ${d.fQL}(CR ${cr(d.fQL,d.fLead)}%)→Brief ${d.fBrief}(CR ${cr(d.fBrief,d.fQL)}%)→QB ${d.fQB}(CR ${cr(d.fQB,d.fBrief)}%)→QS ${d.fQS}→Verbal ${d.fVerbal}→Contract ${d.fContract}.\nWoW: QL ${d.fQL-(lastReport?.fQL||d.fQL)>=0?'+':''}${d.fQL-(lastReport?.fQL||d.fQL)}, QB ${d.fQB-(lastReport?.fQB||d.fQB)>=0?'+':''}${d.fQB-(lastReport?.fQB||d.fQB)}, QS ${d.fQS-(lastReport?.fQS||d.fQS)>=0?'+':''}${d.fQS-(lastReport?.fQS||d.fQS)}.\nBắt đầu stage chuyển hóa tốt nhất, chỉ bottleneck rõ nhất, kết bằng action push stage đó.`,
 
-    highlight: `Bạn là BD Lead đang viết lại highlight report tuần cho member của mình.
-Thông tin thô từ ${d.memberName}:
-ĐIỂM SÁNG: ${d.highlight.join(' | ')||'(chưa có)'}
-RED FLAGS: ${d.redflag.join(' | ')||'(chưa có)'}
-NEXT STEPS: ${d.nextstep.join(' | ')||'(chưa có)'}
+    highlight: systemTone + `\n\nViết lại highlight report của ${d.memberName} tuần ${d.week}. Giữ thông tin cốt lõi, viết sắc nét, professional hơn. Mỗi điểm 1 dòng, cách nhau bằng newline.\nĐiểm sáng: ${d.highlight.join(' | ')||'(chưa có)'}\nRed flags: ${d.redflag.join(' | ')||'(chưa có)'}\nNext steps: ${d.nextstep.join(' | ')||'(chưa có)'}\nĐiểm sáng: bắt đầu bằng kết quả cụ thể + context tại sao quan trọng. Red flag: frame "cần xử lý" + urgency. Next step: bắt đầu bằng verb + deadline nếu biết. Không thêm heading hay label.`,
 
-Viết lại thành các dòng ngắn, sắc nét, professional. Mỗi điểm 1 dòng. Format:
-- Điểm sáng: bắt đầu bằng kết quả cụ thể, thêm context tại sao quan trọng
-- Red flag: frame như "cần xử lý" không phải thất bại, thêm urgency nếu cần
-- Next step: bắt đầu bằng verb hành động, có deadline hoặc owner nếu biết
-Không thêm heading, không label. Chỉ trả về các dòng đã viết lại, mỗi dòng cách nhau bằng newline.`,
-
-    issues: `Bạn là BD Lead viết lại phần vấn đề & điều chỉnh cho ${d.memberName} tuần ${d.week}.
-Input thô:
-Bottleneck: ${d.issueBottleneck||'(chưa điền)'}
-Deal risk: ${d.issueRisk||'(chưa điền)'}
-Điều chỉnh: ${d.issueAdjust||'(chưa điền)'}
-
-Viết lại mỗi phần thành 1-2 câu: clear, không bi quan, có direction rõ. Bottleneck thì chỉ ra root cause và hướng giải. Deal risk thì đánh giá mức độ và action. Điều chỉnh thì cụ thể, measurable. Trả về 3 đoạn riêng cách nhau bằng dấu "|||".`,
+    issues: systemTone + `\n\nViết lại vấn đề & điều chỉnh của ${d.memberName} tuần ${d.week}. Trả về đúng 3 đoạn cách nhau bằng "|||" (không có gì khác).\nBottleneck: ${d.issueBottleneck||'chưa điền'}\nDeal risk: ${d.issueRisk||'chưa điền'}\nĐiều chỉnh: ${d.issueAdjust||'chưa điền'}\nMỗi đoạn 1-2 câu: clear, có direction, không bi quan. Bottleneck→root cause+hướng giải. Risk→mức độ+action. Điều chỉnh→cụ thể+measurable.`,
   };
 
-  const results = {};
-  // Call Claude API for all sections in parallel
-  await Promise.all(Object.entries(prompts).map(async ([key, prompt]) => {
-    try {
-      const res = await fetch(CLAUDE_API, {
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({
-          model:'claude-sonnet-4-20250514',
-          max_tokens:400,
-          system: systemPrompt,
-          messages:[{role:'user',content:prompt}]
-        })
-      });
-      const json = await res.json();
-      results[key] = json.content?.[0]?.text || '';
-    } catch { results[key] = ''; }
-  }));
-  return results;
+  // Route tất cả qua Apps Script Gemini proxy (tránh CORS)
+  try {
+    const res = await fetch(SHEETS_URL, {
+      method: 'POST',
+      body: JSON.stringify({ action: 'geminiAnalyze', prompts })
+    });
+    const data = await res.json();
+    if (!data.success) throw new Error(data.error);
+    const r = data.results || {};
+    return {
+      okr:        r.okr || '',
+      activities: r.activities || '',
+      funnel:     r.funnel || '',
+      highlight:  r.highlight || '',
+      issues:     r.issues || '',
+    };
+  } catch(err) {
+    console.error('AI failed:', err.message);
+    return {okr:'',activities:'',funnel:'',highlight:'',issues:''};
+  }
 }
 
 // ── GENERATE ───────────────────────────────────────────────
