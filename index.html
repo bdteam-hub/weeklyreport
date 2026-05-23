@@ -40,7 +40,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 /* FORM SECTIONS */
 .fsec{padding:16px 18px;border-bottom:1px solid var(--br);}
 .fsec-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--t3);margin-bottom:10px;}
-.fsec-notice{background:var(--bl);border-radius:var(--rads);padding:7px 10px;font-size:10px;color:var(--bd);display:flex;align-items:center;gap:6px;margin-bottom:10px;}
+.fsec-notice{background:var(--bl);border:1px solid #85B7EB;border-radius:var(--rads);padding:7px 10px;font-size:10px;color:var(--bd);display:flex;align-items:center;gap:6px;margin-bottom:10px;transition:all .3s;}
 
 /* MEMBER CHIPS */
 .member-chips{display:flex;gap:6px;flex-wrap:wrap;}
@@ -508,7 +508,7 @@ async function selectMember(key, el) {
 
   // Pull OKR/KPI from Sheets
   try {
-    const res = await fetch(SHEETS_URL + '?action=getMemberOKR&memberId=' + key);
+    const res = await fetch(SHEETS_URL + '?action=getMemberOKR&memberId=' + key, {redirect:'follow'});
     const data = await res.json();
     if(data.success) {
       memberData = data;
@@ -522,7 +522,7 @@ async function selectMember(key, el) {
 
   // Pull last report for WoW
   try {
-    const res2 = await fetch(SHEETS_URL + '?action=getLastReport&memberId=' + key);
+    const res2 = await fetch(SHEETS_URL + '?action=getLastReport&memberId=' + key, {redirect:'follow'});
     const d2 = await res2.json();
     lastReport = d2.report || null;
     if(lastReport) {
@@ -557,7 +557,10 @@ function fillOKR(data) {
   setOKRCard('kpi-gp2',  data.kpi_gp2_actual, data.kpi_gp2_plan);
   setOKRCard('kpi-meet', data.kpi_meet_actual, data.kpi_meet_plan);
   document.getElementById('kpi-total-pct').textContent = data.kpi_total || '—';
-  document.getElementById('okr-notice-txt').textContent = 'Pulled từ Sheets · ' + new Date().toLocaleTimeString('vi');
+  document.getElementById('okr-notice-txt').textContent = '✓ Pulled từ Sheets lúc ' + new Date().toLocaleTimeString('vi-VN', {hour:'2-digit',minute:'2-digit'});
+  document.getElementById('okr-notice').style.background = '#E1F5EE';
+  document.getElementById('okr-notice').style.borderColor = '#1D9E75';
+  document.getElementById('okr-notice').style.color = '#0F6E56';
 }
 
 function fillOKRFallback(key) {
@@ -614,7 +617,10 @@ function fillOKRFallback(key) {
   };
   memberData = STATIC[key] || {};
   fillOKR(memberData);
-  document.getElementById('okr-notice-txt').textContent = 'Fallback data (Sheets chưa kết nối)';
+  document.getElementById('okr-notice-txt').textContent = 'Dùng data cached — kiểm tra kết nối Sheets';
+  document.getElementById('okr-notice').style.background = '#FAEEDA';
+  document.getElementById('okr-notice').style.borderColor = '#EF9F27';
+  document.getElementById('okr-notice').style.color = '#633806';
 }
 
 function setOKRCard(prefix, actual, plan, isMoney=false) {
@@ -803,6 +809,7 @@ Quy tắc bắt buộc:
   try {
     const res = await fetch(SHEETS_URL, {
       method: 'POST',
+      redirect: 'follow',
       body: JSON.stringify({ action: 'geminiAnalyze', prompts })
     });
     const data = await res.json();
@@ -835,8 +842,14 @@ async function generateReport() {
   renderReport(data, {okr:'',activities:'',funnel:'',highlight:'',issues:''}, true);
   previewShown = true;
 
-  // Get AI
-  const ai = await getAIAnalysis(data);
+  // Get AI analysis
+  let ai = {okr:'',activities:'',funnel:'',highlight:'',issues:''};
+  try {
+    ai = await getAIAnalysis(data);
+  } catch(e) {
+    console.error('AI error:', e);
+    toast('⚠ AI lỗi — report vẫn đầy đủ, chỉ thiếu phần nhận xét');
+  }
   renderReport(data, ai, false);
 
   btn.disabled = false; btn.textContent = '✦ Tạo report';
@@ -1076,6 +1089,7 @@ async function saveSheets() {
   try {
     const res = await fetch(SHEETS_URL, {
       method:'POST',
+      redirect:'follow',
       body:JSON.stringify({action:'saveReport',payload:{
         ...window._reportData,
         meetingDetails: JSON.stringify(window._reportData.meetingDetails),
