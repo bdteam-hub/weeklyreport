@@ -3,625 +3,1147 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PMAX BD Weekly Report</title>
+<title>PMAX BD Weekly Report v3</title>
 <style>
-  :root {
-    --green: #1D9E75; --green-light: #E1F5EE; --green-mid: #5DCAA5;
-    --blue: #378ADD; --blue-light: #E6F1FB;
-    --amber: #EF9F27; --amber-light: #FAEEDA;
-    --red: #E24B4A; --red-light: #FCEBEB;
-    --purple: #7F77DD; --purple-light: #EEEDFE;
-    --gray: #888780; --gray-light: #F1EFE8;
-    --text: #1a1a1a; --text-2: #555; --text-3: #999;
-    --border: #e5e5e5; --bg: #fafafa; --white: #fff;
-    --radius: 10px; --radius-sm: 6px;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); font-size: 14px; }
-  .app { display: flex; min-height: 100vh; }
-  .sidebar { width: 240px; background: var(--white); border-right: 1px solid var(--border); padding: 1.5rem 1rem; flex-shrink: 0; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
-  .main { flex: 1; padding: 2rem; max-width: 820px; }
-  .logo { display: flex; align-items: center; gap: 8px; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
-  .logo-mark { width: 28px; height: 28px; background: var(--green); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 13px; }
-  .logo-text { font-weight: 600; font-size: 13px; }
-  .logo-sub { font-size: 11px; color: var(--text-3); }
-  .nav-section { font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-3); margin: 1rem 0 0.4rem; }
-  .nav-item { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: var(--radius-sm); font-size: 12px; color: var(--text-2); cursor: pointer; transition: all 0.15s; margin-bottom: 2px; }
-  .nav-item:hover { background: var(--bg); color: var(--text); }
-  .nav-item.active { background: var(--green-light); color: var(--green); font-weight: 500; }
-  .nav-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); flex-shrink: 0; }
-  .nav-item.active .nav-dot, .nav-item.done .nav-dot { background: var(--green); }
-  .step-header { margin-bottom: 1.5rem; }
-  .step-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; color: var(--green); background: var(--green-light); padding: 4px 10px; border-radius: 99px; margin-bottom: 0.5rem; font-weight: 500; }
-  .step-title { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
-  .step-desc { font-size: 13px; color: var(--text-3); }
-  .form-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin-bottom: 1rem; }
-  .form-card-title { font-size: 12px; font-weight: 600; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 1rem; display: flex; align-items: center; gap: 6px; }
-  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .form-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-  .field { display: flex; flex-direction: column; gap: 4px; }
-  .field.full { grid-column: 1 / -1; }
-  label { font-size: 11px; font-weight: 500; color: var(--text-2); }
-  input, select, textarea { border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 7px 10px; font-size: 13px; color: var(--text); background: var(--white); transition: border 0.15s; font-family: inherit; width: 100%; }
-  input:focus, select:focus, textarea:focus { outline: none; border-color: var(--green); }
-  textarea { resize: vertical; min-height: 72px; line-height: 1.5; }
-  input[type="number"] { -moz-appearance: textfield; }
-  input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
-  .dynamic-row { display: grid; gap: 8px; align-items: start; margin-bottom: 8px; }
-  .dynamic-row.meeting-row { grid-template-columns: 2fr 1fr 1fr 60px 2fr 28px; }
-  .dynamic-row.aov-row { grid-template-columns: 2fr 1fr 1fr 1.5fr 1.5fr 28px; }
-  .dynamic-row.vertical-row { grid-template-columns: 1.2fr 60px 80px 80px 80px 2fr 28px; }
-  .dynamic-row input, .dynamic-row select { font-size: 12px; padding: 6px 8px; }
-  .btn-remove { width: 28px; height: 32px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--white); color: var(--text-3); cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; transition: all 0.15s; flex-shrink: 0; }
-  .btn-remove:hover { background: var(--red-light); border-color: var(--red); color: var(--red); }
-  .btn-add { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border: 1px dashed var(--border); border-radius: var(--radius-sm); font-size: 12px; color: var(--text-3); cursor: pointer; background: transparent; transition: all 0.15s; margin-top: 4px; }
-  .btn-add:hover { border-color: var(--green); color: var(--green); background: var(--green-light); }
-  .btn-primary { background: var(--green); color: white; border: none; border-radius: var(--radius-sm); padding: 10px 20px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.15s; display: inline-flex; align-items: center; gap: 7px; }
-  .btn-primary:hover { background: #189063; }
-  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
-  .btn-secondary { background: var(--white); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 9px 16px; font-size: 13px; cursor: pointer; transition: all 0.15s; display: inline-flex; align-items: center; gap: 7px; }
-  .btn-secondary:hover { background: var(--bg); }
-  .btn-actions { display: flex; gap: 8px; margin-top: 1.5rem; flex-wrap: wrap; }
-  .progress-bar { height: 3px; background: var(--border); border-radius: 99px; margin-bottom: 1.5rem; overflow: hidden; }
-  .progress-fill { height: 100%; background: var(--green); border-radius: 99px; transition: width 0.3s; }
-  .ai-generating { background: var(--purple-light); border: 1px solid #AFA9EC; border-radius: var(--radius); padding: 1.25rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 12px; }
-  .ai-spinner { width: 20px; height: 20px; border: 2px solid #AFA9EC; border-top-color: var(--purple); border-radius: 50%; animation: spin 0.8s linear infinite; flex-shrink: 0; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .ai-gen-text { font-size: 13px; color: var(--purple); font-weight: 500; }
-  .ai-gen-sub { font-size: 12px; color: #7F77DD; margin-top: 2px; }
-  #report-preview { display: none; }
-  .report-actions { display: flex; gap: 8px; margin-bottom: 1.5rem; flex-wrap: wrap; }
-  .btn-copy { background: var(--blue); color: white; border: none; border-radius: var(--radius-sm); padding: 10px 20px; font-size: 13px; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; transition: all 0.15s; }
-  .btn-copy:hover { background: #2a6bb5; }
-  .btn-edit { background: var(--white); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 9px 16px; font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; transition: all 0.15s; }
-  .btn-save { background: var(--green); color: white; border: none; border-radius: var(--radius-sm); padding: 9px 16px; font-size: 13px; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; }
-  #report-output { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem; line-height: 1.7; font-size: 13px; }
-  #report-output[contenteditable="true"] { outline: 2px solid var(--blue); }
-  .step-page { display: none; }
-  .step-page.active { display: block; }
-  .member-select-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .member-card { border: 2px solid var(--border); border-radius: var(--radius); padding: 14px; cursor: pointer; transition: all 0.15s; background: var(--white); }
-  .member-card:hover { border-color: var(--green-mid); }
-  .member-card.selected { border-color: var(--green); background: var(--green-light); }
-  .member-card .m-name { font-weight: 600; font-size: 13px; }
-  .member-card .m-meta { font-size: 11px; color: var(--text-3); margin-top: 3px; }
-  .member-card .m-role { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 99px; margin-top: 6px; }
-  .role-exec { background: var(--blue-light); color: #185FA5; }
-  .role-leader { background: var(--amber-light); color: #854F0B; }
-  .toast { position: fixed; bottom: 24px; right: 24px; background: var(--text); color: white; padding: 10px 18px; border-radius: 8px; font-size: 13px; opacity: 0; transform: translateY(8px); transition: all 0.25s; pointer-events: none; z-index: 999; }
-  .toast.show { opacity: 1; transform: translateY(0); }
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --g:#1D9E75;--gl:#E1F5EE;--gd:#0F6E56;--gm:#5DCAA5;
+  --b:#378ADD;--bl:#E6F1FB;--bd:#0C447C;
+  --a:#EF9F27;--al:#FAEEDA;--ad:#633806;
+  --r:#E24B4A;--rl:#FCEBEB;--rd:#791F1F;
+  --p:#7F77DD;--pl:#EEEDFE;--pd:#3C3489;
+  --t1:#2C2C2A;--t2:#5F5E5A;--t3:#B4B2A9;
+  --br:#e5e3dc;--bg:#F8F7F3;--wh:#fff;
+  --rad:10px;--rads:6px;
+}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--t1);font-size:13px;min-height:100vh;}
+
+/* TOP BAR */
+.topbar{background:var(--wh);border-bottom:1px solid var(--br);padding:11px 24px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100;}
+.logo{width:28px;height:28px;background:var(--g);border-radius:7px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:13px;}
+.topbar-name{font-size:13px;font-weight:600;color:var(--t1);}
+.topbar-sep{color:var(--t3);}
+.status-tag{font-size:10px;font-weight:600;padding:3px 9px;border-radius:99px;margin-left:4px;}
+.st-ok{background:var(--gl);color:var(--gd);}
+.st-load{background:var(--al);color:var(--ad);}
+.st-empty{background:var(--bg);color:var(--t3);border:1px solid var(--br);}
+.topbar-right{margin-left:auto;display:flex;gap:8px;align-items:center;}
+.btn-gen{background:var(--g);color:#fff;border:none;border-radius:var(--rads);padding:7px 18px;font-size:12px;font-weight:600;cursor:pointer;transition:background .12s;}
+.btn-gen:hover{background:var(--gd);}
+.btn-gen:disabled{opacity:.5;cursor:not-allowed;}
+
+/* TWO COL LAYOUT */
+.layout{display:flex;min-height:calc(100vh - 46px);}
+.form-wrap{width:360px;flex-shrink:0;border-right:1px solid var(--br);background:var(--wh);overflow-y:auto;height:calc(100vh - 46px);position:sticky;top:46px;}
+.preview-wrap{flex:1;padding:24px;overflow-y:auto;}
+
+/* FORM SECTIONS */
+.fsec{padding:16px 18px;border-bottom:1px solid var(--br);}
+.fsec-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--t3);margin-bottom:10px;}
+.fsec-notice{background:var(--bl);border-radius:var(--rads);padding:7px 10px;font-size:10px;color:var(--bd);display:flex;align-items:center;gap:6px;margin-bottom:10px;}
+
+/* MEMBER CHIPS */
+.member-chips{display:flex;gap:6px;flex-wrap:wrap;}
+.mchip{padding:6px 13px;border:1px solid var(--br);border-radius:var(--rads);font-size:12px;color:var(--t2);cursor:pointer;background:var(--wh);transition:all .12s;font-weight:500;}
+.mchip:hover{border-color:var(--gm);color:var(--t1);}
+.mchip.on{border-color:var(--g);background:var(--gl);color:var(--gd);font-weight:600;}
+
+/* WEEK ROW */
+.week-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;}
+.fld{display:flex;flex-direction:column;gap:3px;}
+.fld label{font-size:10px;font-weight:600;color:var(--t2);}
+.fld input,.fld select{font-size:12px;padding:6px 9px;border:1px solid var(--br);border-radius:var(--rads);background:var(--wh);color:var(--t1);width:100%;}
+.fld input:focus,.fld select:focus{outline:none;border-color:var(--g);}
+.fld textarea{font-size:12px;padding:6px 9px;border:1px solid var(--br);border-radius:var(--rads);background:var(--wh);color:var(--t1);resize:none;height:56px;line-height:1.45;width:100%;}
+.fld textarea:focus{outline:none;border-color:var(--g);}
+
+/* OKR/KPI READONLY CARDS */
+.okr-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px;}
+.okr-card{background:var(--bg);border-radius:var(--rads);padding:9px 11px;}
+.okr-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-bottom:4px;}
+.okr-actual{font-size:20px;font-weight:700;color:var(--t1);line-height:1;}
+.okr-plan{font-size:10px;color:var(--t3);margin-top:2px;}
+.okr-pct{font-size:9px;font-weight:700;padding:2px 6px;border-radius:99px;margin-top:4px;display:inline-block;}
+.pok{background:var(--gl);color:var(--gd);}
+.pmid{background:var(--al);color:var(--ad);}
+.plo{background:var(--rl);color:var(--rd);}
+
+/* FUNNEL INPUTS */
+.fn-labels{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:3px;}
+.fn-lbl{font-size:8px;font-weight:700;color:var(--t3);text-align:center;text-transform:uppercase;letter-spacing:.04em;}
+.fn-inputs{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+.fn-inp{font-size:12px;border:1px solid var(--br);border-radius:4px;padding:5px 0;text-align:center;background:var(--wh);color:var(--t1);width:100%;}
+.fn-inp:focus{outline:none;border-color:var(--g);}
+.fn-prev{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:2px;}
+.fn-p{font-size:9px;color:var(--t3);text-align:center;}
+
+/* ACT INPUTS */
+.act-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
+.act-fld{display:flex;flex-direction:column;gap:3px;align-items:center;}
+.act-fld label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--t3);}
+.act-fld input{font-size:13px;border:1px solid var(--br);border-radius:4px;padding:6px 0;text-align:center;background:var(--wh);color:var(--t1);width:100%;}
+.act-fld input:focus{outline:none;border-color:var(--g);}
+.act-prev{font-size:9px;color:var(--t3);text-align:center;}
+
+/* DYNAMIC ROWS */
+.drow{display:grid;gap:5px;margin-bottom:5px;align-items:start;}
+.drow.rm{grid-template-columns:2fr 1fr 2fr 22px;}
+.drow.ra{grid-template-columns:2fr 1fr 1fr 1fr 22px;}
+.drow.rv{grid-template-columns:1.4fr 50px 60px 55px 22px;}
+.drow input,.drow select{font-size:11px;padding:4px 6px;border:1px solid var(--br);border-radius:4px;background:var(--wh);color:var(--t1);width:100%;}
+.drow-hdr{display:grid;gap:5px;margin-bottom:3px;}
+.drow-hdr span{font-size:8px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;}
+.btn-rm{width:22px;height:28px;border:1px solid var(--br);border-radius:4px;background:var(--wh);color:var(--t3);cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;}
+.btn-rm:hover{background:var(--rl);border-color:var(--r);color:var(--r);}
+.btn-add{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border:1px dashed var(--br);border-radius:4px;font-size:11px;color:var(--t3);cursor:pointer;background:transparent;margin-top:3px;}
+.btn-add:hover{border-color:var(--g);color:var(--g);background:var(--gl);}
+
+/* HL ROWS */
+.hl-row{display:flex;gap:5px;margin-bottom:4px;}
+.hl-row input{flex:1;font-size:11px;padding:5px 8px;border:1px solid var(--br);border-radius:4px;background:var(--wh);color:var(--t1);}
+.hl-row input:focus{outline:none;border-color:var(--g);}
+.hl-row.hl input{border-left:2px solid var(--g);border-radius:0 4px 4px 0;}
+.hl-row.rf input{border-left:2px solid var(--r);border-radius:0 4px 4px 0;}
+.hl-row.ns input{border-left:2px solid var(--b);border-radius:0 4px 4px 0;}
+
+/* ── PREVIEW ── */
+.preview-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:400px;gap:8px;color:var(--t3);}
+.pe-icon{font-size:32px;opacity:.25;}
+.rpt-container{max-width:680px;}
+.rpt-hdr{border-left:4px solid var(--g);background:var(--gl);border-radius:0 var(--rads) var(--rads) 0;padding:12px 16px;margin-bottom:14px;}
+.rpt-hdr-title{font-size:16px;font-weight:700;color:var(--t1);}
+.rpt-hdr-sub{font-size:11px;color:var(--gd);margin-top:3px;}
+
+.rpt-sec{margin-bottom:14px;}
+.rpt-sec-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--t3);border-bottom:1px solid var(--br);padding-bottom:5px;margin-bottom:9px;}
+
+/* HL items in preview */
+.rpt-hl{border-left:2px solid var(--g);background:var(--gl);padding:6px 11px;margin-bottom:4px;font-size:12px;color:var(--gd);border-radius:0 4px 4px 0;line-height:1.5;}
+.rpt-rf{border-left:2px solid var(--r);background:var(--rl);padding:6px 11px;margin-bottom:4px;font-size:12px;color:var(--rd);border-radius:0 4px 4px 0;line-height:1.5;}
+.rpt-ns{border-left:2px solid var(--b);background:var(--bl);padding:6px 11px;margin-bottom:4px;font-size:12px;color:var(--bd);border-radius:0 4px 4px 0;line-height:1.5;}
+
+/* KPI BARS */
+.kb{margin-bottom:9px;}
+.kb-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;}
+.kb-lbl{font-size:11px;color:var(--t2);}
+.kb-right{display:flex;align-items:baseline;gap:5px;}
+.kb-a{font-size:13px;font-weight:700;color:var(--t1);}
+.kb-p{font-size:10px;color:var(--t3);}
+.kb-pct{font-size:9px;font-weight:700;padding:2px 6px;border-radius:99px;}
+.kb-track{height:4px;background:var(--bg);border-radius:99px;overflow:hidden;}
+.kb-fill{height:100%;border-radius:99px;transition:width .3s;}
+
+/* FUNNEL CELLS */
+.fn-cells{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+.fnc{border-radius:5px;padding:7px 4px;text-align:center;background:var(--bg);}
+.fnc.fnc-ok{background:var(--gl);}
+.fnc.fnc-mid{background:var(--al);}
+.fnc.fnc-lo{background:var(--rl);}
+.fnc .fl{font-size:8px;color:var(--t3);text-transform:uppercase;font-weight:600;letter-spacing:.04em;}
+.fnc .fn{font-size:17px;font-weight:700;color:var(--t1);line-height:1.2;}
+.fnc .fcr{font-size:8px;color:var(--t2);}
+.fnc .fw{font-size:8px;font-weight:700;}
+
+/* ACT PREVIEW */
+.act-prev-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;}
+.apc{border-radius:6px;padding:9px 6px;text-align:center;}
+.apc .al{font-size:8px;text-transform:uppercase;font-weight:700;letter-spacing:.05em;}
+.apc .an{font-size:18px;font-weight:700;line-height:1.3;}
+.apc .aw{font-size:9px;font-weight:700;}
+
+/* AI ANALYSIS BLOCK */
+.ai-block{background:var(--bg);border-radius:var(--rads);padding:10px 13px;margin-top:8px;font-size:12px;color:var(--t2);line-height:1.7;border-left:2px solid var(--br);}
+.ai-block.loading{color:var(--t3);font-style:italic;}
+
+/* TABLES */
+.tbl{width:100%;border-collapse:collapse;font-size:11px;table-layout:fixed;}
+.tbl th{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--t3);padding:6px 8px;border-bottom:1px solid var(--br);text-align:left;}
+.tbl td{padding:6px 8px;border-bottom:1px solid var(--bg);font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.tbl tr:last-child td{border-bottom:none;}
+.vpill{font-size:9px;font-weight:700;padding:2px 7px;border-radius:99px;display:inline-block;white-space:nowrap;}
+.spill{font-size:9px;font-weight:700;padding:2px 6px;border-radius:3px;display:inline-block;}
+
+/* ISSUE BOX */
+.issue-box{border:1px solid var(--br);border-radius:var(--rads);overflow:hidden;}
+.issue-row{padding:9px 12px;border-bottom:1px solid var(--br);}
+.issue-row:last-child{border-bottom:none;}
+.issue-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-bottom:4px;}
+.issue-txt{font-size:11px;color:var(--t1);line-height:1.55;}
+
+/* TOOLBAR */
+.toolbar{background:var(--wh);border-top:1px solid var(--br);padding:10px 24px;display:none;gap:8px;align-items:center;}
+.toolbar.show{display:flex;}
+.tb-btn{padding:6px 14px;border-radius:var(--rads);font-size:12px;font-weight:600;cursor:pointer;border:none;transition:all .12s;}
+.tb-copy{background:var(--gl);color:var(--gd);}
+.tb-copy:hover{background:#c8f0e4;}
+.tb-edit{background:var(--bg);color:var(--t1);border:1px solid var(--br) !important;}
+.tb-edit:hover{background:var(--br);}
+.tb-save{background:var(--bl);color:var(--bd);}
+.tb-save:hover{background:#cde5f8;}
+.tb-new{background:var(--wh);color:var(--t2);border:1px solid var(--br) !important;margin-left:auto;}
+
+/* TOAST */
+.toast{position:fixed;bottom:20px;right:20px;background:var(--t1);color:#fff;padding:9px 16px;border-radius:7px;font-size:12px;font-weight:500;opacity:0;transform:translateY(8px);transition:all .2s;pointer-events:none;z-index:9999;}
+.toast.show{opacity:1;transform:translateY(0);}
+
+/* OKR TABLE in preview */
+.okr-preview{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;}
+.okrp-card{background:var(--bg);border-radius:var(--rads);padding:10px 12px;}
+.okrp-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-bottom:4px;}
+.okrp-nums{display:flex;align-items:baseline;gap:5px;}
+.okrp-a{font-size:16px;font-weight:700;color:var(--t1);}
+.okrp-p{font-size:10px;color:var(--t3);}
+.okrp-pct{font-size:9px;font-weight:700;padding:2px 6px;border-radius:99px;display:inline-block;margin-top:4px;}
+.okrp-rr{font-size:9px;color:var(--t3);margin-top:2px;}
+
+/* KPI TABLE in preview */
+.kpi-tbl{width:100%;border-collapse:collapse;font-size:11px;}
+.kpi-tbl th{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--t3);padding:5px 8px;border-bottom:1px solid var(--br);text-align:left;}
+.kpi-tbl td{padding:6px 8px;border-bottom:1px solid var(--bg);font-size:11px;}
+.kpi-tbl tr:last-child td{border-bottom:none;}
+.kpi-total{font-size:13px;font-weight:700;text-align:right;padding:8px;background:var(--al);color:var(--ad);border-radius:0 0 var(--rads) var(--rads);}
 </style>
 </head>
 <body>
-<div class="app">
-  <aside class="sidebar">
-    <div class="logo">
-      <div class="logo-mark">P</div>
-      <div><div class="logo-text">PMAX BD Report</div><div class="logo-sub">Weekly Generator</div></div>
-    </div>
-    <div class="nav-section">Các bước</div>
-    <div class="nav-item active" id="nav-0" onclick="goStep(0)"><div class="nav-dot"></div> Chọn thành viên</div>
-    <div class="nav-item" id="nav-1" onclick="goStep(1)"><div class="nav-dot"></div> Kế hoạch & KPI</div>
-    <div class="nav-item" id="nav-2" onclick="goStep(2)"><div class="nav-dot"></div> Activities & Funnel</div>
-    <div class="nav-item" id="nav-3" onclick="goStep(3)"><div class="nav-dot"></div> Meeting & AOV</div>
-    <div class="nav-item" id="nav-4" onclick="goStep(4)"><div class="nav-dot"></div> Vertical & Vấn đề</div>
-    <div class="nav-item" id="nav-5" onclick="goStep(5)"><div class="nav-dot"></div> Highlight & Review</div>
-  </aside>
-  <main class="main">
-    <div class="progress-bar"><div class="progress-fill" id="progress" style="width:0%"></div></div>
 
-    <!-- Step 0 -->
-    <div class="step-page active" id="step-0">
-      <div class="step-header">
-        <div class="step-badge">Bước 1 / 6</div>
-        <div class="step-title">Chọn thành viên</div>
-        <div class="step-desc">Report sẽ tự load dữ liệu tuần trước để so sánh WoW</div>
-      </div>
-      <div class="form-card">
-        <div class="form-card-title">Thông tin tuần báo cáo</div>
-        <div class="form-grid">
-          <div class="field"><label>Quý</label><select id="quarter"><option value="Q2">Q2/2026</option><option value="Q3">Q3/2026</option><option value="Q1">Q1/2026</option></select></div>
-          <div class="field"><label>Tuần số</label><input type="number" id="week" min="1" max="13" value="8"></div>
-          <div class="field"><label>Từ ngày</label><input type="date" id="period-from"></div>
-          <div class="field"><label>Đến ngày</label><input type="date" id="period-to"></div>
-        </div>
-      </div>
-      <div class="form-card">
-        <div class="form-card-title">Chọn thành viên</div>
-        <div class="member-select-wrap" id="member-list"><div style="color:var(--text-3);font-size:13px;">Đang tải...</div></div>
-      </div>
-      <div class="btn-actions"><button class="btn-primary" onclick="goStep(1)">Tiếp theo →</button></div>
-    </div>
-
-    <!-- Step 1 -->
-    <div class="step-page" id="step-1">
-      <div class="step-header"><div class="step-badge">Bước 2 / 6</div><div class="step-title">Kế hoạch & KPI</div></div>
-      <div class="form-card">
-        <div class="form-card-title">📋 Kế hoạch tuần này</div>
-        <div class="form-grid">
-          <div class="field"><label>Số khách dự kiến tiếp cận</label><input type="number" id="plan-clients" placeholder="12"></div>
-          <div class="field"><label>Focus vertical tuần này</label><input type="text" id="plan-focus-vertical" placeholder="Healthcare (IVF/Sản nhi)"></div>
-          <div class="field full"><label>Mục tiêu stage move</label><input type="text" id="plan-stage-move" placeholder="Phương Châu: Brief → QB"></div>
-          <div class="field full"><label>Deal ưu tiên BOF</label><input type="text" id="plan-priority-deals" placeholder="Biocodex top-up"></div>
-        </div>
-      </div>
-      <div class="form-card">
-        <div class="form-card-title">🎯 KPI — Actual vs Plan (Q2 QTD)</div>
-        <div class="form-grid-4">
-          <div class="field"><label>QB Actual</label><input type="number" id="kpi-qb-actual" placeholder="3"></div>
-          <div class="field"><label>QB Plan Q2</label><input type="number" id="kpi-qb-plan" placeholder="5"></div>
-          <div class="field"><label>GP2 Actual (M)</label><input type="number" id="kpi-gp2-actual" placeholder="125"></div>
-          <div class="field"><label>GP2 Plan Q2 (M)</label><input type="number" id="kpi-gp2-plan" placeholder="675"></div>
-          <div class="field"><label>Meeting 1st Actual</label><input type="number" id="kpi-meeting-actual" placeholder="17"></div>
-          <div class="field"><label>Meeting 1st Plan Q2</label><input type="number" id="kpi-meeting-plan" placeholder="25"></div>
-          <div class="field"><label>Activities Actual</label><input type="number" id="kpi-act-actual" placeholder="251"></div>
-          <div class="field"><label>Activities Plan Q2</label><input type="number" id="kpi-act-plan" placeholder="280"></div>
-        </div>
-      </div>
-      <div class="btn-actions"><button class="btn-secondary" onclick="goStep(0)">← Quay lại</button><button class="btn-primary" onclick="goStep(2)">Tiếp theo →</button></div>
-    </div>
-
-    <!-- Step 2 -->
-    <div class="step-page" id="step-2">
-      <div class="step-header"><div class="step-badge">Bước 3 / 6</div><div class="step-title">Activities & Funnel</div></div>
-      <div class="form-card">
-        <div class="form-card-title">📊 Activities tuần này</div>
-        <div class="form-grid-4">
-          <div class="field"><label>Call</label><input type="number" id="act-call" placeholder="23"></div>
-          <div class="field"><label>SMS</label><input type="number" id="act-sms" placeholder="87"></div>
-          <div class="field"><label>Email & other</label><input type="number" id="act-email" placeholder="41"></div>
-          <div class="field"><label>Meeting</label><input type="number" id="act-meeting" placeholder="6"></div>
-        </div>
-      </div>
-      <div class="form-card">
-        <div class="form-card-title">🔽 Funnel — Actual (Q2 QTD)</div>
-        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-bottom:6px;">
-          <span style="font-size:10px;color:var(--text-3);font-weight:600;text-transform:uppercase;">Lead</span><span style="font-size:10px;color:var(--text-3);font-weight:600;text-transform:uppercase;">QL</span><span style="font-size:10px;color:var(--text-3);font-weight:600;text-transform:uppercase;">Brief</span><span style="font-size:10px;color:var(--text-3);font-weight:600;text-transform:uppercase;">QB</span><span style="font-size:10px;color:var(--text-3);font-weight:600;text-transform:uppercase;">QS</span><span style="font-size:10px;color:var(--text-3);font-weight:600;text-transform:uppercase;">Verbal</span><span style="font-size:10px;color:var(--text-3);font-weight:600;text-transform:uppercase;">Contract</span>
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-bottom:14px;">
-          <input type="number" id="f-lead" placeholder="19"><input type="number" id="f-ql" placeholder="15"><input type="number" id="f-brief" placeholder="4"><input type="number" id="f-qb" placeholder="3"><input type="number" id="f-qs" placeholder="1"><input type="number" id="f-verbal" placeholder="0"><input type="number" id="f-contract" placeholder="0">
-        </div>
-        <div class="form-card-title" style="margin-top:4px;">Plan Q2</div>
-        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:8px;">
-          <input type="number" id="fp-lead" placeholder="25"><input type="number" id="fp-ql" placeholder="18"><input type="number" id="fp-brief" placeholder="6"><input type="number" id="fp-qb" placeholder="5"><input type="number" id="fp-qs" placeholder="3"><input type="number" id="fp-verbal" placeholder="1"><input type="number" id="fp-contract" placeholder="1">
-        </div>
-      </div>
-      <div class="btn-actions"><button class="btn-secondary" onclick="goStep(1)">← Quay lại</button><button class="btn-primary" onclick="goStep(3)">Tiếp theo →</button></div>
-    </div>
-
-    <!-- Step 3 -->
-    <div class="step-page" id="step-3">
-      <div class="step-header"><div class="step-badge">Bước 4 / 6</div><div class="step-title">Meeting & AOV Control</div></div>
-      <div class="form-card">
-        <div class="form-card-title">🤝 Meeting</div>
-        <div style="display:grid;grid-template-columns:2fr 1fr 1fr 60px 2fr 28px;gap:8px;margin-bottom:4px;">
-          <span style="font-size:10px;color:var(--text-3);font-weight:600;text-transform:uppercase;">Khách hàng</span><span style="font-size:10px;color:var(--text-3);font-weight:600;text-transform:uppercase;">Vertical</span><span style="font-size:10px;color:var(--text-3);font-weight:600;text-transform:uppercase;">Stage</span><span style="font-size:10px;color:var(--text-3);font-weight:600;text-transform:uppercase;">Số lần</span><span style="font-size:10px;color:var(--text-3);font-weight:600;text-transform:uppercase;">Outcome</span><span></span>
-        </div>
-        <div id="meeting-rows"></div>
-        <button class="btn-add" onclick="addMeetingRow()">+ Thêm khách</button>
-      </div>
-      <div class="form-card">
-        <div class="form-card-title">💰 AOV Control</div>
-        <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1.5fr 1.5fr 28px;gap:8px;margin-bottom:4px;">
-          <span style="font-size:10px;color:var(--text-3);font-weight:600;text-transform:uppercase;">Deal</span><span style="font-size:10px;color:var(--text-3);font-weight:600;text-transform:uppercase;">Vertical</span><span style="font-size:10px;color:var(--text-3);font-weight:600;text-transform:uppercase;">Stage</span><span style="font-size:10px;color:var(--text-3);font-weight:600;text-transform:uppercase;">Value</span><span style="font-size:10px;color:var(--text-3);font-weight:600;text-transform:uppercase;">Next step</span><span></span>
-        </div>
-        <div id="aov-rows"></div>
-        <button class="btn-add" onclick="addAOVRow()">+ Thêm deal</button>
-      </div>
-      <div class="btn-actions"><button class="btn-secondary" onclick="goStep(2)">← Quay lại</button><button class="btn-primary" onclick="goStep(4)">Tiếp theo →</button></div>
-    </div>
-
-    <!-- Step 4 -->
-    <div class="step-page" id="step-4">
-      <div class="step-header"><div class="step-badge">Bước 5 / 6</div><div class="step-title">Vertical & Vấn đề</div></div>
-      <div class="form-card">
-        <div class="form-card-title">📊 Vertical Analysis</div>
-        <div style="display:grid;grid-template-columns:1.2fr 60px 80px 80px 80px 2fr 28px;gap:8px;margin-bottom:4px;">
-          <span style="font-size:10px;color:var(--text-3);font-weight:600;text-transform:uppercase;">Vertical</span><span style="font-size:10px;color:var(--text-3);font-weight:600;text-transform:uppercase;">Khách</span><span style="font-size:10px;color:var(--text-3);font-weight:600;text-transform:uppercase;">Activities</span><span style="font-size:10px;color:var(--text-3);font-weight:600;text-transform:uppercase;">Lead→QL</span><span style="font-size:10px;color:var(--text-3);font-weight:600;text-transform:uppercase;">Freq</span><span style="font-size:10px;color:var(--text-3);font-weight:600;text-transform:uppercase;">Stage nổi bật</span><span></span>
-        </div>
-        <div id="vertical-rows"></div>
-        <button class="btn-add" onclick="addVerticalRow()">+ Thêm vertical</button>
-      </div>
-      <div class="form-card">
-        <div class="form-card-title">⚠️ Vấn đề & Điều chỉnh</div>
-        <div class="field" style="margin-bottom:12px;"><label>Bottleneck tuần này?</label><textarea id="issue-bottleneck" placeholder="CR Brief→QB thấp..."></textarea></div>
-        <div class="field" style="margin-bottom:12px;"><label>Deal nào đang risk?</label><textarea id="issue-risk" placeholder="Chiro dời lịch 2 lần..."></textarea></div>
-        <div class="field"><label>Điều chỉnh tuần tới?</label><textarea id="issue-adjust" placeholder="Tăng Relationship Direct..."></textarea></div>
-      </div>
-      <div class="btn-actions"><button class="btn-secondary" onclick="goStep(3)">← Quay lại</button><button class="btn-primary" onclick="goStep(5)">Tiếp theo →</button></div>
-    </div>
-
-    <!-- Step 5 -->
-    <div class="step-page" id="step-5">
-      <div class="step-header"><div class="step-badge">Bước 6 / 6</div><div class="step-title">Highlight & Tạo Report</div></div>
-      <div class="form-card"><div class="form-card-title">⭐ Highlight</div><div id="hl-rows"></div><button class="btn-add" onclick="addHLRow('hl')">+ Thêm điểm sáng</button></div>
-      <div class="form-card"><div class="form-card-title" style="color:var(--red);">🚩 Red flags</div><div id="rf-rows"></div><button class="btn-add" onclick="addHLRow('rf')">+ Thêm red flag</button></div>
-      <div class="form-card"><div class="form-card-title" style="color:var(--blue);">→ Next step</div><div id="ns-rows"></div><button class="btn-add" onclick="addHLRow('ns')">+ Thêm next step</button></div>
-      <div class="btn-actions"><button class="btn-secondary" onclick="goStep(4)">← Quay lại</button><button class="btn-primary" id="btn-generate" onclick="generateReport()">✦ Tạo Report với AI</button></div>
-    </div>
-
-    <!-- Report Preview -->
-    <div id="report-preview">
-      <div id="ai-generating" class="ai-generating" style="display:none;">
-        <div class="ai-spinner"></div>
-        <div><div class="ai-gen-text">Gemini đang phân tích...</div><div class="ai-gen-sub" id="ai-gen-status">Đang xử lý</div></div>
-      </div>
-      <div class="report-actions">
-        <button class="btn-copy" onclick="copyReport()">📋 Copy để paste vào Gmail</button>
-        <button class="btn-edit" onclick="toggleEdit()">✏️ Chỉnh sửa</button>
-        <button class="btn-save" onclick="saveToSheets()">💾 Lưu vào Sheets</button>
-        <button class="btn-secondary" onclick="goStep(0)">← Làm report mới</button>
-      </div>
-      <div id="report-output"></div>
-    </div>
-  </main>
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="logo">P</div>
+  <span class="topbar-name">PMAX BD Report</span>
+  <span class="topbar-sep">·</span>
+  <span class="status-tag st-empty" id="status-tag">Chọn thành viên</span>
+  <div class="topbar-right">
+    <button class="btn-gen" id="btn-gen" onclick="generateReport()" disabled>✦ Tạo report</button>
+  </div>
 </div>
+
+<div class="layout">
+  <!-- ═══ FORM COL ═══ -->
+  <div class="form-wrap">
+
+    <!-- 1. Member + week -->
+    <div class="fsec">
+      <div class="fsec-title">Thành viên & tuần</div>
+      <div class="member-chips">
+        <div class="mchip" onclick="selectMember('My',this)">Hoài My</div>
+        <div class="mchip" onclick="selectMember('Ngoc',this)">Ngọc</div>
+        <div class="mchip" onclick="selectMember('Phuong',this)">Phương</div>
+        <div class="mchip" onclick="selectMember('Thao',this)">Thảo</div>
+      </div>
+      <div class="week-row">
+        <div class="fld"><label>Quý</label>
+          <select id="quarter"><option value="Q2">Q2 / 2026</option><option value="Q3">Q3 / 2026</option></select>
+        </div>
+        <div class="fld"><label>Tuần số</label><input type="number" id="week" value="8" min="1" max="13"></div>
+        <div class="fld"><label>Từ ngày</label><input type="date" id="from-date"></div>
+        <div class="fld"><label>Đến ngày</label><input type="date" id="to-date"></div>
+      </div>
+    </div>
+
+    <!-- 2. OKR + KPI readonly -->
+    <div class="fsec" id="okr-section" style="display:none;">
+      <div class="fsec-title">OKR & KPI — pulled từ Sheets</div>
+      <div class="fsec-notice" id="okr-notice">
+        <span>📡</span> <span id="okr-notice-txt">Đang load...</span>
+      </div>
+      <!-- OKR cards -->
+      <div style="font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;">OKR — Acquisition</div>
+      <div class="okr-grid">
+        <div class="okr-card">
+          <div class="okr-lbl">Brief BE</div>
+          <div class="okr-actual" id="okr-brief-a">—</div>
+          <div class="okr-plan" id="okr-brief-p">plan: —</div>
+          <span class="okr-pct" id="okr-brief-pct">—</span>
+        </div>
+        <div class="okr-card">
+          <div class="okr-lbl">Meeting</div>
+          <div class="okr-actual" id="okr-meet-a">—</div>
+          <div class="okr-plan" id="okr-meet-p">plan: —</div>
+          <span class="okr-pct" id="okr-meet-pct">—</span>
+        </div>
+        <div class="okr-card">
+          <div class="okr-lbl">Activities</div>
+          <div class="okr-actual" id="okr-act-a">—</div>
+          <div class="okr-plan" id="okr-act-p">plan: —</div>
+          <span class="okr-pct" id="okr-act-pct">—</span>
+        </div>
+        <div class="okr-card">
+          <div class="okr-lbl">GP2 from QB (M)</div>
+          <div class="okr-actual" id="okr-gp2-a">—</div>
+          <div class="okr-plan" id="okr-gp2-p">plan: —</div>
+          <span class="okr-pct" id="okr-gp2-pct">—</span>
+        </div>
+        <div class="okr-card" style="grid-column:1/-1;">
+          <div class="okr-lbl">Frequency/client</div>
+          <div class="okr-actual" id="okr-freq-a">—</div>
+          <div class="okr-plan" id="okr-freq-p">plan: —</div>
+          <span class="okr-pct" id="okr-freq-pct">—</span>
+        </div>
+      </div>
+      <!-- KPI -->
+      <div style="font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;margin:10px 0 6px;">KPI Q2/2026</div>
+      <div class="okr-grid">
+        <div class="okr-card">
+          <div class="okr-lbl">QB Passive</div>
+          <div class="okr-actual" id="kpi-qbp-a">—</div>
+          <div class="okr-plan" id="kpi-qbp-p">KPI: —</div>
+          <span class="okr-pct" id="kpi-qbp-pct">—</span>
+        </div>
+        <div class="okr-card">
+          <div class="okr-lbl">QB Active</div>
+          <div class="okr-actual" id="kpi-qba-a">—</div>
+          <div class="okr-plan" id="kpi-qba-p">KPI: —</div>
+          <span class="okr-pct" id="kpi-qba-pct">—</span>
+        </div>
+        <div class="okr-card">
+          <div class="okr-lbl">GP2 Active (M)</div>
+          <div class="okr-actual" id="kpi-gp2-a">—</div>
+          <div class="okr-plan" id="kpi-gp2-p">KPI: —</div>
+          <span class="okr-pct" id="kpi-gp2-pct">—</span>
+        </div>
+        <div class="okr-card">
+          <div class="okr-lbl">Meeting 1st</div>
+          <div class="okr-actual" id="kpi-meet-a">—</div>
+          <div class="okr-plan" id="kpi-meet-p">KPI: —</div>
+          <span class="okr-pct" id="kpi-meet-pct">—</span>
+        </div>
+      </div>
+      <div style="font-size:10px;color:var(--t3);text-align:right;margin-top:4px;">Total KPI achievement: <strong id="kpi-total-pct" style="color:var(--t1);">—</strong></div>
+    </div>
+
+    <!-- 3. Activities tuần này -->
+    <div class="fsec" id="act-section" style="display:none;">
+      <div class="fsec-title">Activities tuần này</div>
+      <div class="act-grid">
+        <div class="act-fld">
+          <label>Call</label>
+          <input type="number" id="a-call" value="0" oninput="liveUpdate()">
+          <div class="act-prev" id="p-call">T.trước: —</div>
+        </div>
+        <div class="act-fld">
+          <label>SMS/Zalo</label>
+          <input type="number" id="a-sms" value="0" oninput="liveUpdate()">
+          <div class="act-prev" id="p-sms">T.trước: —</div>
+        </div>
+        <div class="act-fld">
+          <label>Email</label>
+          <input type="number" id="a-email" value="0" oninput="liveUpdate()">
+          <div class="act-prev" id="p-email">T.trước: —</div>
+        </div>
+        <div class="act-fld">
+          <label>Meeting</label>
+          <input type="number" id="a-meeting" value="0" oninput="liveUpdate()">
+          <div class="act-prev" id="p-meeting">T.trước: —</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Funnel -->
+    <div class="fsec" id="funnel-section" style="display:none;">
+      <div class="fsec-title">Funnel Q2 QTD (update số mới)</div>
+      <div class="fn-labels">
+        <div class="fn-lbl">Lead</div><div class="fn-lbl">QL</div><div class="fn-lbl">Brief</div>
+        <div class="fn-lbl">QB</div><div class="fn-lbl">QS</div><div class="fn-lbl">Verbal</div><div class="fn-lbl">Contract</div>
+      </div>
+      <div class="fn-inputs">
+        <input class="fn-inp" type="number" id="f-lead" value="0" oninput="liveUpdate()">
+        <input class="fn-inp" type="number" id="f-ql" value="0" oninput="liveUpdate()">
+        <input class="fn-inp" type="number" id="f-brief" value="0" oninput="liveUpdate()">
+        <input class="fn-inp" type="number" id="f-qb" value="0" oninput="liveUpdate()">
+        <input class="fn-inp" type="number" id="f-qs" value="0" oninput="liveUpdate()">
+        <input class="fn-inp" type="number" id="f-verbal" value="0" oninput="liveUpdate()">
+        <input class="fn-inp" type="number" id="f-contract" value="0" oninput="liveUpdate()">
+      </div>
+      <div class="fn-prev" id="fn-prev-row">
+        <div class="fn-p">—</div><div class="fn-p">—</div><div class="fn-p">—</div>
+        <div class="fn-p">—</div><div class="fn-p">—</div><div class="fn-p">—</div><div class="fn-p">—</div>
+      </div>
+    </div>
+
+    <!-- 5. Meeting -->
+    <div class="fsec" id="meet-section" style="display:none;">
+      <div class="fsec-title">Meeting tuần này</div>
+      <div class="drow-hdr rm" style="grid-template-columns:2fr 1fr 2fr 22px;">
+        <span>Khách hàng</span><span>Stage</span><span>Outcome / next step</span><span></span>
+      </div>
+      <div id="meet-rows"></div>
+      <button class="btn-add" onclick="addMeet()">+ Thêm khách</button>
+    </div>
+
+    <!-- 6. AOV -->
+    <div class="fsec" id="aov-section" style="display:none;">
+      <div class="fsec-title">AOV pipeline (pre-fill từ tuần trước)</div>
+      <div class="drow-hdr ra" style="grid-template-columns:2fr 1fr 1fr 1fr 22px;">
+        <span>Deal</span><span>Stage</span><span>Value</span><span>GP2 est.</span><span></span>
+      </div>
+      <div id="aov-rows"></div>
+      <button class="btn-add" onclick="addAOV()">+ Thêm deal</button>
+    </div>
+
+    <!-- 7. Vertical -->
+    <div class="fsec" id="vert-section" style="display:none;">
+      <div class="fsec-title">Vertical analysis</div>
+      <div class="drow-hdr rv" style="grid-template-columns:1.4fr 50px 60px 55px 22px;">
+        <span>Vertical</span><span>Khách</span><span>Activities</span><span>CR Lead→QL</span><span></span>
+      </div>
+      <div id="vert-rows"></div>
+      <button class="btn-add" onclick="addVert()">+ Thêm vertical</button>
+    </div>
+
+    <!-- 8. Highlight -->
+    <div class="fsec" id="hl-section" style="display:none;">
+      <div class="fsec-title">Highlight & key takeaway</div>
+      <div id="hl-rows"></div>
+      <button class="btn-add" onclick="addHL('hl')">+ Điểm sáng</button>
+      <div style="margin-top:8px;" id="rf-rows"></div>
+      <button class="btn-add" onclick="addHL('rf')">+ Red flag</button>
+      <div style="margin-top:8px;" id="ns-rows"></div>
+      <button class="btn-add" onclick="addHL('ns')">+ Next step</button>
+    </div>
+
+    <!-- 9. Issues -->
+    <div class="fsec" id="issue-section" style="display:none;">
+      <div class="fsec-title">Vấn đề & điều chỉnh</div>
+      <div class="fld" style="margin-bottom:8px;"><label>Bottleneck</label><textarea id="iss-bottleneck" oninput="liveUpdate()"></textarea></div>
+      <div class="fld" style="margin-bottom:8px;"><label>Deal risk</label><textarea id="iss-risk" oninput="liveUpdate()"></textarea></div>
+      <div class="fld"><label>Điều chỉnh tuần tới</label><textarea id="iss-adjust" oninput="liveUpdate()"></textarea></div>
+    </div>
+
+  </div><!-- /form-wrap -->
+
+  <!-- ═══ PREVIEW COL ═══ -->
+  <div class="preview-wrap" id="preview-wrap">
+    <div class="preview-empty" id="preview-empty">
+      <div class="pe-icon">📄</div>
+      <div style="font-size:13px;color:var(--t2);font-weight:500;">Chọn thành viên để bắt đầu</div>
+      <div style="font-size:11px;">OKR & KPI sẽ tự load từ Sheets</div>
+    </div>
+    <div class="rpt-container" id="rpt-container" style="display:none;">
+      <!-- populated by JS -->
+    </div>
+  </div>
+</div>
+
+<!-- TOOLBAR -->
+<div class="toolbar" id="toolbar">
+  <button class="tb-btn tb-copy" onclick="copyReport()">📋 Copy vào Gmail</button>
+  <button class="tb-btn tb-edit" id="btn-edit" onclick="toggleEdit()">✏️ Chỉnh sửa</button>
+  <button class="tb-btn tb-save" onclick="saveSheets()">💾 Lưu Sheets</button>
+  <button class="tb-btn tb-new" onclick="resetAll()">← Report mới</button>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
-// VERSION: 2.0 - Fixed AI proxy parsing
-const SHEETS_URL = 'https://script.google.com/a/macros/pmax.com.vn/s/AKfycbzINwc8D0CLAed4zmDYis2wspVOFAnsbdzqlHlc4WreHjJZx-B-L9ozEVZTnYfjx6Oycw/exec';
-let selectedMember = null, lastReport = null, currentStep = 0;
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbyRe6m-YZW6WVBZeG75J_bPdJKnzow1e2gMpjKL5fj8DmOQus55o6DkeQECvZ7gt9DX/exec';
+const CLAUDE_API = 'https://api.anthropic.com/v1/messages';
+const OKR_SHEET_ID = '1pU-2pZAOCTcETEH1_JGAQnWmh40BWU4_OE7D9ihdmIQ';
 
-function goStep(n) {
-  document.querySelectorAll('.step-page').forEach(p => p.classList.remove('active'));
-  document.getElementById('step-'+n).classList.add('active');
-  document.querySelectorAll('.nav-item').forEach((el,i) => {
-    el.classList.remove('active','done');
-    if(i===n) el.classList.add('active');
-    else if(i<n) el.classList.add('done');
-  });
-  document.getElementById('progress').style.width = (n/5*100)+'%';
-  document.getElementById('report-preview').style.display = 'none';
-  currentStep = n; window.scrollTo(0,0);
-}
-
-async function loadMembers() {
-  try {
-    const res = await fetch(SHEETS_URL+'?action=getMembers');
-    const data = await res.json();
-    if(data.success) renderMembers(data.members); else renderStaticMembers();
-  } catch { renderStaticMembers(); }
-}
-
-function renderStaticMembers() {
-  renderMembers([
-    {id:'bd_thao',name:'Thảo Hồ Lê Thanh',team:'NUP',role:'executive',vertical:'Healthcare, Real Estate'},
-    {id:'bd_phuong',name:'Huỳnh Phương',team:'BD',role:'executive',vertical:'Real Estate, Auto, Finance'},
-    {id:'bd_my',name:'Hoài My',team:'BD',role:'executive',vertical:'FMCG, Beauty, Hospitality'},
-    {id:'bd_ngoc',name:'Ngọc Nguyễn (Jolie)',team:'NUP',role:'leader',vertical:'All verticals'},
-    {id:'bd_dai',name:'Nguyễn Trọng Đại',team:'BD',role:'leader',vertical:'All verticals'},
-  ]);
-}
-
-function renderMembers(members) {
-  document.getElementById('member-list').innerHTML = members.map(m=>`
-    <div class="member-card" onclick="selectMember(${JSON.stringify(m).replace(/"/g,'&quot;')},this)">
-      <div class="m-name">${m.name}</div>
-      <div class="m-meta">${m.team} · ${m.vertical}</div>
-      <span class="m-role ${m.role==='leader'?'role-leader':'role-exec'}">${m.role==='leader'?'Leader':'Executive'}</span>
-    </div>`).join('');
-}
-
-async function selectMember(member, el) {
-  selectedMember = member;
-  document.querySelectorAll('.member-card').forEach(c=>c.classList.remove('selected'));
-  el.classList.add('selected');
-  try {
-    const res = await fetch(SHEETS_URL+'?action=getLastReport&memberId='+member.id);
-    const data = await res.json();
-    lastReport = data.report;
-    if(lastReport) showToast('✓ Đã load dữ liệu tuần '+lastReport.week+' để so sánh WoW');
-  } catch { lastReport = null; }
-}
+// ── MEMBER CONFIG ──────────────────────────────────────────
+// Row ranges in the OKR sheet (1-indexed) per member
+// OKR rows: Brief=rowBrief, Meeting=rowMeet, Act=rowAct, GP2=rowGP2, Freq=rowFreq
+// KPI rows: QBP=rowQBP, QBA=rowQBA, GP2K=rowGP2K, MeetK=rowMeetK
+const MEMBER_CFG = {
+  My:     {name:'Hoài My',    team:'BD', okr:{brief:4,meet:3,act:5,gp2:6,freq:7},    kpi:{qbp:2,qba:3,gp2:4,meet:5},    okrStart:2,  kpiStart:2},
+  Ngoc:   {name:'Ngọc',       team:'NUP',okr:{brief:13,meet:14,act:15,gp2:16,freq:18},kpi:{qbp:11,qba:12,gp2:13,meet:14}, okrStart:11, kpiStart:11},
+  Phuong: {name:'Phương',     team:'BD', okr:{brief:24,meet:25,act:26,gp2:27,freq:29},kpi:{qbp:24,qba:25,gp2:26,meet:27}, okrStart:22, kpiStart:23},
+  Thao:   {name:'Thảo',       team:'NUP',okr:{brief:35,meet:36,act:37,gp2:38,freq:40},kpi:{qbp:36,qba:37,gp2:38,meet:39}, okrStart:33, kpiStart:35},
+};
 
 const VERTICALS = ['Healthcare','Real Estate','FMCG','Beauty','Auto','Finance','Education','Home & Electronics','Hospitality','Others'];
 const STAGES = ['Lead','QL','Brief','QB','QS','Verbal','Contract','Execution','Not Verbal'];
-const vOpts = (s='') => VERTICALS.map(v=>`<option${v===s?' selected':''}>${v}</option>`).join('');
-const sOpts = (s='') => STAGES.map(v=>`<option${v===s?' selected':''}>${v}</option>`).join('');
 
-function addMeetingRow(d={}) {
-  const div = document.createElement('div');
-  div.className = 'dynamic-row meeting-row';
-  div.innerHTML = `<input type="text" placeholder="Tên khách hàng" value="${d.client||''}"><select>${vOpts(d.vertical)}</select><select>${sOpts(d.stage)}</select><input type="number" placeholder="1" value="${d.count||''}"><input type="text" placeholder="Outcome" value="${d.outcome||''}"><button class="btn-remove" onclick="this.parentElement.remove()">×</button>`;
-  document.getElementById('meeting-rows').appendChild(div);
+let currentMember = null;
+let memberData = {};    // pulled OKR/KPI data
+let lastReport = null;  // last week's report
+let previewShown = false;
+let isEditing = false;
+
+// ── HELPERS ────────────────────────────────────────────────
+const g = id => (document.getElementById(id)||{}).value||'';
+const gn = id => parseFloat(g(id))||0;
+const pct = (a,b) => b>0 ? Math.min(Math.round(a/b*100),999) : 0;
+const cr  = (a,b) => b>0 ? Math.round(a/b*100) : 0;
+const pctCls = p => p>=80?'pok':p>=50?'pmid':'plo';
+const fmtM = v => {
+  if(!v) return '—';
+  const n = parseFloat(v);
+  if(isNaN(n)) return v;
+  return n>=1000 ? (n/1000).toFixed(1)+'B' : n+'M';
+};
+
+function wowBadge(cur, prev) {
+  if(prev===null||prev===undefined) return '';
+  const d = cur - prev;
+  if(d>0) return `<span style="color:var(--g);font-weight:700;font-size:9px;">▲ +${d}</span>`;
+  if(d<0) return `<span style="color:var(--r);font-weight:700;font-size:9px;">▼ ${d}</span>`;
+  return `<span style="color:var(--t3);font-size:9px;">= 0</span>`;
 }
 
-function addAOVRow(d={}) {
-  const div = document.createElement('div');
-  div.className = 'dynamic-row aov-row';
-  div.innerHTML = `<input type="text" placeholder="Tên deal" value="${d.deal||''}"><select>${vOpts(d.vertical)}</select><select>${sOpts(d.stage)}</select><input type="text" placeholder="~1.2B" value="${d.value||''}"><input type="text" placeholder="Next step" value="${d.next||''}"><button class="btn-remove" onclick="this.parentElement.remove()">×</button>`;
-  document.getElementById('aov-rows').appendChild(div);
+function showSections(show) {
+  ['okr-section','act-section','funnel-section','meet-section','aov-section','vert-section','hl-section','issue-section']
+    .forEach(id => document.getElementById(id).style.display = show?'block':'none');
 }
 
-function addVerticalRow(d={}) {
-  const div = document.createElement('div');
-  div.className = 'dynamic-row vertical-row';
-  div.innerHTML = `<select>${vOpts(d.vertical)}</select><input type="number" placeholder="29" value="${d.companies||''}"><input type="number" placeholder="845" value="${d.activities||''}"><input type="text" placeholder="83%" value="${d.cr||''}"><input type="text" placeholder="16.9" value="${d.freq||''}"><input type="text" placeholder="2 Brief..." value="${d.stages||''}"><button class="btn-remove" onclick="this.parentElement.remove()">×</button>`;
-  document.getElementById('vertical-rows').appendChild(div);
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 3000);
 }
 
-function addHLRow(type) {
-  const p = {hl:'Điểm sáng...',rf:'Red flag...',ns:'Next step...'};
-  const div = document.createElement('div');
-  div.style.cssText = 'display:flex;gap:8px;margin-bottom:6px;';
-  div.innerHTML = `<input type="text" placeholder="${p[type]}" style="flex:1;"><button class="btn-remove" onclick="this.parentElement.remove()">×</button>`;
-  document.getElementById(type+'-rows').appendChild(div);
-}
+// ── MEMBER SELECT ──────────────────────────────────────────
+async function selectMember(key, el) {
+  document.querySelectorAll('.mchip').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');
+  currentMember = key;
+  const cfg = MEMBER_CFG[key];
 
-function g(id) { return document.getElementById(id)?.value||''; }
-function gn(id) { return parseFloat(g(id))||0; }
+  document.getElementById('status-tag').className = 'status-tag st-load';
+  document.getElementById('status-tag').textContent = 'Đang load ' + cfg.name + '...';
+  document.getElementById('btn-gen').disabled = true;
+  showSections(true);
+  document.getElementById('okr-notice-txt').textContent = 'Đang pull từ Sheets...';
 
-function collectData() {
-  const meetings = [...document.querySelectorAll('#meeting-rows .dynamic-row')].map(row => {
-    const inp = row.querySelectorAll('input'), sel = row.querySelectorAll('select');
-    return {client:inp[0].value,vertical:sel[0].value,stage:sel[1].value,count:inp[1].value,outcome:inp[2].value};
-  });
-  const aovDeals = [...document.querySelectorAll('#aov-rows .dynamic-row')].map(row => {
-    const inp = row.querySelectorAll('input'), sel = row.querySelectorAll('select');
-    return {deal:inp[0].value,vertical:sel[0].value,stage:sel[1].value,value:inp[1].value,next:inp[2].value};
-  });
-  const verticalData = [...document.querySelectorAll('#vertical-rows .dynamic-row')].map(row => {
-    const inp = row.querySelectorAll('input');
-    return {vertical:row.querySelector('select').value,companies:inp[0].value,activities:inp[1].value,cr:inp[2].value,freq:inp[3].value,stages:inp[4].value};
-  });
-  return {
-    memberId:selectedMember?.id||'', memberName:selectedMember?.name||'',
-    team:selectedMember?.team||'', role:selectedMember?.role||'',
-    quarter:g('quarter'), week:g('week'), period:g('period-from')+' – '+g('period-to'),
-    verticals:selectedMember?.vertical||'',
-    planClients:g('plan-clients'), planStageMove:g('plan-stage-move'),
-    planFocusVertical:g('plan-focus-vertical'), planPriorityDeals:g('plan-priority-deals'),
-    actCall:gn('act-call'), actSMS:gn('act-sms'), actEmail:gn('act-email'), actMeeting:gn('act-meeting'),
-    fLead:gn('f-lead'), fQL:gn('f-ql'), fBrief:gn('f-brief'), fQB:gn('f-qb'),
-    fQS:gn('f-qs'), fVerbal:gn('f-verbal'), fContract:gn('f-contract'),
-    fLeadPlan:gn('fp-lead'), fQLPlan:gn('fp-ql'), fBriefPlan:gn('fp-brief'), fQBPlan:gn('fp-qb'),
-    fQSPlan:gn('fp-qs'), fVerbalPlan:gn('fp-verbal'), fContractPlan:gn('fp-contract'),
-    kpiQBActual:gn('kpi-qb-actual'), kpiQBPlan:gn('kpi-qb-plan'),
-    kpiGP2Actual:gn('kpi-gp2-actual'), kpiGP2Plan:gn('kpi-gp2-plan'),
-    kpiMeetingActual:gn('kpi-meeting-actual'), kpiMeetingPlan:gn('kpi-meeting-plan'),
-    kpiActActual:gn('kpi-act-actual'), kpiActPlan:gn('kpi-act-plan'),
-    meetingDetails:meetings, aovDeals, verticalData,
-    highlight:[...document.querySelectorAll('#hl-rows input')].map(i=>i.value).filter(Boolean),
-    redflag:[...document.querySelectorAll('#rf-rows input')].map(i=>i.value).filter(Boolean),
-    nextstep:[...document.querySelectorAll('#ns-rows input')].map(i=>i.value).filter(Boolean),
-    issueBottleneck:g('issue-bottleneck'), issueRisk:g('issue-risk'), issueAdjust:g('issue-adjust'),
-    timestamp:new Date().toISOString()
-  };
-}
+  // Set default dates
+  setDefaultDates();
 
-// ══════ AI ANALYSIS — qua Apps Script proxy ══════
-async function generateAIAnalysis(d) {
-  const cr = (a,b) => b>0 ? Math.round(a/b*100) : 0;
-  const wow = (cur,key) => {
-    if(!lastReport||lastReport[key]===undefined) return '';
-    const diff = cur - parseFloat(lastReport[key]);
-    return ` (WoW:${diff>=0?'+':''}${diff})`;
-  };
-
-  const prompt = `Phân tích BD Weekly Report của ${d.memberName} — ${d.quarter} Tuần ${d.week}.
-Trả về JSON object với đúng 6 keys: kpi, activities, funnel, meeting, aov, vertical.
-Mỗi value là string 1-2 câu nhận xét tiếng Việt, dùng **text** để bold điểm quan trọng.
-QUAN TRỌNG: Chỉ trả về JSON thuần. Không markdown. Không backtick. Không giải thích thêm.
-
-KPI: QB ${d.kpiQBActual}/${d.kpiQBPlan} (${cr(d.kpiQBActual,d.kpiQBPlan)}%), GP2 ${d.kpiGP2Actual}M/${d.kpiGP2Plan}M (${cr(d.kpiGP2Actual,d.kpiGP2Plan)}%), Meeting ${d.kpiMeetingActual}/${d.kpiMeetingPlan}, Act ${d.kpiActActual}/${d.kpiActPlan}. Còn ~5 tuần.
-ACTIVITIES: Call ${d.actCall}${wow(d.actCall,'actCall')}, SMS ${d.actSMS}${wow(d.actSMS,'actSMS')}, Email ${d.actEmail}${wow(d.actEmail,'actEmail')}, Meeting ${d.actMeeting}${wow(d.actMeeting,'actMeeting')}.
-FUNNEL: Lead ${d.fLead}→QL ${d.fQL}(${cr(d.fQL,d.fLead)}%)→Brief ${d.fBrief}(${cr(d.fBrief,d.fQL)}%)→QB ${d.fQB}(${cr(d.fQB,d.fBrief)}%)→QS ${d.fQS}→Verbal ${d.fVerbal}→Contract ${d.fContract}.
-MEETING: ${d.meetingDetails.map(m=>m.client+'('+m.stage+','+m.count+'lần,'+m.outcome+')').join('; ')}.
-AOV: ${d.aovDeals.map(a=>a.deal+' '+a.stage+' '+a.value).join('; ')}.
-VERTICAL: ${d.verticalData.map(v=>v.vertical+': '+v.companies+' khách, '+v.activities+' act, CR '+v.cr).join('; ')}.`;
-
-  document.getElementById('ai-gen-status').textContent = 'Đang gửi qua proxy...';
-
+  // Pull OKR/KPI from Sheets
   try {
-    const res = await fetch(SHEETS_URL, {
-      method: 'POST',
-      body: JSON.stringify({ action: 'geminiAnalyze', prompts: { combined: prompt } })
-    });
+    const res = await fetch(SHEETS_URL + '?action=getMemberOKR&memberId=' + key);
     const data = await res.json();
-    console.log('PROXY RESPONSE:', JSON.stringify(data)); // debug log
-
-    if (!data.success) throw new Error(data.error || 'Proxy error');
-
-    let raw = data.results?.combined || '';
-    console.log('RAW GEMINI TEXT:', raw.substring(0, 300));
-
-    // Strip backticks nếu có
-    raw = raw.replace(/```json\s*/gi,'').replace(/```\s*/g,'').trim();
-
-    // Thử parse JSON trực tiếp
-    try {
-      const direct = JSON.parse(raw);
-      if (direct.kpi !== undefined) return direct;
-    } catch(e) {}
-
-    // Tìm JSON object trong text
-    const match = raw.match(/\{[\s\S]*\}/);
-    if (match) {
-      try {
-        const parsed = JSON.parse(match[0]);
-        if (parsed.kpi !== undefined) return parsed;
-      } catch(e) {}
+    if(data.success) {
+      memberData = data;
+      fillOKR(data);
+    } else {
+      fillOKRFallback(key);
     }
+  } catch {
+    fillOKRFallback(key);
+  }
 
-    // Gemini trả về text thường — tách theo key pattern
-    const extract = (key) => {
-      const patterns = [
-        new RegExp(`"${key}"\\s*:\\s*"((?:[^"\\\\]|\\\\.)*)"`, 'i'),
-        new RegExp(`\\.?${key}["\\.:]+(.*?)(?=\\n\\s*[a-z_"]+[":.]|$)`, 'i'),
-      ];
-      for (const p of patterns) {
-        const m = raw.match(p);
-        if (m) return m[1].trim().replace(/\\n/g,' ').replace(/\\"/g,'"');
-      }
-      return '';
-    };
-
-    // Nếu raw là text dài → dùng toàn bộ làm kpi
-    if (raw.length > 50 && !raw.includes('"kpi"')) {
-      return { kpi: raw.substring(0, 300), activities:'', funnel:'', meeting:'', aov:'', vertical:'' };
+  // Pull last report for WoW
+  try {
+    const res2 = await fetch(SHEETS_URL + '?action=getLastReport&memberId=' + key);
+    const d2 = await res2.json();
+    lastReport = d2.report || null;
+    if(lastReport) {
+      prefillFromLastReport();
+      toast('✓ Đã load dữ liệu tuần ' + lastReport.week + ' để tính WoW');
     }
+  } catch { lastReport = null; }
 
-    return {
-      kpi: extract('kpi'),
-      activities: extract('activities'),
-      funnel: extract('funnel'),
-      meeting: extract('meeting'),
-      aov: extract('aov'),
-      vertical: extract('vertical'),
-    };
+  document.getElementById('status-tag').className = 'status-tag st-ok';
+  document.getElementById('status-tag').textContent = cfg.name + ' · Tuần ' + g('week');
+  document.getElementById('btn-gen').disabled = false;
 
-  } catch(err) {
-    console.error('AI failed:', err.message);
-    showToast('⚠ AI lỗi — report vẫn tạo được, không có nhận xét AI');
-    return {kpi:'',activities:'',funnel:'',meeting:'',aov:'',vertical:''};
+  // Init default rows if empty
+  if(!document.querySelectorAll('#meet-rows .drow').length) { addMeet(); addMeet(); }
+  if(!document.querySelectorAll('#aov-rows .drow').length) addAOV();
+  if(!document.querySelectorAll('#vert-rows .drow').length) { addVert(); addVert(); }
+  if(!document.querySelectorAll('#hl-rows .hl-row').length) { addHL('hl'); addHL('hl'); }
+  if(!document.querySelectorAll('#rf-rows .hl-row').length) addHL('rf');
+  if(!document.querySelectorAll('#ns-rows .hl-row').length) { addHL('ns'); addHL('ns'); }
+}
+
+function fillOKR(data) {
+  // OKR
+  setOKRCard('okr-brief', data.okr_brief_actual, data.okr_brief_plan);
+  setOKRCard('okr-meet',  data.okr_meet_actual,  data.okr_meet_plan);
+  setOKRCard('okr-act',   data.okr_act_actual,   data.okr_act_plan);
+  setOKRCard('okr-gp2',   fmtM(data.okr_gp2_actual), fmtM(data.okr_gp2_plan), true);
+  setOKRCard('okr-freq',  data.okr_freq_actual,  data.okr_freq_plan);
+  // KPI
+  setOKRCard('kpi-qbp',  data.kpi_qbp_actual, data.kpi_qbp_plan);
+  setOKRCard('kpi-qba',  data.kpi_qba_actual, data.kpi_qba_plan);
+  setOKRCard('kpi-gp2',  data.kpi_gp2_actual, data.kpi_gp2_plan);
+  setOKRCard('kpi-meet', data.kpi_meet_actual, data.kpi_meet_plan);
+  document.getElementById('kpi-total-pct').textContent = data.kpi_total || '—';
+  document.getElementById('okr-notice-txt').textContent = 'Pulled từ Sheets · ' + new Date().toLocaleTimeString('vi');
+}
+
+function fillOKRFallback(key) {
+  // Fallback static data based on screenshot
+  const STATIC = {
+    Thao: {
+      okr_brief_actual:3, okr_brief_plan:8,
+      okr_meet_actual:6,  okr_meet_plan:25,
+      okr_act_actual:268, okr_act_plan:285,
+      okr_gp2_actual:3180, okr_gp2_plan:1690,
+      okr_freq_actual:9,  okr_freq_plan:8,
+      kpi_qbp_actual:0,  kpi_qbp_plan:2,
+      kpi_qba_actual:1,  kpi_qba_plan:4,
+      kpi_gp2_actual:10, kpi_gp2_plan:338,
+      kpi_meet_actual:6, kpi_meet_plan:20,
+      kpi_total:'15.49%'
+    },
+    Ngoc: {
+      okr_brief_actual:6, okr_brief_plan:8,
+      okr_meet_actual:18, okr_meet_plan:25,
+      okr_act_actual:276, okr_act_plan:280,
+      okr_gp2_actual:4008, okr_gp2_plan:3375,
+      okr_freq_actual:8,  okr_freq_plan:8,
+      kpi_qbp_actual:0, kpi_qbp_plan:4,
+      kpi_qba_actual:4, kpi_qba_plan:13,
+      kpi_gp2_actual:34,kpi_gp2_plan:675,
+      kpi_meet_actual:18,kpi_meet_plan:40,
+      kpi_total:'40.53%'
+    },
+    Phuong: {
+      okr_brief_actual:4, okr_brief_plan:8,
+      okr_meet_actual:16, okr_meet_plan:25,
+      okr_act_actual:290, okr_act_plan:290,
+      okr_gp2_actual:3378, okr_gp2_plan:3378,
+      okr_freq_actual:7.32, okr_freq_plan:8,
+      kpi_qbp_actual:0, kpi_qbp_plan:2,
+      kpi_qba_actual:4, kpi_qba_plan:4,
+      kpi_gp2_actual:24,kpi_gp2_plan:338,
+      kpi_meet_actual:16,kpi_meet_plan:20,
+      kpi_total:'52.78%'
+    },
+    My: {
+      okr_brief_actual:4, okr_brief_plan:8,
+      okr_meet_actual:14, okr_meet_plan:25,
+      okr_act_actual:268, okr_act_plan:285,
+      okr_gp2_actual:2996, okr_gp2_plan:3375,
+      okr_freq_actual:0, okr_freq_plan:8,
+      kpi_qbp_actual:1, kpi_qbp_plan:1,
+      kpi_qba_actual:1, kpi_qba_plan:4,
+      kpi_gp2_actual:10,kpi_gp2_plan:495,
+      kpi_meet_actual:15,kpi_meet_plan:25,
+      kpi_total:'40.75%'
+    }
+  };
+  memberData = STATIC[key] || {};
+  fillOKR(memberData);
+  document.getElementById('okr-notice-txt').textContent = 'Fallback data (Sheets chưa kết nối)';
+}
+
+function setOKRCard(prefix, actual, plan, isMoney=false) {
+  const aEl = document.getElementById(prefix+'-a');
+  const pEl = document.getElementById(prefix+'-p');
+  const pctEl = document.getElementById(prefix+'-pct');
+  if(!aEl) return;
+  aEl.textContent = actual !== undefined && actual !== null ? actual : '—';
+  pEl.textContent = 'plan: ' + (plan !== undefined && plan !== null ? plan : '—');
+  if(!isMoney) {
+    const p = pct(parseFloat(actual)||0, parseFloat(plan)||0);
+    pctEl.textContent = p + '%';
+    pctEl.className = 'okr-pct ' + pctCls(p);
+  } else {
+    pctEl.textContent = '';
   }
 }
 
-// ══════ RENDER REPORT ══════
-function renderReport(d, ai) {
-  const pct = (a,b) => b>0 ? Math.min(Math.round(a/b*100),100) : 0;
-  const cr = (a,b) => b>0 ? Math.round(a/b*100) : 0;
-  const md = t => (t||'').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
+function prefillFromLastReport() {
+  if(!lastReport) return;
+  const map = {
+    'actCall':'a-call','actSMS':'a-sms','actEmail':'a-email','actMeeting':'a-meeting',
+    'fLead':'f-lead','fQL':'f-ql','fBrief':'f-brief','fQB':'f-qb',
+    'fQS':'f-qs','fVerbal':'f-verbal','fContract':'f-contract',
+    'issueBottleneck':'iss-bottleneck','issueRisk':'iss-risk','issueAdjust':'iss-adjust'
+  };
+  for(const [key,id] of Object.entries(map)) {
+    if(lastReport[key] !== undefined) {
+      const el = document.getElementById(id);
+      if(el) el.value = lastReport[key];
+    }
+  }
+  // Update prev labels
+  const prevActMap = {actCall:'p-call',actSMS:'p-sms',actEmail:'p-email',actMeeting:'p-meeting'};
+  for(const [key,id] of Object.entries(prevActMap)) {
+    if(lastReport[key] !== undefined) {
+      const el = document.getElementById(id);
+      if(el) el.textContent = 'T.' + lastReport.week + ': ' + lastReport[key];
+    }
+  }
+  const prevFnMap = {fLead:0,fQL:1,fBrief:2,fQB:3,fQS:4,fVerbal:5,fContract:6};
+  const fnPrevCells = document.querySelectorAll('#fn-prev-row .fn-p');
+  for(const [key,idx] of Object.entries(prevFnMap)) {
+    if(lastReport[key] !== undefined && fnPrevCells[idx]) {
+      fnPrevCells[idx].textContent = 'T.' + lastReport.week + ': ' + lastReport[key];
+    }
+  }
+  // Prefill meeting/aov rows if stored
+  if(lastReport.meetingDetails) {
+    try {
+      const meets = JSON.parse(lastReport.meetingDetails);
+      if(meets.length && !document.querySelectorAll('#meet-rows .drow').length) {
+        meets.forEach(m => addMeet(m));
+      }
+    } catch{}
+  }
+  if(lastReport.aovDeals) {
+    try {
+      const aovs = JSON.parse(lastReport.aovDeals);
+      if(aovs.length && !document.querySelectorAll('#aov-rows .drow').length) {
+        aovs.forEach(a => addAOV(a));
+      }
+    } catch{}
+  }
+}
 
-  const wowStr = (cur,key) => {
-    if(!lastReport||lastReport[key]===undefined) return '<span style="color:#999">—</span>';
+function setDefaultDates() {
+  const now = new Date();
+  const day = now.getDay();
+  const mon = new Date(now); mon.setDate(now.getDate()-((day||7)-1));
+  const sun = new Date(mon); sun.setDate(mon.getDate()+6);
+  const fmt = d => d.toISOString().split('T')[0];
+  document.getElementById('from-date').value = fmt(mon);
+  document.getElementById('to-date').value = fmt(sun);
+}
+
+// ── DYNAMIC ROWS ───────────────────────────────────────────
+const vOpts = (s='') => VERTICALS.map(v=>`<option${v===s?' selected':''}>${v}</option>`).join('');
+const sOpts = (s='') => STAGES.map(v=>`<option${v===s?' selected':''}>${v}</option>`).join('');
+
+function addMeet(d={}) {
+  const div = document.createElement('div');
+  div.className = 'drow rm';
+  div.style.gridTemplateColumns = '2fr 1fr 2fr 22px';
+  div.innerHTML = `<input type="text" placeholder="Tên khách hàng" value="${d.client||''}">
+    <select>${sOpts(d.stage||'QL')}</select>
+    <input type="text" placeholder="Outcome / next step" value="${d.outcome||''}">
+    <button class="btn-rm" onclick="this.parentElement.remove()">×</button>`;
+  document.getElementById('meet-rows').appendChild(div);
+}
+
+function addAOV(d={}) {
+  const div = document.createElement('div');
+  div.className = 'drow ra';
+  div.style.gridTemplateColumns = '2fr 1fr 1fr 1fr 22px';
+  div.innerHTML = `<input type="text" placeholder="Tên deal" value="${d.deal||''}">
+    <select>${sOpts(d.stage||'QB')}</select>
+    <input type="text" placeholder="~1.2B" value="${d.value||''}">
+    <input type="text" placeholder="GP2 est." value="${d.gp2||''}">
+    <button class="btn-rm" onclick="this.parentElement.remove()">×</button>`;
+  document.getElementById('aov-rows').appendChild(div);
+}
+
+function addVert(d={}) {
+  const div = document.createElement('div');
+  div.className = 'drow rv';
+  div.style.gridTemplateColumns = '1.4fr 50px 60px 55px 22px';
+  div.innerHTML = `<select>${vOpts(d.vertical||'Healthcare')}</select>
+    <input type="number" placeholder="0" value="${d.companies||''}">
+    <input type="number" placeholder="0" value="${d.activities||''}">
+    <input type="text" placeholder="83%" value="${d.cr||''}">
+    <button class="btn-rm" onclick="this.parentElement.remove()">×</button>`;
+  document.getElementById('vert-rows').appendChild(div);
+}
+
+function addHL(type) {
+  const ph = {hl:'Điểm sáng...',rf:'Red flag...',ns:'Next step...'};
+  const div = document.createElement('div');
+  div.className = 'hl-row ' + type;
+  div.innerHTML = `<input type="text" placeholder="${ph[type]}" oninput="if(previewShown)renderHL()">
+    <button class="btn-rm" onclick="this.parentElement.remove();if(previewShown)renderHL()">×</button>`;
+  document.getElementById(type+'-rows').appendChild(div);
+}
+
+// ── COLLECT ────────────────────────────────────────────────
+function collectData() {
+  const cfg = MEMBER_CFG[currentMember] || {};
+  const meets = [...document.querySelectorAll('#meet-rows .drow')].map(row=>{
+    const inp=row.querySelectorAll('input'),sel=row.querySelectorAll('select');
+    return {client:inp[0].value,stage:sel[0].value,outcome:inp[1].value};
+  }).filter(m=>m.client);
+  const aovs = [...document.querySelectorAll('#aov-rows .drow')].map(row=>{
+    const inp=row.querySelectorAll('input'),sel=row.querySelectorAll('select');
+    return {deal:inp[0].value,stage:sel[0].value,value:inp[1].value,gp2:inp[2].value};
+  }).filter(a=>a.deal);
+  const verts = [...document.querySelectorAll('#vert-rows .drow')].map(row=>{
+    const inp=row.querySelectorAll('input');
+    return {vertical:row.querySelector('select').value,companies:inp[0].value,activities:inp[1].value,cr:inp[2].value};
+  });
+  return {
+    memberId:currentMember, memberName:cfg.name||'', team:cfg.team||'',
+    quarter:g('quarter'), week:g('week'),
+    period:g('from-date')+' – '+g('to-date'),
+    actCall:gn('a-call'),actSMS:gn('a-sms'),actEmail:gn('a-email'),actMeeting:gn('a-meeting'),
+    fLead:gn('f-lead'),fQL:gn('f-ql'),fBrief:gn('f-brief'),fQB:gn('f-qb'),
+    fQS:gn('f-qs'),fVerbal:gn('f-verbal'),fContract:gn('f-contract'),
+    meetingDetails:meets, aovDeals:aovs, verticalData:verts,
+    highlight:[...document.querySelectorAll('#hl-rows input')].map(i=>i.value).filter(Boolean),
+    redflag:[...document.querySelectorAll('#rf-rows input')].map(i=>i.value).filter(Boolean),
+    nextstep:[...document.querySelectorAll('#ns-rows input')].map(i=>i.value).filter(Boolean),
+    issueBottleneck:g('iss-bottleneck'),issueRisk:g('iss-risk'),issueAdjust:g('iss-adjust'),
+    okrData: memberData, lastReport, timestamp:new Date().toISOString()
+  };
+}
+
+// ── AI ANALYSIS ────────────────────────────────────────────
+async function getAIAnalysis(d) {
+  const prevAct = lastReport || {};
+  const wow = (cur,key) => {
+    if(!lastReport||lastReport[key]===undefined) return '';
     const diff = cur - parseFloat(lastReport[key]);
-    if(diff>0) return `<span style="color:#1D9E75;font-weight:600">▲ +${diff}</span>`;
-    if(diff<0) return `<span style="color:#E24B4A;font-weight:600">▼ ${diff}</span>`;
-    return '<span style="color:#999">= 0</span>';
+    return ` (WoW ${diff>=0?'+':''}${diff})`;
+  };
+  const md = d.okrData;
+  const systemPrompt = `Bạn là BD analyst viết weekly report cho PMAX Agency.
+
+PHONG CÁCH — học theo chị Ngọc (BD Lead), đây là cách chị ấy viết:
+- Luôn bắt đầu bằng điểm mạnh / tín hiệu tốt trước, dù số chưa cao
+- Dùng ngôn ngữ động lực: "tín hiệu tốt", "đà tăng", "bứt phá", "chuyển hóa tốt", "nền tảng vững"
+- Khi nói gap: frame như cơ hội hành động, không phải thất bại — "cần push thêm", "còn room để cải thiện", "cửa sổ 5 tuần là đủ nếu..."
+- Kết mỗi đoạn bằng 1 implication hoặc action rõ ràng (→ ...)
+- Viết như người trong cuộc, hiểu context BD agency, không viết như AI
+- Tiếng Việt tự nhiên, không dùng từ sáo rỗng như "tuyệt vời", "xuất sắc"
+- Không dùng bullet, không heading, không label, không markdown
+- Độ dài: 2-3 câu mỗi phần, súc tích`;
+
+  const weeksLeft = 13 - parseInt(d.week||8);
+  const prompts = {
+    okr: `Viết nhận xét 2-3 câu cho phần OKR & KPI của ${d.memberName}, ${d.quarter} Tuần ${d.week}.
+Số liệu:
+- Brief BE: ${md?.okr_brief_actual||0}/${md?.okr_brief_plan||0} (${pct(md?.okr_brief_actual,md?.okr_brief_plan)}% plan, run-rate ${Math.round(pct(md?.okr_brief_actual,md?.okr_brief_plan)*2)}%)
+- Meeting: ${md?.okr_meet_actual||0}/${md?.okr_meet_plan||0} (${pct(md?.okr_meet_actual,md?.okr_meet_plan)}%)
+- Activities: ${md?.okr_act_actual||0}/${md?.okr_act_plan||0} (${pct(md?.okr_act_actual,md?.okr_act_plan)}%)
+- GP2 from QB: ${md?.okr_gp2_actual||0}M / ${md?.okr_gp2_plan||0}M
+- KPI QB Active: ${md?.kpi_qba_actual||0}/${md?.kpi_qba_plan||0} (${pct(md?.kpi_qba_actual,md?.kpi_qba_plan)}%)
+- KPI Meeting 1st: ${md?.kpi_meet_actual||0}/${md?.kpi_meet_plan||0}
+- Total KPI achievement: ${md?.kpi_total||'?'}
+- Còn ${weeksLeft} tuần trong Q2.
+Bắt đầu bằng điểm mạnh nhất, sau đó chỉ ra 1 KPI cần ưu tiên push nhất, kết bằng action cụ thể.`,
+
+    activities: `Viết nhận xét 2-3 câu cho phần Activities tuần này của ${d.memberName}.
+Tuần này: Call ${d.actCall}, SMS/Zalo ${d.actSMS}, Email ${d.actEmail}, Meeting ${d.actMeeting}.
+Tuần trước: Call ${prevAct.actCall||'?'}, SMS ${prevAct.actSMS||'?'}, Email ${prevAct.actEmail||'?'}, Meeting ${prevAct.actMeeting||'?'}.
+WoW delta: Call ${d.actCall-(prevAct.actCall||d.actCall)>=0?'+':''}${d.actCall-(prevAct.actCall||d.actCall)}, SMS ${d.actSMS-(prevAct.actSMS||d.actSMS)>=0?'+':''}${d.actSMS-(prevAct.actSMS||d.actSMS)}, Meeting ${d.actMeeting-(prevAct.actMeeting||d.actMeeting)>=0?'+':''}${d.actMeeting-(prevAct.actMeeting||d.actMeeting)}.
+Highlight kênh tăng tốt nhất, chỉ ra kênh nào đang tạo ra deal thực sự (Meeting > SMS > Call về chất lượng), kết bằng điều chỉnh cụ thể nếu cần.`,
+
+    funnel: `Viết nhận xét 2-3 câu cho phần Funnel của ${d.memberName}, ${d.quarter} Tuần ${d.week}.
+Funnel QTD: Lead ${d.fLead} → QL ${d.fQL} (CR ${cr(d.fQL,d.fLead)}%) → Brief ${d.fBrief} (CR ${cr(d.fBrief,d.fQL)}%) → QB ${d.fQB} (CR ${cr(d.fQB,d.fBrief)}%) → QS ${d.fQS} → Verbal ${d.fVerbal} → Contract ${d.fContract}.
+WoW: QL ${d.fQL-(lastReport?.fQL||d.fQL)>=0?'+':''}${d.fQL-(lastReport?.fQL||d.fQL)}, QB ${d.fQB-(lastReport?.fQB||d.fQB)>=0?'+':''}${d.fQB-(lastReport?.fQB||d.fQB)}, QS ${d.fQS-(lastReport?.fQS||d.fQS)>=0?'+':''}${d.fQS-(lastReport?.fQS||d.fQS)}.
+Bắt đầu bằng stage đang chuyển hóa tốt nhất (CR cao, WoW tăng), sau đó chỉ ra bottleneck rõ nhất (stage nào CR thấp hoặc bị stall), kết bằng action push stage đó.`,
+
+    highlight: `Bạn là BD Lead đang viết lại highlight report tuần cho member của mình.
+Thông tin thô từ ${d.memberName}:
+ĐIỂM SÁNG: ${d.highlight.join(' | ')||'(chưa có)'}
+RED FLAGS: ${d.redflag.join(' | ')||'(chưa có)'}
+NEXT STEPS: ${d.nextstep.join(' | ')||'(chưa có)'}
+
+Viết lại thành các dòng ngắn, sắc nét, professional. Mỗi điểm 1 dòng. Format:
+- Điểm sáng: bắt đầu bằng kết quả cụ thể, thêm context tại sao quan trọng
+- Red flag: frame như "cần xử lý" không phải thất bại, thêm urgency nếu cần
+- Next step: bắt đầu bằng verb hành động, có deadline hoặc owner nếu biết
+Không thêm heading, không label. Chỉ trả về các dòng đã viết lại, mỗi dòng cách nhau bằng newline.`,
+
+    issues: `Bạn là BD Lead viết lại phần vấn đề & điều chỉnh cho ${d.memberName} tuần ${d.week}.
+Input thô:
+Bottleneck: ${d.issueBottleneck||'(chưa điền)'}
+Deal risk: ${d.issueRisk||'(chưa điền)'}
+Điều chỉnh: ${d.issueAdjust||'(chưa điền)'}
+
+Viết lại mỗi phần thành 1-2 câu: clear, không bi quan, có direction rõ. Bottleneck thì chỉ ra root cause và hướng giải. Deal risk thì đánh giá mức độ và action. Điều chỉnh thì cụ thể, measurable. Trả về 3 đoạn riêng cách nhau bằng dấu "|||".`,
   };
 
-  const crQL=cr(d.fQL,d.fLead), crBrief=cr(d.fBrief,d.fQL), crBriefPlan=cr(d.fBriefPlan,d.fQLPlan);
-  const crQB=cr(d.fQB,d.fBrief), crQS=cr(d.fQS,d.fQB);
-
-  const aiBlock = text => !text ? '' : `<tr><td style="padding:0 0 4px;"><table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin-top:8px;"><tr><td style="background:#f4f3fe;border:1px solid #d0cdf5;border-radius:6px;padding:10px 14px;font-size:12px;color:#444;line-height:1.7;"><span style="color:#7F77DD;font-weight:700;font-size:11px;margin-right:8px;">✦ AI</span>${md(text)}</td></tr></table></td></tr>`;
-
-  const kpiBar = (label,actual,plan,color) => {
-    const p=pct(actual,plan);
-    return `<table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin-bottom:10px;"><tr><td style="font-size:11px;color:#777;padding-bottom:4px;">${label}</td><td style="font-size:12px;font-weight:600;text-align:right;padding-bottom:4px;">${actual} / ${plan} &nbsp;·&nbsp; <span style="color:${p>=100?'#1D9E75':p>=70?'#EF9F27':'#E24B4A'}">${p}%</span></td></tr><tr><td colspan="2"><table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;background:#eee;border-radius:3px;"><tr><td width="${p}%" style="background:${color};height:6px;border-radius:3px;font-size:0;">&nbsp;</td><td style="height:6px;font-size:0;">&nbsp;</td></tr></table></td></tr></table>`;
-  };
-
-  const sec = label => `<tr><td style="padding:16px 0 0;"><table width="100%" cellpadding="0" cellspacing="0"><tr><td style="font-size:10px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:#aaa;border-bottom:1px solid #eee;padding-bottom:6px;">${label}</td></tr></table></td></tr>`;
-
-  const hlRows = (items,bc,bg,icon) => items.filter(Boolean).map(t=>`<div style="border-left:3px solid ${bc};background:${bg};padding:8px 12px;margin-bottom:5px;border-radius:0 6px 6px 0;font-size:13px;color:#222;">${icon} ${t}</div>`).join('');
-
-  const vStyle = v => {
-    const m={'Healthcare':'background:#E6F1FB;color:#185FA5','Real Estate':'background:#FAEEDA;color:#854F0B','FMCG':'background:#E1F5EE;color:#0F6E56','Beauty':'background:#FBEAF0;color:#993556','Auto':'background:#F1EFE8;color:#5F5E5A','Finance':'background:#EAF3DE;color:#3B6D11'};
-    return (m[v]||'background:#f0f0f0;color:#666')+';font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;display:inline-block;';
-  };
-  const sStyle = s => {
-    const m={'QS':'background:#FAEEDA;color:#854F0B','QB':'background:#E6F1FB;color:#185FA5','Verbal':'background:#E1F5EE;color:#0F6E56','Brief':'background:#F1EFE8;color:#5F5E5A','Contract':'background:#EAF3DE;color:#3B6D11'};
-    return (m[s]||'background:#FCEBEB;color:#A32D2D')+';font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;display:inline-block;';
-  };
-
-  const funnelStages = [
-    {name:'Lead',val:d.fLead,plan:d.fLeadPlan,cr:'',key:'fLead'},
-    {name:'QL',val:d.fQL,plan:d.fQLPlan,cr:`CR ${crQL}%`,key:'fQL'},
-    {name:'Brief',val:d.fBrief,plan:d.fBriefPlan,cr:`CR ${crBrief}% ${crBrief>=crBriefPlan?'↑':'↓'}`,key:'fBrief'},
-    {name:'QB',val:d.fQB,plan:d.fQBPlan,cr:`CR ${crQB}%`,key:'fQB'},
-    {name:'QS',val:d.fQS,plan:d.fQSPlan,cr:`CR ${crQS}%`,key:'fQS'},
-    {name:'Verbal',val:d.fVerbal,plan:d.fVerbalPlan,cr:'',key:'fVerbal'},
-    {name:'Contract',val:d.fContract,plan:d.fContractPlan,cr:'',key:'fContract'},
-  ];
-
-  const funnelCells = funnelStages.map(s => {
-    const bg=(s.name==='Contract'&&s.val===0)?'#FCEBEB':s.val>=s.plan?'#E8F9F4':s.val>=s.plan*0.7?'#FAEEDA':'#f9f9f9';
-    return `<td width="14%" style="padding:2px;"><table width="100%" cellpadding="6" cellspacing="0" style="border-collapse:collapse;background:${bg};border-radius:8px;text-align:center;"><tr><td style="font-size:9px;color:#888;text-align:center;">${s.name}</td></tr><tr><td style="font-size:18px;font-weight:700;text-align:center;padding:2px 0;color:#111;">${s.val}</td></tr><tr><td style="font-size:9px;color:#777;text-align:center;">${s.cr||'plan '+s.plan}</td></tr><tr><td style="font-size:9px;text-align:center;">${wowStr(s.val,s.key)}</td></tr></table></td>`;
-  }).join('');
-
-  const actCells = [
-    {label:'Call',val:d.actCall,key:'actCall'},{label:'SMS',val:d.actSMS,key:'actSMS'},
-    {label:'Email & other',val:d.actEmail,key:'actEmail'},{label:'Meeting',val:d.actMeeting,key:'actMeeting'},
-  ].map(a=>`<td width="25%" style="padding:3px;"><table width="100%" cellpadding="8" cellspacing="0" style="border-collapse:collapse;background:#f8f8f8;border-radius:8px;text-align:center;"><tr><td style="font-size:10px;color:#999;padding-bottom:2px;">${a.label}</td></tr><tr><td style="font-size:22px;font-weight:700;color:#111;padding:2px 0;">${a.val}</td></tr><tr><td style="font-size:11px;padding-top:2px;">${wowStr(a.val,a.key)}</td></tr></table></td>`).join('');
-
-  const thStyle = 'text-align:left;font-size:10px;color:#999;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:8px;';
-
-  return `<table width="100%" cellpadding="0" cellspacing="0" style="font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#1a1a1a;border-collapse:collapse;max-width:680px;margin:0 auto;">
-<tr><td style="padding-bottom:16px;"><table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;border-left:4px solid #1D9E75;background:#f7fffe;"><tr><td style="padding:12px 16px;"><div style="font-size:16px;font-weight:700;color:#111;">${d.quarter}/2026 Tuần ${d.week} — BD Weekly Report</div><div style="font-size:12px;color:#888;margin-top:4px;">${d.memberName} &nbsp;·&nbsp; ${d.period} &nbsp;·&nbsp; ${d.verticals}</div></td></tr></table></td></tr>
-${sec('Highlight & Key takeaway')}
-<tr><td style="padding:10px 0 0;">${hlRows(d.highlight,'#1D9E75','#E8F9F4','✦')}${hlRows(d.redflag,'#E24B4A','#FCEBEB','⚠')}${hlRows(d.nextstep,'#378ADD','#E6F1FB','→')}</td></tr>
-${sec('Kế hoạch tuần này')}
-<tr><td style="padding:10px 0 0;"><table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;border:1px solid #eee;border-radius:8px;"><tr><td width="50%" style="padding:10px 14px;border-bottom:1px solid #f5f5f5;border-right:1px solid #f5f5f5;vertical-align:top;"><div style="font-size:10px;color:#999;text-transform:uppercase;margin-bottom:4px;">Số khách dự kiến</div><div style="font-weight:600;">${d.planClients} khách</div></td><td width="50%" style="padding:10px 14px;border-bottom:1px solid #f5f5f5;vertical-align:top;"><div style="font-size:10px;color:#999;text-transform:uppercase;margin-bottom:4px;">Mục tiêu stage move</div><div style="font-weight:600;">${d.planStageMove}</div></td></tr><tr><td style="padding:10px 14px;border-right:1px solid #f5f5f5;vertical-align:top;"><div style="font-size:10px;color:#999;text-transform:uppercase;margin-bottom:4px;">Focus vertical</div><div style="font-weight:600;">${d.planFocusVertical}</div></td><td style="padding:10px 14px;vertical-align:top;"><div style="font-size:10px;color:#999;text-transform:uppercase;margin-bottom:4px;">Deal ưu tiên BOF</div><div style="font-weight:600;">${d.planPriorityDeals}</div></td></tr></table></td></tr>
-${sec('KPI — '+d.quarter+' QTD')}
-<tr><td style="padding:10px 0 0;"><table width="100%" cellpadding="14" cellspacing="0" style="border-collapse:collapse;border:1px solid #eee;border-radius:8px;"><tr><td>${kpiBar('QB Active — cá nhân',d.kpiQBActual,d.kpiQBPlan,'#1D9E75')}${kpiBar('GP2 Active (M)',d.kpiGP2Actual,d.kpiGP2Plan,'#EF9F27')}${kpiBar('Meeting 1st — cá nhân',d.kpiMeetingActual,d.kpiMeetingPlan,'#378ADD')}${kpiBar('Activities tổng',d.kpiActActual,d.kpiActPlan,'#7F77DD')}</td></tr></table>${aiBlock(ai.kpi)}</td></tr>
-${sec('Activities — WoW')}
-<tr><td style="padding:10px 0 0;"><table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;"><tr>${actCells}</tr></table>${aiBlock(ai.activities)}</td></tr>
-${sec('Funnel — Stage · CR% · WoW')}
-<tr><td style="padding:10px 0 0;"><table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;"><tr>${funnelCells}</tr></table>${aiBlock(ai.funnel)}</td></tr>
-${sec('Meeting — Chi tiết theo khách')}
-<tr><td style="padding:10px 0 0;"><table width="100%" cellpadding="8" cellspacing="0" style="border-collapse:collapse;border:1px solid #eee;border-radius:8px;font-size:12px;"><tr style="background:#f8f8f8;"><th style="${thStyle}">Khách hàng</th><th style="${thStyle}">Vertical</th><th style="${thStyle}">Stage</th><th style="text-align:center;font-size:10px;color:#999;font-weight:700;text-transform:uppercase;padding:8px;">Lần</th><th style="${thStyle}">Outcome</th></tr>${d.meetingDetails.map(m=>`<tr style="border-top:1px solid #f5f5f5;"><td style="padding:7px 8px;font-weight:600;">${m.client}</td><td style="padding:7px 8px;"><span style="${vStyle(m.vertical)}">${m.vertical}</span></td><td style="padding:7px 8px;"><span style="${sStyle(m.stage)}">${m.stage}</span></td><td style="padding:7px 8px;text-align:center;">${m.count}</td><td style="padding:7px 8px;color:#777;font-size:11px;">${m.outcome}</td></tr>`).join('')}</table>${aiBlock(ai.meeting)}</td></tr>
-${sec('AOV Control — Pipeline cá nhân')}
-<tr><td style="padding:10px 0 0;"><table width="100%" cellpadding="8" cellspacing="0" style="border-collapse:collapse;border:1px solid #eee;border-radius:8px;font-size:12px;"><tr style="background:#f8f8f8;"><th style="${thStyle}">Deal</th><th style="${thStyle}">Vertical</th><th style="${thStyle}">Stage</th><th style="text-align:right;font-size:10px;color:#999;font-weight:700;text-transform:uppercase;padding:8px;">Value</th><th style="${thStyle}">Next step</th></tr>${d.aovDeals.map(a=>`<tr style="border-top:1px solid #f5f5f5;"><td style="padding:7px 8px;font-weight:600;">${a.deal}</td><td style="padding:7px 8px;"><span style="${vStyle(a.vertical)}">${a.vertical}</span></td><td style="padding:7px 8px;"><span style="${sStyle(a.stage)}">${a.stage}</span></td><td style="padding:7px 8px;text-align:right;">${a.value}</td><td style="padding:7px 8px;color:#777;font-size:11px;">${a.next}</td></tr>`).join('')}</table>${aiBlock(ai.aov)}</td></tr>
-${sec('Vertical Analysis — '+d.quarter+' QTD')}
-<tr><td style="padding:10px 0 0;"><table width="100%" cellpadding="8" cellspacing="0" style="border-collapse:collapse;border:1px solid #eee;border-radius:8px;font-size:12px;"><tr style="background:#f8f8f8;"><th style="${thStyle}">Vertical</th><th style="text-align:center;font-size:10px;color:#999;font-weight:700;text-transform:uppercase;padding:8px;">Khách</th><th style="text-align:center;font-size:10px;color:#999;font-weight:700;text-transform:uppercase;padding:8px;">Activities</th><th style="text-align:center;font-size:10px;color:#999;font-weight:700;text-transform:uppercase;padding:8px;">Freq</th><th style="text-align:center;font-size:10px;color:#999;font-weight:700;text-transform:uppercase;padding:8px;">Lead→QL</th><th style="${thStyle}">Stage nổi bật</th></tr>${d.verticalData.map(v=>`<tr style="border-top:1px solid #f5f5f5;"><td style="padding:7px 8px;"><span style="${vStyle(v.vertical)}">${v.vertical}</span></td><td style="padding:7px 8px;text-align:center;">${v.companies}</td><td style="padding:7px 8px;text-align:center;">${v.activities}</td><td style="padding:7px 8px;text-align:center;">${v.freq}</td><td style="padding:7px 8px;text-align:center;color:#1D9E75;font-weight:700;">${v.cr}</td><td style="padding:7px 8px;font-size:11px;color:#555;">${v.stages}</td></tr>`).join('')}</table>${aiBlock(ai.vertical)}</td></tr>
-${sec('Vấn đề & Điều chỉnh')}
-<tr><td style="padding:10px 0 0;"><table width="100%" cellpadding="12" cellspacing="0" style="border-collapse:collapse;border:1px solid #eee;border-radius:8px;"><tr><td style="border-bottom:1px solid #f5f5f5;"><div style="font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;margin-bottom:5px;">Bottleneck tuần này</div><div style="font-size:13px;line-height:1.6;">${d.issueBottleneck||'—'}</div></td></tr><tr><td style="border-bottom:1px solid #f5f5f5;"><div style="font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;margin-bottom:5px;">Deal đang risk</div><div style="font-size:13px;line-height:1.6;">${d.issueRisk||'—'}</div></td></tr><tr><td><div style="font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;margin-bottom:5px;">Điều chỉnh tuần tới</div><div style="font-size:13px;line-height:1.6;">${d.issueAdjust||'—'}</div></td></tr></table></td></tr>
-</table>`;
+  const results = {};
+  // Call Claude API for all sections in parallel
+  await Promise.all(Object.entries(prompts).map(async ([key, prompt]) => {
+    try {
+      const res = await fetch(CLAUDE_API, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+          model:'claude-sonnet-4-20250514',
+          max_tokens:400,
+          system: systemPrompt,
+          messages:[{role:'user',content:prompt}]
+        })
+      });
+      const json = await res.json();
+      results[key] = json.content?.[0]?.text || '';
+    } catch { results[key] = ''; }
+  }));
+  return results;
 }
 
+// ── GENERATE ───────────────────────────────────────────────
 async function generateReport() {
-  const btn = document.getElementById('btn-generate');
-  btn.disabled = true; btn.textContent = '⏳ Đang tạo...';
+  const btn = document.getElementById('btn-gen');
+  btn.disabled = true; btn.textContent = '⏳ Generating...';
   const data = collectData();
-  const preview = document.getElementById('report-preview');
-  const aiDiv = document.getElementById('ai-generating');
-  const output = document.getElementById('report-output');
-  document.querySelectorAll('.step-page').forEach(p=>p.classList.remove('active'));
-  preview.style.display = 'block'; aiDiv.style.display = 'flex'; output.innerHTML = '';
-  window.scrollTo(0,0);
-  let ai = {};
-  try { ai = await generateAIAnalysis(data); } catch(e) { console.error(e); }
-  aiDiv.style.display = 'none';
-  output.innerHTML = renderReport(data, ai||{});
   window._reportData = data;
-  btn.disabled = false; btn.textContent = '✦ Tạo Report với AI';
+  document.getElementById('preview-empty').style.display = 'none';
+  document.getElementById('rpt-container').style.display = 'block';
+  document.getElementById('toolbar').classList.add('show');
+
+  // Render skeleton first
+  renderReport(data, {okr:'',activities:'',funnel:'',highlight:'',issues:''}, true);
+  previewShown = true;
+
+  // Get AI
+  const ai = await getAIAnalysis(data);
+  renderReport(data, ai, false);
+
+  btn.disabled = false; btn.textContent = '✦ Tạo report';
+  toast('✓ Report đã tạo xong!');
 }
 
+// ── LIVE UPDATE ────────────────────────────────────────────
+function liveUpdate() {
+  if(!previewShown) return;
+  const data = collectData();
+  renderFunnelPreview(data);
+  renderActPreview(data);
+  renderHL();
+}
+
+function renderHL() {
+  const hls = [...document.querySelectorAll('#hl-rows input')].map(i=>i.value).filter(Boolean);
+  const rfs = [...document.querySelectorAll('#rf-rows input')].map(i=>i.value).filter(Boolean);
+  const nss = [...document.querySelectorAll('#ns-rows input')].map(i=>i.value).filter(Boolean);
+  const el = document.getElementById('rpt-hl-raw');
+  if(el) el.innerHTML =
+    hls.map(t=>`<div class="rpt-hl">✦ ${t}</div>`).join('')+
+    rfs.map(t=>`<div class="rpt-rf">⚠ ${t}</div>`).join('')+
+    nss.map(t=>`<div class="rpt-ns">→ ${t}</div>`).join('');
+}
+
+function renderFunnelPreview(d) {
+  const el = document.getElementById('rpt-funnel');
+  if(!el) return;
+  const stages=['Lead','QL','Brief','QB','QS','Verbal','Contract'];
+  const keys=['fLead','fQL','fBrief','fQB','fQS','fVerbal','fContract'];
+  const vals=keys.map(k=>d[k]);
+  el.innerHTML = stages.map((s,i)=>{
+    const crPct = i>0 ? cr(vals[i],vals[i-1]) : 0;
+    const prev = lastReport?.[keys[i]];
+    const diff = prev!==undefined ? vals[i]-prev : null;
+    const diffStr = diff!==null?(diff>0?`<span style="color:var(--g);font-weight:700;">▲ +${diff}</span>`:diff<0?`<span style="color:var(--r);font-weight:700;">▼ ${diff}</span>`:`<span style="color:var(--t3);">= 0</span>`):'';
+    const cls = s==='Contract'&&vals[i]===0?'fnc fnc-lo':prev!==undefined&&vals[i]>prev?'fnc fnc-ok':'fnc';
+    return `<div class="${cls}"><div class="fl">${s}</div><div class="fn">${vals[i]}</div>${i>0?`<div class="fcr">CR ${crPct}%</div>`:''}<div class="fw">${diffStr}</div></div>`;
+  }).join('');
+}
+
+function renderActPreview(d) {
+  const el = document.getElementById('rpt-act');
+  if(!el) return;
+  const acts=[
+    {l:'Call',v:d.actCall,k:'actCall',bg:'#E6F1FB',tc:'#0C447C'},
+    {l:'SMS',v:d.actSMS,k:'actSMS',bg:'#E1F5EE',tc:'#0F6E56'},
+    {l:'Email',v:d.actEmail,k:'actEmail',bg:'#FAEEDA',tc:'#633806'},
+    {l:'Meeting',v:d.actMeeting,k:'actMeeting',bg:'#EEEDFE',tc:'#3C3489'},
+  ];
+  el.innerHTML = acts.map(a=>{
+    const prev = lastReport?.[a.k];
+    const diff = prev!==undefined?a.v-prev:null;
+    const wow = diff!==null?(diff>0?`<span style="color:#1D9E75;font-weight:700;">▲ +${diff}</span>`:diff<0?`<span style="color:#E24B4A;font-weight:700;">▼ ${diff}</span>`:`<span style="color:var(--t3);">= 0</span>`):'';
+    return `<div class="apc" style="background:${a.bg};"><div class="al" style="color:${a.tc};">${a.l}</div><div class="an" style="color:${a.tc};">${a.v}</div><div class="aw">${wow}</div></div>`;
+  }).join('');
+}
+
+// ── RENDER HELPERS ─────────────────────────────────────────
+function renderIssuesAI(text, d) {
+  if(!text) return '';
+  const parts = text.split('|||').map(s=>s.trim()).filter(Boolean);
+  const labels = ['Bottleneck','Deal risk','Điều chỉnh tuần tới'];
+  if(parts.length >= 2) {
+    return '<div class="issue-box" style="margin-top:8px;border-color:#1D9E75;">'+
+      parts.slice(0,3).map((p,i)=>'<div class="issue-row"><div class="issue-lbl" style="color:#0F6E56;">'+labels[i]+'</div><div class="issue-txt">'+p+'</div></div>').join('')+
+    '</div>';
+  }
+  return '<div class="ai-block">'+text+'</div>';
+}
+function renderHighlightAI(text) {
+  if(!text) return '';
+  const lines = text.split('\n').map(l=>l.trim()).filter(Boolean);
+  return '<div style="margin-top:8px;">'+lines.map(l=>{
+    if(/^[⚠!]|cần xử|risk/i.test(l)) return '<div class="rpt-rf">'+l+'</div>';
+    if(/^→|tuần tới|next/i.test(l)) return '<div class="rpt-ns">'+l+'</div>';
+    return '<div class="rpt-hl">'+l+'</div>';
+  }).join('')+'</div>';
+}
+
+// ── RENDER REPORT ──────────────────────────────────────────
+function renderReport(d, ai, loading) {
+  const md = d.okrData || {};
+  const aiLoading = txt => loading ? '<div class="ai-block loading">Đang phân tích...</div>' : (txt ? `<div class="ai-block">${txt}</div>` : '');
+
+  const kpiBar = (label, actual, plan, color) => {
+    const p = pct(parseFloat(actual)||0, parseFloat(plan)||0);
+    return `<div class="kb"><div class="kb-top"><span class="kb-lbl">${label}</span><span class="kb-right"><span class="kb-a">${actual||'—'}</span><span class="kb-p"> / ${plan||'—'}</span>&nbsp;<span class="kb-pct ${pctCls(p)}">${p}%</span></span></div><div class="kb-track"><div class="kb-fill" style="width:${Math.min(p,100)}%;background:${color};"></div></div></div>`;
+  };
+
+  const spStyle = s => {
+    const m={'QS':'background:#FAEEDA;color:#633806','QB':'background:#E6F1FB;color:#0C447C','Verbal':'background:#E1F5EE;color:#0F6E56','Brief':'background:#F1EFE8;color:#444441','Contract':'background:#EAF3DE;color:#3B6D11','Execution':'background:#EEEDFE;color:#3C3489','Not Verbal':'background:#FCEBEB;color:#791F1F','Lead':'background:#F1EFE8;color:#5F5E5A','QL':'background:#F1EFE8;color:#5F5E5A'};
+    return (m[s]||'background:#F1EFE8;color:#5F5E5A')+';font-size:9px;font-weight:700;padding:2px 6px;border-radius:3px;display:inline-block;';
+  };
+
+  const vpStyle = v => {
+    const m={'Healthcare':'background:#E6F1FB;color:#0C447C','Real Estate':'background:#FAEEDA;color:#633806','FMCG':'background:#E1F5EE;color:#0F6E56','Beauty':'background:#FBEAF0;color:#72243E','Auto':'background:#F1EFE8;color:#444441','Finance':'background:#EAF3DE;color:#27500A','Education':'background:#EEEDFE;color:#3C3489','Home & Electronics':'background:#FAEEDA;color:#854F0B','Hospitality':'background:#FAECE7;color:#712B13'};
+    return (m[v]||'background:#F1EFE8;color:#5F5E5A')+';font-size:9px;font-weight:700;padding:2px 7px;border-radius:99px;display:inline-block;';
+  };
+
+  const thS = 'text-align:left;font-size:9px;color:var(--t3);font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:6px 8px;border-bottom:1px solid var(--br);';
+
+  const rptHTML = `
+<div class="rpt-hdr">
+  <div class="rpt-hdr-title">BD Weekly Report — ${d.quarter}/2026 Tuần ${d.week}</div>
+  <div class="rpt-hdr-sub">${d.memberName} · ${d.team} · ${d.period}</div>
+</div>
+
+<div class="rpt-sec">
+  <div class="rpt-sec-title">Highlight & Key takeaway</div>
+  <div id="rpt-hl-raw">
+    ${d.highlight.map(t=>`<div class="rpt-hl">✦ ${t}</div>`).join('')}
+    ${d.redflag.map(t=>`<div class="rpt-rf">⚠ ${t}</div>`).join('')}
+    ${d.nextstep.map(t=>`<div class="rpt-ns">→ ${t}</div>`).join('')}
+  </div>
+  ${loading ? '<div class="ai-block loading">Đang phân tích...</div>' : renderHighlightAI(ai.highlight)}
+</div>
+
+<div class="rpt-sec">
+  <div class="rpt-sec-title">OKR — Acquisition</div>
+  <div class="okr-preview">
+    ${[
+      {l:'Brief BE',a:md.okr_brief_actual,p:md.okr_brief_plan,c:'#1D9E75'},
+      {l:'Meeting',a:md.okr_meet_actual,p:md.okr_meet_plan,c:'#378ADD'},
+      {l:'Activities',a:md.okr_act_actual,p:md.okr_act_plan,c:'#7F77DD'},
+      {l:'GP2 from QB',a:fmtM(md.okr_gp2_actual),p:fmtM(md.okr_gp2_plan),c:'#EF9F27',skip:true},
+      {l:'Freq/client',a:md.okr_freq_actual,p:md.okr_freq_plan,c:'#1D9E75'},
+    ].map(it=>{
+      const p = it.skip ? 0 : pct(parseFloat(it.a)||0,parseFloat(it.p)||0);
+      return `<div class="okrp-card"><div class="okrp-lbl">${it.l}</div><div class="okrp-nums"><span class="okrp-a">${it.a||'—'}</span><span class="okrp-p">/ ${it.p||'—'}</span></div>${!it.skip?`<span class="okrp-pct ${pctCls(p)}">${p}%</span>`:''}</div>`;
+    }).join('')}
+  </div>
+  ${aiLoading(ai.okr)}
+</div>
+
+<div class="rpt-sec">
+  <div class="rpt-sec-title">KPI Q2/2026</div>
+  <table class="kpi-tbl" style="width:100%;border-collapse:collapse;">
+    <thead><tr><th style="${thS}">Criteria</th><th style="${thS}">KPI</th><th style="${thS}">Actual</th><th style="${thS}">Achievement</th></tr></thead>
+    <tbody>
+      ${[
+        {l:'QB Passive',kpi:md.kpi_qbp_plan,a:md.kpi_qbp_actual},
+        {l:'QB Active',kpi:md.kpi_qba_plan,a:md.kpi_qba_actual},
+        {l:'GP2 Active (M)',kpi:md.kpi_gp2_plan,a:md.kpi_gp2_actual},
+        {l:'Meeting 1st',kpi:md.kpi_meet_plan,a:md.kpi_meet_actual},
+      ].map(r=>{
+        const p=pct(parseFloat(r.a)||0,parseFloat(r.kpi)||0);
+        return `<tr style="border-bottom:1px solid var(--bg);"><td style="padding:6px 8px;font-size:11px;">${r.l}</td><td style="padding:6px 8px;font-size:11px;">${r.kpi||'—'}</td><td style="padding:6px 8px;font-size:11px;font-weight:600;">${r.a||'—'}</td><td style="padding:6px 8px;"><span class="okrp-pct ${pctCls(p)}" style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:99px;">${p}%</span></td></tr>`;
+      }).join('')}
+    </tbody>
+  </table>
+  <div style="text-align:right;font-size:11px;font-weight:600;color:var(--ad);background:var(--al);padding:6px 10px;border-radius:0 0 6px 6px;">Total achievement: ${md.kpi_total||'—'}</div>
+</div>
+
+<div class="rpt-sec">
+  <div class="rpt-sec-title">Activities — WoW</div>
+  <div class="act-prev-grid" id="rpt-act"></div>
+  ${aiLoading(ai.activities)}
+</div>
+
+<div class="rpt-sec">
+  <div class="rpt-sec-title">Funnel — Stage · CR% · WoW</div>
+  <div class="fn-cells" id="rpt-funnel"></div>
+  ${aiLoading(ai.funnel)}
+</div>
+
+<div class="rpt-sec">
+  <div class="rpt-sec-title">Meeting — chi tiết</div>
+  <table style="width:100%;border-collapse:collapse;font-size:11px;table-layout:fixed;">
+    <thead><tr><th style="${thS}width:40%;">Khách hàng</th><th style="${thS}width:20%;">Stage</th><th style="${thS}">Outcome / next step</th></tr></thead>
+    <tbody>${d.meetingDetails.map(m=>`<tr style="border-bottom:1px solid var(--bg);"><td style="padding:6px 8px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${m.client}</td><td style="padding:6px 8px;"><span style="${spStyle(m.stage)}">${m.stage}</span></td><td style="padding:6px 8px;color:var(--t2);font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${m.outcome}</td></tr>`).join('')}</tbody>
+  </table>
+</div>
+
+<div class="rpt-sec">
+  <div class="rpt-sec-title">AOV Control — pipeline</div>
+  <table style="width:100%;border-collapse:collapse;font-size:11px;table-layout:fixed;">
+    <thead><tr><th style="${thS}width:35%;">Deal</th><th style="${thS}width:18%;">Stage</th><th style="${thS}width:17%;">Value</th><th style="${thS}">GP2 est.</th></tr></thead>
+    <tbody>${d.aovDeals.map(a=>`<tr style="border-bottom:1px solid var(--bg);"><td style="padding:6px 8px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${a.deal}</td><td style="padding:6px 8px;"><span style="${spStyle(a.stage)}">${a.stage}</span></td><td style="padding:6px 8px;">${a.value}</td><td style="padding:6px 8px;color:#0F6E56;font-weight:600;">${a.gp2||'—'}</td></tr>`).join('')}</tbody>
+  </table>
+</div>
+
+${d.verticalData.length ? `
+<div class="rpt-sec">
+  <div class="rpt-sec-title">Vertical analysis</div>
+  <table style="width:100%;border-collapse:collapse;font-size:11px;">
+    <thead><tr><th style="${thS}">Vertical</th><th style="${thS}text-align:center;">Khách</th><th style="${thS}text-align:center;">Activities</th><th style="${thS}text-align:center;">CR Lead→QL</th></tr></thead>
+    <tbody>${d.verticalData.map(v=>`<tr style="border-bottom:1px solid var(--bg);"><td style="padding:6px 8px;"><span style="${vpStyle(v.vertical)}">${v.vertical}</span></td><td style="padding:6px 8px;text-align:center;">${v.companies}</td><td style="padding:6px 8px;text-align:center;">${v.activities}</td><td style="padding:6px 8px;text-align:center;font-weight:600;color:#0F6E56;">${v.cr}</td></tr>`).join('')}</tbody>
+  </table>
+</div>` : ''}
+
+<div class="rpt-sec">
+  <div class="rpt-sec-title">Vấn đề & điều chỉnh</div>
+  <div class="issue-box">
+    <div class="issue-row"><div class="issue-lbl">Bottleneck</div><div class="issue-txt">${d.issueBottleneck||'—'}</div></div>
+    <div class="issue-row"><div class="issue-lbl">Deal risk</div><div class="issue-txt">${d.issueRisk||'—'}</div></div>
+    <div class="issue-row"><div class="issue-lbl">Điều chỉnh tuần tới</div><div class="issue-txt">${d.issueAdjust||'—'}</div></div>
+  </div>
+  ${loading ? '<div class="ai-block loading">Đang viết lại...</div>' : renderIssuesAI(ai.issues, d)}
+</div>
+
+<div style="font-size:9px;color:var(--t3);text-align:center;padding:12px 0;border-top:1px solid var(--br);margin-top:8px;">
+  Generated by PMAX BD Report Tool · ${d.quarter}/2026 Tuần ${d.week} · ${d.memberName}
+</div>`;
+
+  document.getElementById('rpt-container').innerHTML = rptHTML;
+  // Render live sections after innerHTML
+  renderActPreview(d);
+  renderFunnelPreview(d);
+}
+
+// ── TOOLBAR ACTIONS ────────────────────────────────────────
 function copyReport() {
-  const el = document.getElementById('report-output');
+  const el = document.getElementById('rpt-container');
   const range = document.createRange();
   range.selectNode(el);
   window.getSelection().removeAllRanges();
   window.getSelection().addRange(range);
   document.execCommand('copy');
   window.getSelection().removeAllRanges();
-  showToast('✓ Đã copy! Paste vào Gmail giữ nguyên format.');
+  toast('✓ Đã copy! Paste vào Gmail giữ nguyên format.');
 }
 
-let isEditing = false;
 function toggleEdit() {
-  const el = document.getElementById('report-output');
-  const btn = document.querySelector('.btn-edit');
+  const el = document.getElementById('rpt-container');
+  const btn = document.getElementById('btn-edit');
   isEditing = !isEditing;
   el.contentEditable = isEditing ? 'true' : 'false';
   btn.textContent = isEditing ? '✓ Xong' : '✏️ Chỉnh sửa';
-  if(isEditing) el.focus();
+  if(isEditing) { el.focus(); toast('✏️ Chỉnh sửa bật — edit trực tiếp trên report'); }
+  else toast('✓ Đã lưu chỉnh sửa');
 }
 
-async function saveToSheets() {
+async function saveSheets() {
   if(!window._reportData) return;
   try {
-    const res = await fetch(SHEETS_URL, {method:'POST', body:JSON.stringify({action:'saveReport',payload:window._reportData})});
-    const data = await res.json();
-    if(data.success) showToast('✓ Đã lưu vào Sheets!');
-    else showToast('⚠ Lỗi: '+data.error);
-  } catch { showToast('⚠ Không kết nối được Sheets'); }
+    const res = await fetch(SHEETS_URL, {
+      method:'POST',
+      body:JSON.stringify({action:'saveReport',payload:{
+        ...window._reportData,
+        meetingDetails: JSON.stringify(window._reportData.meetingDetails),
+        aovDeals: JSON.stringify(window._reportData.aovDeals),
+        verticalData: JSON.stringify(window._reportData.verticalData),
+      }})
+    });
+    const d = await res.json();
+    if(d.success) toast('✓ Đã lưu vào Google Sheets!');
+    else toast('⚠ Lỗi: '+d.error);
+  } catch { toast('⚠ Không kết nối được Sheets'); }
 }
 
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),3000);
+function resetAll() {
+  currentMember = null; memberData = {}; lastReport = null; previewShown = false;
+  document.querySelectorAll('.mchip').forEach(c=>c.classList.remove('on'));
+  document.getElementById('status-tag').className='status-tag st-empty';
+  document.getElementById('status-tag').textContent='Chọn thành viên';
+  document.getElementById('btn-gen').disabled=true;
+  showSections(false);
+  document.getElementById('preview-empty').style.display='flex';
+  document.getElementById('rpt-container').style.display='none';
+  document.getElementById('toolbar').classList.remove('show');
+  ['meet-rows','aov-rows','vert-rows','hl-rows','rf-rows','ns-rows'].forEach(id=>{
+    document.getElementById(id).innerHTML='';
+  });
 }
 
-window.onload = () => {
-  loadMembers();
-  addMeetingRow(); addAOVRow(); addVerticalRow();
-  addHLRow('hl'); addHLRow('hl');
-  addHLRow('rf');
-  addHLRow('ns');
-};
+// Init
+setDefaultDates();
 </script>
 </body>
 </html>
